@@ -1,0 +1,52 @@
+site_name: HapSelect
+site_description: Haplotype block discovery, localGEBV analysis, and parent selection for genomic selection in R
+site_url: https://zanecarter.github.io/HapSelect-Docs
+repo_url: https://github.com/zanecarter/BlockParty
+repo_name: BlockParty
+
+theme:
+  name: material
+  palette:
+    scheme: default
+    primary: custom
+    accent: custom
+  features:
+    - navigation.sections
+    - navigation.top
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+
+extra_css:
+  - assets/custom.css
+
+markdown_extensions:
+  - admonition
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+  - pymdownx.arithmatex:
+      generic: true
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+
+extra_javascript:
+  - https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js
+
+nav:
+  - Home: index.md
+  - Overview: overview.md
+  - Installation: installation.md
+  - Getting Started: getting-started.md
+  - Workflow:
+    - Pairwise LD: workflow/pairwise-ld.md
+    - Haplotype Blocks: workflow/haploblocks.md
+    - Local GEBV: workflow/local-gebv.md
+    - Visualizations: workflow/visualizations.md
+    - Parent Selection: workflow/parent-selection.md
+  - Function Reference: reference.md
