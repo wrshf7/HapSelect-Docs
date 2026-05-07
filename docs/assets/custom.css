@@ -1,8 +1,16 @@
-:root {
+:root,
+[data-md-color-scheme="default"] {
   --md-primary-fg-color:        #2C4A6E;
   --md-primary-fg-color--light: #3D6491;
   --md-primary-fg-color--dark:  #1A2F45;
   --md-accent-fg-color:         #4A90A4;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #4A7FB5;
+  --md-primary-fg-color--light: #5A90C8;
+  --md-primary-fg-color--dark:  #2C4A6E;
+  --md-accent-fg-color:         #5AAFC4;
 }
 
 /* Cleaner header */
@@ -21,8 +29,6 @@
   margin: 2rem auto;
   max-width: 560px;
   width: 100%;
-  border-radius: 6px;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.10);
 }
 
 /* Step cards on overview page */
@@ -50,4 +56,17 @@
   margin: 0;
   font-size: 0.88rem;
   color: #444;
+}
+
+[data-md-color-scheme="slate"] .process-card {
+  background: #1e2a3a;
+  border-left-color: #4A7FB5;
+}
+
+[data-md-color-scheme="slate"] .process-card h3 {
+  color: #7ab3d9;
+}
+
+[data-md-color-scheme="slate"] .process-card p {
+  color: #b0bec5;
 }
