@@ -60,3 +60,10 @@ plot_ld_decay(
 ```
 
 Smoothed LD decay curve (r² vs. physical distance). Supports `"gam_cr"` and loess smoothing methods.
+
+# Test Table
+| Header | Header 2 | Header 3 | Header 4 | Header 5 |
+|--------|----------|----------|----------|----------|
+| Row 1  | Test     |          |          |          |
+|        |          |          |          |          |
+|        |          |          |          |          |
