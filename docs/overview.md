@@ -126,13 +126,14 @@ GA_output$One_Solution
 ```
 
 See [Parent Selection](workflow/parent-selection.md) for full parameter details.
+
 ---
 
 ## F — Basic Simulation and Parental Diversity
 
 Utilizing the parents selected by the genetic algorithm (GA) and the parents selected by truncation selection (TS; i.e., best whole-genome GEBV) a basic simulation can be conducted using recurrent TS for each set of parents to compare genetic gain over time. We have provided a wrapper for the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package [(Villiers et al., 2002)](https://doi.org/10.1093/g3journal/jkac216) to conduct the simulation and plot the rate of genetic gain based on each set of parents. Furthermore, we also offer an option to conduct principle component analysis (PCA) and return a PCA dataframe as well as plot mapping where each set of parents and their overlap sit in the overall population diversity. The whole-genome GEBV of the GA parents and TS parents (calculated internally) are then utilzied to perform the simulation.
 
-For more information on parameters, see [GenomicSimulation](workflow/genomicSimulation.md).
+For more information on parameters, see [Basic Simulation](workflow/basic-simulation.md).
 
 ```r
 parent_sln_obj = GA_vs_TS_simulation(GA_output = GA_output, geno = geno, marker_effects = marker_effects, map = map, genetic_map_position = NULL, num_gen = 50, num_sim_reps = 30,
