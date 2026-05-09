@@ -141,4 +141,5 @@ parent_sln_obj = GA_vs_TS_simulation(GA_output = GA_output, geno = geno, marker_
                                num_cross_per_gen = 1000, num_TS_parents = NULL, mean_adjust = TRUE, max_cM_chr = 100, PCA = TRUE,
                                colors = c("green", "#d95f02", "#A01FF0", "gray80"), alpha = c(1,1,1,0.5))
 ```
+
 ---
