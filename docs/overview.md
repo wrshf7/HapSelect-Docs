@@ -59,7 +59,7 @@ Any model that returns a vector of marker effect estimates aligned to the same m
 
 ```r
 # Example using rrBLUP integration into package
-marker_effects            <- create_marker_effects_file(geno = geno, BLUE = BLUE, h2_method = "VanRaden", ploidy = 2L)
+marker_effects <- create_marker_effects_file(geno = geno, BLUE = BLUE, h2_method = "VanRaden", ploidy = 2L)
 ```
 
 ---
@@ -137,9 +137,11 @@ Utilizing the parents selected by the genetic algorithm (GA) and the parents sel
 For more information on parameters, see [Basic Simulation](workflow/basic-simulation.md).
 
 ```r
-parent_sln_obj = GA_vs_TS_simulation(GA_output = GA_output, geno = geno, marker_effects = marker_effects, map = map, genetic_map_position = NULL, num_gen = 50, num_sim_reps = 30,
-                               num_cross_per_gen = 1000, num_TS_parents = NULL, mean_adjust = TRUE, max_cM_chr = 100, PCA = TRUE,
-                               colors = c("green", "#d95f02", "#A01FF0", "gray80"), alpha = c(1,1,1,0.5))
+parent_sln_obj = GA_vs_TS_simulation(GA_output = GA_output, geno = geno, marker_effects = marker_effects, map = map,
+                                      genetic_map_position = NULL, num_gen = 50, num_sim_reps = 30,
+                                      num_cross_per_gen = 1000, num_TS_parents = NULL, mean_adjust = TRUE,
+                                      max_cM_chr = 100, PCA = TRUE,
+                                      colors = c("green", "#d95f02", "#A01FF0", "gray80"), alpha = c(1,1,1,0.5))
 ```
 
 ---
