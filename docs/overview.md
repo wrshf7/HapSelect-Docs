@@ -1,6 +1,6 @@
 # Process Overview
 
-HapSelect implements a four-stage pipeline that moves from raw genotype data to an optimised set of founder parents for a genomic selection program.
+HapSelect implements a six-stage pipeline that moves from raw genotype data to an optimised set of founder parents for a genomic selection program.
 
 ![HapSelect process overview](assets/overview-diagram.png){ .overview-diagram }
 
@@ -94,7 +94,7 @@ $$
 \text{var}(\text{localGEBV}_j) = \frac{\sum_i \left( \text{localGEBV}_{ij} - \overline{\text{localGEBV}_j} \right)^2}{N}
 $$
 
-where \text{var}(\text{localGEBV}_j) is the haploblock variance.
+where \(\text{var}(\text{localGEBV}_j)\) is the haploblock variance.
 
 High-variance blocks are those where individuals differ substantially in their haplotype (localGEBV) effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
 
@@ -102,11 +102,21 @@ The funnel plot (`block_var_funnel_plot`) visualises this across all blocks, wit
 
 ---
 
-## Parent Selection
+## E — Parent Selection
 
 The top-ranked haploblocks (by variance) are used as targets for the genetic algorithm. `genetic_algorithm()` searches for a set of **n_founders** parents that collectively carry the highest-value haplotype alleles across the selected blocks, subject to constraints on crossing scheme and population size.
 
 ```r
+
+#1: select top 15 haploblocks (arbitrary)
+haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, n = 15)
+
+#2 select top 50% of haploblocks (arbitrary)
+haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_total = 0.5)
+
+#3 select the top blocks explaining at least 90% of the total block variance (arbitrary)
+haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_of_total_var = 0.9)
+
 GA_output <- genetic_algorithm(
   localGEBV  = localGEBV,
   n_founders = 20,
@@ -116,3 +126,17 @@ GA_output$One_Solution
 ```
 
 See [Parent Selection](workflow/parent-selection.md) for full parameter details.
+---
+
+## F — Basic Simulation and Parental Diversity
+
+Utilizing the parents selected by the genetic algorithm (GA) and the parents selected by truncation selection (TS; i.e., best whole-genome GEBV) a basic simulation can be conducted using recurrent TS for each set of parents to compare genetic gain over time. We have provided a wrapper for the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package [(Villiers et al., 2002)](https://doi.org/10.1093/g3journal/jkac216) to conduct the simulation and plot the rate of genetic gain based on each set of parents. Furthermore, we also offer an option to conduct principle component analysis (PCA) and return a PCA dataframe as well as plot mapping where each set of parents and their overlap sit in the overall population diversity. The whole-genome GEBV of the GA parents and TS parents (calculated internally) are then utilzied to perform the simulation.
+
+For more information on parameters, see [GenomicSimulation](workflow/genomicSimulation.md).
+
+```r
+parent_sln_obj = GA_vs_TS_simulation(GA_output = GA_output, geno = geno, marker_effects = marker_effects, map = map, genetic_map_position = NULL, num_gen = 50, num_sim_reps = 30,
+                               num_cross_per_gen = 1000, num_TS_parents = NULL, mean_adjust = TRUE, max_cM_chr = 100, PCA = TRUE,
+                               colors = c("green", "#d95f02", "#A01FF0", "gray80"), alpha = c(1,1,1,0.5))
+```
+---
