@@ -96,7 +96,7 @@ where \text{var}(\text{localGEBV}_j) is the haploblock variance.
 
 High-variance blocks are those where individuals differ substantially in their haplotype (localGEBV) effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
 
-The funnel plot (`block_var_funnel_plot`) visualises this across all blocks, with localGEBV effects on the x-axis and block variance on the y-axis scaled using a 0 to 1 min-max scaling procedure. Similarly, localGEBV effects can be visualized in a Manhattan-style plot using the `unique_haplo_effects_plot()` function (see more in the [Visualizations](workflow/visualizations.md) section.)
+The funnel plot (`block_var_funnel_plot`) visualises this across all blocks, with localGEBV effects on the x-axis and block variance on the y-axis scaled using a 0 to 1 min-max scaling procedure. Similarly, localGEBV effects can be visualized in a Manhattan-style plot using the `unique_haplo_effects_plot()` function (for more details and information, see [Visualizations](workflow/visualizations.md)).
 
 ---
 
