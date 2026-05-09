@@ -18,7 +18,7 @@ The package is designed for breeding programs running genomic selection, where i
 
 See the [Overview](overview.md) for a full explanation of the method, or jump to [Getting Started](getting-started.md) to run the example workflow.
 
-## Installation (quick for experienced users)
+## Installation
 
 Install with DevTools:
 
