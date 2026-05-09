@@ -34,6 +34,7 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 ```
 !!! tip
     There are many parameters that affect the behaior of `def_blocks()` with various defaults. Be sure to check out all options and how they can influence the result. See [Haplotype Blocks](workflow/haploblocks.md) for more details!
+    
 ---
 
 ## B — SNP Effect Estimation
