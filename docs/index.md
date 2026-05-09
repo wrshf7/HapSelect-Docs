@@ -33,7 +33,7 @@ Install with base R command:
 install.packages("path/to/HapSelect", type = "source", repos = NULL)
 ```
 
-!!!Warning [genomicSimulation](https://github.com/vllrs/genomicSimulation), [PLINK 1.9](https://www.cog-genomics.org/plink/), and [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users only) dependencies must be installed separately. Alternatively run the helper installation scripts to install all needed software. The package is usable without PLINK 1.9, but related functions to utilize PLINK will fail with an error. See [Installation](docs/installation.md) for more details.
+!!! warning [genomicSimulation](https://github.com/vllrs/genomicSimulation), [PLINK 1.9](https://www.cog-genomics.org/plink/), and [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users) dependencies must be installed separately. Alternatively run the helper installation scripts to install all needed software. The package is usable without PLINK 1.9, but related functions to utilize PLINK will fail with an error. See [Installation](docs/installation.md) for more details.
 
 ## Authors
 
