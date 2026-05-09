@@ -40,7 +40,9 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 
 Marker effects are estimated independently using a genomic prediction model — GBLUP with backsolve, BayesR, rrBLUP, other Bayesian methods, or any equivalent method that produces per-SNP effect estimates (\(\hat{u}_m\)).
 
-HapSelect offers a basic genomic prediction model using the rrBLUP R package ([rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html)). However, the implementation is limited to utilizing singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modeling, please consult the packages below. However, any model that returns a vector of marker effect estimates aligned to the same map can be used and it is up to the user to ensure marker effect estimates are correctly generated.
+HapSelect offers a basic genomic prediction model by integrating the [rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html). However, the implementation is limited to utilizing singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modeling, please consult the packages below. 
+
+Any model that returns a vector of marker effect estimates aligned to the same map can be used and it is up to the user to ensure marker effect estimates are correctly generated. Please see [localGEB](workflow/local-gebv.md) for file structure details.
 
 ### Example R Packages for Genomic Prediction:
 #### SNP Based Models:
