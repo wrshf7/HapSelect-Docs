@@ -18,7 +18,7 @@ Starting from a genotype matrix of **N individuals × M markers**, HapSelect:
 The result is a set of **J haploblocks** that tile the genome, each capturing a segment of co-inherited variation.
 
 ```r
-ld_pairs   <- plink_pairwise_ld("path/to/plink_prefix")
+ld_pairs   <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999, ld_window_kb = 1e6, ld_window_r2 = 0)
 haploblocks <- def_blocks(ld = ld_pairs, map = map, method = "flanking",
                           threshold = 0.2, tolerance = 4)
 haploblocks <- block_obj_to_df(haploblocks, map)
