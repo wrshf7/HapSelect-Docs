@@ -42,7 +42,7 @@ Marker effects are estimated independently using a genomic prediction model — 
 
 HapSelect offers a basic genomic prediction model by integrating the [rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html). However, the implementation is limited to utilizing singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modeling, please consult the packages below. 
 
-Any model that returns a vector of marker effect estimates aligned to the same map can be used and it is up to the user to ensure marker effect estimates are correctly generated. Please see [localGEB](workflow/local-gebv.md) for file structure details.
+Any model that returns a vector of marker effect estimates aligned to the same map can be used and it is up to the user to ensure marker effect estimates are correctly generated. Please see [localGEBV](workflow/local-gebv.md) for file structure details.
 
 ### Example R Packages for Genomic Prediction:
 #### SNP Based Models:
@@ -73,7 +73,7 @@ $$
 
 where \(z_{im}\) is the **centered*** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect.
 
-This produces an **N × J matrix** of localGEBV values — one value per individual per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
+This produces an \text{**N × J matrix**} of localGEBV values — one value per individual per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
 
 ```r
 haploblock_obj <- compute_local_GEBV(
