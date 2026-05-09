@@ -30,7 +30,7 @@ devtools::install("path/to/HapSelect")
 Install with base R command:
 
 ```r
-install.packages("path/to/HapSelect", type = "source, repos = NULL)
+install.packages("path/to/HapSelect", type = "source", repos = NULL)
 ```
 ## Authors
 
