@@ -10,7 +10,7 @@ HapSelect implements a four-stage pipeline that moves from raw genotype data to 
 
 The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers. We highly recommend using [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute marker effects. If PLINK 1.9 is installed and available in the `PATH` variable, we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
-Starting from a genotype matrix of **N individuals × M markers**, HapSelect:
+Starting from a pared-down VCF structured genotype matrix of **N individuals × M markers** (see [Haploblocks](workflow/haploblocks.md) for more details), HapSelect:
 
 1. Computes pairwise r² between all marker pairs within each chromosome
 2. Uses the r² matrix to define contiguous regions of high internal LD — **haploblocks**
