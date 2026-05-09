@@ -10,6 +10,7 @@ The package is designed for breeding programs running genomic selection, where i
 |-------|-------------|--------------|
 | Pairwise LD | Compute r² between all marker pairs | `pairwise_ld()` / `plink_pairwise_ld()` |
 | Haploblocking | Partition genome into LD-based haploblocks | `def_blocks()` |
+| Genomic Prediction | Compute marker effects and prediction accuracy | `create_marker_effects_file()`, `n_fold_cross_validation()`, `cross_validation()` |
 | LocalGEBV | Estimate per-block breeding value per individual | `compute_local_GEBV()` |
 | Visualisation | Explore haploblock structure, localGEBV patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
 | Parent selection | Optimise founder set using a genetic algorithm | `genetic_algorithm()` |
