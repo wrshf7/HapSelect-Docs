@@ -95,7 +95,7 @@ $$
 \text{var}(\text{localGEBV}_j) = \frac{\sum_i \left( \text{localGEBV}_{ij} - \overline{\text{localGEBV}_j} \right)^2}{N}
 $$
 
-where \(\text{var}(\mathbf{\text{localGEBV}_j)}\) is the haploblock variance.
+where \(\text{var}(\mathbf{\text{localGEBV}_j})\) is the haploblock variance.
 
 High-variance blocks are those where individuals differ substantially in their haplotype (localGEBV) effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
 
