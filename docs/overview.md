@@ -69,10 +69,10 @@ marker_effects <- create_marker_effects_file(geno = geno, BLUE = BLUE, h2_method
 With haploblocks defined and marker effects estimated, HapSelect calculates a **local genomic estimated breeding value (localGEBV)** for each individual in each haploblock:
 
 $$
-\text{localGEBV}_{ij} = \sum_{m \in \text{block}_j} \bar{z}_{im} \cdot \hat{u}_m
+\text{localGEBV}_{ij} = \sum_{m \in \text{block}_j} \overline{z_{im}} \cdot \hat{u}_m
 $$
 
-where \(\bar{z}_{im}\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect.
+where \(\overline{z_{im}}\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect.
 
 This produces an **\(\text{N × J}\) matrix** of localGEBV values — one value per individual per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
 
@@ -95,7 +95,7 @@ $$
 \text{var}(\text{localGEBV}_j) = \frac{\sum_i \left( \text{localGEBV}_{ij} - \overline{\text{localGEBV}_j} \right)^2}{N}
 $$
 
-where \(\text{var}(\text{localGEBV}_j)\) is the haploblock variance.
+where \(\text{var}(\mathbf{\text{localGEBV}_j)}\) is the haploblock variance.
 
 High-variance blocks are those where individuals differ substantially in their haplotype (localGEBV) effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
 
