@@ -46,13 +46,13 @@ HapSelect offers a basic genomic prediction model by integrating the [rrBLUP R P
 Any model that returns a vector of marker effect estimates aligned to the same map can be used and it is up to the user to ensure marker effect estimates are correctly generated. Please see [localGEBV](workflow/local-gebv.md) for file structure details.
 
 ### Example R Packages for Genomic Prediction:
-#### SNP Based Models:
+<strong>SNP Based Models:</strong><br>
 [rrBLUP](https://cran.r-project.org/web/packages/rrBLUP/index.html)
 [BGLR](http://cran.r-project.org/web/packages/BGLR/index.html)
 [Sommer](http://cran.r-project.org/web/packages/BGLR/index.html)
 [ASREML-R](https://asreml.kb.vsni.co.uk/)
 
-#### GBLUP Based Models:
+<strong>GBLUP Based Models:</strong><br>
 [rrBLUP](https://cran.r-project.org/web/packages/rrBLUP/index.html)
 [Sommer](http://cran.r-project.org/web/packages/BGLR/index.html)
 [ASREML-R](https://asreml.kb.vsni.co.uk/)
