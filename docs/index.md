@@ -37,16 +37,20 @@ install.packages("path/to/HapSelect", type = "source", repos = NULL)
     [genomicSimulation](https://github.com/vllrs/genomicSimulation), [PLINK 1.9](https://www.cog-genomics.org/plink/), and [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users) dependencies must be installed separately. Alternatively run the helper installation scripts to install all needed software. The package is usable without PLINK 1.9, but related functions that call PLINK will fail with an error. See [Installation](./installation.md) for more details.
 
 ## Important Papers
-<p><strong>localGEBV Method and Haploblock Formation:</strong></p>
+**localGEBV Method and Haploblock Formation:**
+
 [Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv](https://doi.org/10.1101/2025.08.28.672830)
 
-<p><strong>Origin of the localGEBV Method and Parent Optimization with a Genetic Algorithm:</strong></p>
+**Origin of the localGEBV Method and Parent Optimization with a Genetic Algorithm:**
+
 [Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci](https://doi.org/10.3168/jds.2011-5289)
 
-<p><strong>The First Implementation of Haploblocking with localGEBV:</strong></p>
+**The First Implementation of Haploblocking with localGEBV:**
+
 [Voss-Fels et al. 2019. Breeding improves wheat productivity under contrasting agrochemical input levels. Nat Plants](https://doi.org/10.1038/s41477-019-0445-5)
 
-<p><strong>The Concept of the Ultimate Genotype:</strong></p>
+**The Concept of the Ultimate Genotype:**
+
 [Hays et al. 2024. Potential approaches to create ultimate genotypes in crops and livestock. Nat Genet](https://doi.org/10.1038/s41588-024-01942-0)
 
 ## Authors
