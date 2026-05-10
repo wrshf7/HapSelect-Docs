@@ -38,20 +38,16 @@ install.packages("path/to/HapSelect", type = "source", repos = NULL)
 
 ## Important Papers
 **localGEBV Method and Haploblock Formation:**
-
-[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv](https://doi.org/10.1101/2025.08.28.672830)
+[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv.](https://doi.org/10.1101/2025.08.28.672830)
 
 **Origin of the localGEBV Method and Parent Optimization with a Genetic Algorithm:**
-
-[Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci](https://doi.org/10.3168/jds.2011-5289)
+[Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci.](https://doi.org/10.3168/jds.2011-5289)
 
 **The First Implementation of Haploblocking with localGEBV:**
-
-[Voss-Fels et al. 2019. Breeding improves wheat productivity under contrasting agrochemical input levels. Nat Plants](https://doi.org/10.1038/s41477-019-0445-5)
+[Voss-Fels et al. 2019. Breeding improves wheat productivity under contrasting agrochemical input levels. Nat Plants.](https://doi.org/10.1038/s41477-019-0445-5)
 
 **The Concept of the Ultimate Genotype:**
-
-[Hays et al. 2024. Potential approaches to create ultimate genotypes in crops and livestock. Nat Genet](https://doi.org/10.1038/s41588-024-01942-0)
+[Hays et al. 2024. Potential approaches to create ultimate genotypes in crops and livestock. Nat Genet.](https://doi.org/10.1038/s41588-024-01942-0)
 
 ## Authors
 
