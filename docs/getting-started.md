@@ -10,12 +10,36 @@ library(HapSelect)
 
 ## Required Data
 
-HapSelect expects two primary inputs:
+HapSelect expects two primary inputs (map file and genotype file). The rest can be computed in the R package or externally as additional inputs:
 
-- **Map file** — marker positions with columns for marker ID, chromosome, and position
-    -
-- **Genotype matrix** — individuals × markers, typically coded as allele dosage (0/1/2)
+- **Map file** — marker positions with columns for marker ID, chromosome, and position.
+    - First column should be named `SNP` and should be a character vector, not numeric or factorized.
+    - Second column should be named `Chromosome` and should be numeric for proper sorting.
+    - Third column should be named `Position` and should be numeric. It can be a physical position or genetic map position.
+
+- **Genotype matrix** — individuals × markers, coded as allele dosage (0/1/2 for diploid).
+    - First three columns should be identical to the map file.
+    - Columns `4:ncol(genotype_file)` should be individuals and their genotype for each marker (rows are markers, columns are individuals).
+    - Names of columns 4 onwards should be the individuals' identifiers.
+    - Genotypes should be dosage format: i.e., number of copies of the alternative allele (integer counts only for consistency).
+    - `NA` values are allowed and are handled differently at each sage via options in the relevant functions.
+
+- **LD file** - pairwise LD between each marker within a chromosome.
+    - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
+    - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed. because R is not built for large, iterative computions require to compute LD pairs.
+    - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
+    - Columns:
+        - `Chrom`: the chromosome each SNP pair belongs to.
+        - `Locus1`: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the **ordered map file** (see below for more details).
+        - `Locus2`: similar to `Locus1`, this is the numerical integer of the second marker in the marker pair.
+        - `Name1`: Character name of the first marker in the pair as seen in the genotype, map, and marker effeccts file.
+        - `Name2`: Similar to `Name1`, this corresponds to the name of the second marker in the pair as seen in the genotype, map, and marker effects file.
+        - `LD`: The numerical LD value computed. This is typically an $R^{2}$ value.
+
 - **Marker effects** — estimated SNP effects from a genomic prediction model
+    - Can be computed for basic cases in the package with BLUE/dergressed BLUP/singular adjusted phenotype or provided externally.
+    - First column: `SNP` corresponding to the `SNP` column in the map and genotype file. It should be formatted as a character vector.
+    - Second column: `Effect` the allele subsititution (marker) effects corresponding to the SNP in column one.
 
 Example datasets are bundled with the package:
 
