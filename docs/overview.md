@@ -126,7 +126,8 @@ GA_output <- genetic_algorithm(
 GA_output$One_Solution
 ```
 
-See [Parent Selection](workflow/parent-selection.md) for full parameter details.
+!!! tip
+    There are many parameters that affect the behavior of `genetic_algorithm()` and convergence to an optimal solution with various defaults. Be sure to check out all options and how they can influence the result. See [Parent Selection](workflow/parent-selection.md) for full parameter details!
 
 ---
 
