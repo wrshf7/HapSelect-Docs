@@ -19,6 +19,10 @@ The package is designed for breeding programs running genomic selection, where i
 See the [Overview](overview.md) for a full explanation of the method, or jump to [Getting Started](getting-started.md) to run the example workflow.
 
 ## Installation
+1. Extract the .zip file
+2. Ensure RTools4.5 (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed.
+a. Non-Windows machines must have a C++ compiler that works with the RCPP R package (usually this will be automatically detected and shipped natively with Linux/Unix and MacOS systems).
+4. Either set the working directory in R with `setwd("path/to/unzipped/file/HapSelect")` or provide the full path to the unzipped directory.
 
 Install with DevTools:
 
