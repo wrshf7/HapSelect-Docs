@@ -22,7 +22,7 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
     - Columns `4:ncol(genotype_file)` should be individuals and their genotype for each marker (rows are markers, columns are individuals).
     - Names of columns 4 onwards should be the individuals' identifiers.
     - Genotypes should be dosage format: i.e., number of copies of the alternative allele (integer counts only for consistency).
-    - `NA` values are allowed and are handled differently at each sage via options in the relevant functions.
+    - `NA` values are allowed and are handled differently at each stage via options in the relevant functions.
 
 - **LD file** - pairwise LD between each marker within a chromosome.
     - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
