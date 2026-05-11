@@ -13,6 +13,7 @@ library(HapSelect)
 HapSelect expects two primary inputs:
 
 - **Map file** — marker positions with columns for marker ID, chromosome, and position
+    -
 - **Genotype matrix** — individuals × markers, typically coded as allele dosage (0/1/2)
 - **Marker effects** — estimated SNP effects from a genomic prediction model
 
