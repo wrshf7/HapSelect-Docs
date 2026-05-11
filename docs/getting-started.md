@@ -26,7 +26,7 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
 
 - **LD file** - pairwise LD between each marker within a chromosome.
     - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
-    - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed. because R is not built for large, iterative computions require to compute LD pairs.
+    - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed, because R is not built for large, iterative computions require to compute LD pairs. Even small to moderate sized SNP panels will take too long in R.
     - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
     - Columns:
         - `Chrom`: the chromosome each SNP pair belongs to.
