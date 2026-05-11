@@ -14,7 +14,7 @@ The package is designed for breeding programs running genomic selection, where i
 | LocalGEBV | Estimate per-block breeding value per individual | `compute_local_GEBV()` |
 | Visualisation | Explore haploblock structure, localGEBV patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
 | Parent selection | Optimise founder set using a genetic algorithm | `genetic_algorithm()` |
-| Basic Simulation | Compare GA and TS parent performance over time and explore how diversity is captured | `GA_vs_TS_simulation()` |
+| Basic Simulation | Compare GA and TS parent performance over time and explore how diversity is captured using the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package. | `GA_vs_TS_simulation()` |
 
 See the [Overview](overview.md) for a full explanation of the method, or jump to [Getting Started](getting-started.md) to run the example workflow.
 
