@@ -27,7 +27,7 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 3. Either set the working directory in R with: `setwd("path/to/unzipped/file/HapSelect")` or record the full path to the unzipped directory.
 
-Install with DevTools:
+<strong>Install with DevTools:</strong><br>
 
 ```r
 install.packages("devtools")
@@ -36,7 +36,7 @@ install.packages("devtools")
 devtools::install("path/to/unzipped/file/HapSelect")
 ```
 
-Install with base R command:
+<strong>Install with base R command:</strong><br>
 
 ```r
 #setting the working directory
