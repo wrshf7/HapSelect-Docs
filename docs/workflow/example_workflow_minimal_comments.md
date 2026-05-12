@@ -12,7 +12,7 @@ Minimal workflow demonstrating:
 
 ---
 
-# Load Package and Example Data
+## Load Package and Example Data
 
 ```r
 library(HapSelect)
@@ -23,7 +23,7 @@ geno = HapSelect::geno
 
 ---
 
-# Order Map File
+## Order Map File
 
 ```r
 # simulate unordered map
@@ -34,8 +34,8 @@ map2 = order_map(map = map2)
 ```
 
 ---
-# LD Calculation
-## Pairwise LD (Native Function)
+## LD Calculation
+### Pairwise LD (Native Function)
 
 ```r
 # very slow; demonstration only
@@ -44,7 +44,7 @@ map2 = order_map(map = map2)
 
 ---
 
-## Pairwise LD with PLINK (Recommended)
+### Pairwise LD with PLINK (Recommended)
 
 ```r
 ld_pairs = plink_pairwise_ld_geno(
@@ -58,7 +58,7 @@ ld_pairs = plink_pairwise_ld_geno(
 Requires PLINK v1.9 installed and available in the system `PATH`.
 
 
-# Load Example LD Data
+## Load Example LD Data
 
 ```r
 ld_pairs = HapSelect::ld_pairs
@@ -66,7 +66,7 @@ ld_pairs = HapSelect::ld_pairs
 
 ---
 
-# Construct Haploblocks
+## Construct Haploblocks
 
 ```r
 haploblocks = def_blocks(
@@ -83,7 +83,7 @@ haploblocks = def_blocks(
 
 ---
 
-# Convert to Dataframe
+## Convert to Dataframe
 
 ```r
 haploblocks = block_obj_to_df(haploblocks, map)
@@ -91,7 +91,7 @@ haploblocks = block_obj_to_df(haploblocks, map)
 
 ---
 
-# Summarize Haploblocks
+### Summarize Haploblocks
 
 ```r
 block_summary(block_df = haploblocks)
@@ -99,9 +99,9 @@ block_summary(block_df = haploblocks)
 
 ---
 
-# Marker Effect Estimation
-## Estimate marker effects if not provided
-### Important Note:
+## Marker Effect Estimation
+### Estimate marker effects if not provided
+#### Important Note:
 - One BLUE, deregressed BLUP, or adjusted phenotype per individual only
 - rrBLUP implementation
 - no other effects in the model, see [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modeling.
@@ -119,9 +119,9 @@ marker_effects = create_marker_effects_file(
 
 ---
 
-## Cross Validation
+### Cross Validation
 
-### N-fold
+#### N-fold
 
 ```r
 CV = n_fold_cross_validation(
@@ -133,7 +133,7 @@ CV = n_fold_cross_validation(
 )
 ```
 
-### Random Train/Test
+#### Random Train/Test
 
 ```r
 CV = cross_validation(
@@ -148,7 +148,7 @@ CV = cross_validation(
 
 ---
 
-# Compute localGEBV
+## Compute localGEBV
 
 ```r
 marker_effects = HapSelect::marker_effects
@@ -164,8 +164,8 @@ haploblock_obj = compute_local_GEBV(
 
 ---
 
-# Visualizations
-## Marker Effects Plot
+## Visualizations
+### Marker Effects Plot
 
 ```r
 marker_plot = marker_effects_plot(
@@ -180,7 +180,7 @@ marker_plot
 
 ---
 
-## Unique Haplotype Effects Plot
+### Unique Haplotype Effects Plot
 
 ```r
 haplo_eff_plot = unique_haplo_effects_plot(
@@ -194,7 +194,7 @@ haplo_eff_plot
 
 ---
 
-## Funnel Plot
+### Funnel Plot
 
 ```r
 funnel_plot = block_var_funnel_plot(
@@ -208,7 +208,7 @@ funnel_plot
 
 ---
 
-## Haploblock Position Plot
+### Haploblock Position Plot
 
 ```r
 haploblock_plot = plot_haploblocks(
@@ -224,7 +224,7 @@ haploblock_plot
 
 ---
 
-## Marker Density Plot
+### Marker Density Plot
 
 ```r
 marker_density_plot = plot_marker_density(
@@ -242,7 +242,7 @@ marker_density_plot
 
 ---
 
-## LD Decay Plot
+### LD Decay Plot
 
 ```r
 ld_decay_plot = plot_ld_decay(
@@ -262,9 +262,9 @@ ld_decay_plot
 
 ---
 
-# Select Haploblocks for the GA
+## Select Haploblocks for the GA
 
-## Top N Blocks
+### Top N Blocks
 
 ```r
 haploblock_obj = select_top_blocks(
@@ -275,7 +275,7 @@ haploblock_obj = select_top_blocks(
 nrow(haploblock_obj$Haploblocks_GA)
 ```
 
-## Top Percentage of Blocks
+### Top Percentage of Blocks
 
 ```r
 haploblock_obj = select_top_blocks(
@@ -286,7 +286,7 @@ haploblock_obj = select_top_blocks(
 nrow(haploblock_obj$Haploblocks_GA)
 ```
 
-## Variance Explained Threshold
+### Variance Explained Threshold
 
 ```r
 haploblock_obj = select_top_blocks(
@@ -299,7 +299,7 @@ nrow(haploblock_obj$Haploblocks_GA)
 
 ---
 
-# Genetic Algorithm
+## Genetic Algorithm
 
 ```r
 GA_output = genetic_algorithm(
@@ -317,7 +317,7 @@ GA_output = genetic_algorithm(
 
 ---
 
-## Inspect One Solution
+### Inspect One Solution
 
 ```r
 GA_output$One_Solution
@@ -325,7 +325,7 @@ GA_output$One_Solution
 
 ---
 
-# Simulate Recurrent Selection
+## Simulate Recurrent Selection
 
 ```r
 parent_sln_obj = GA_vs_TS_simulation(
@@ -348,7 +348,7 @@ parent_sln_obj = GA_vs_TS_simulation(
 
 ---
 
-## Display Simulation Results
+### Display Simulation Results
 
 ```r
 parent_sln_obj$Simulation_Plot
