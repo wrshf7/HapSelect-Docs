@@ -34,8 +34,8 @@ map2 = order_map(map = map2)
 ```
 
 ---
-
-# Pairwise LD (Native Function)
+# LD Calculation
+## Pairwise LD (Native Function)
 
 ```r
 # very slow; demonstration only
@@ -44,15 +44,7 @@ map2 = order_map(map = map2)
 
 ---
 
-# Load Example LD Data
-
-```r
-ld_pairs = HapSelect::ld_pairs
-```
-
----
-
-# Pairwise LD with PLINK (Recommended)
+## Pairwise LD with PLINK (Recommended)
 
 ```r
 ld_pairs = plink_pairwise_ld_geno(
@@ -64,6 +56,13 @@ ld_pairs = plink_pairwise_ld_geno(
 ```
 
 Requires PLINK v1.9 installed and available in the system `PATH`.
+
+
+# Load Example LD Data
+
+```r
+ld_pairs = HapSelect::ld_pairs
+```
 
 ---
 
@@ -101,7 +100,6 @@ block_summary(block_df = haploblocks)
 ---
 
 # Marker Effect Estimation
-
 ## Estimate marker effects if not provided
 ### Important Note:
 - One BLUE, deregressed BLUP, or adjusted phenotype per individual only
@@ -121,9 +119,9 @@ marker_effects = create_marker_effects_file(
 
 ---
 
-# Cross Validation
+#E Cross Validation
 
-## N-fold
+##E N-fold
 
 ```r
 CV = n_fold_cross_validation(
@@ -135,7 +133,7 @@ CV = n_fold_cross_validation(
 )
 ```
 
-## Random Train/Test
+##E Random Train/Test
 
 ```r
 CV = cross_validation(
@@ -166,7 +164,8 @@ haploblock_obj = compute_local_GEBV(
 
 ---
 
-# Marker Effects Plot
+# Visualizations
+## Marker Effects Plot
 
 ```r
 marker_plot = marker_effects_plot(
@@ -181,7 +180,7 @@ marker_plot
 
 ---
 
-# Unique Haplotype Effects Plot
+## Unique Haplotype Effects Plot
 
 ```r
 haplo_eff_plot = unique_haplo_effects_plot(
@@ -195,7 +194,7 @@ haplo_eff_plot
 
 ---
 
-# Funnel Plot
+## Funnel Plot
 
 ```r
 funnel_plot = block_var_funnel_plot(
@@ -209,7 +208,7 @@ funnel_plot
 
 ---
 
-# Haploblock Position Plot
+## Haploblock Position Plot
 
 ```r
 haploblock_plot = plot_haploblocks(
@@ -225,7 +224,7 @@ haploblock_plot
 
 ---
 
-# Marker Density Plot
+## Marker Density Plot
 
 ```r
 marker_density_plot = plot_marker_density(
@@ -243,7 +242,7 @@ marker_density_plot
 
 ---
 
-# LD Decay Plot
+## LD Decay Plot
 
 ```r
 ld_decay_plot = plot_ld_decay(
@@ -318,7 +317,7 @@ GA_output = genetic_algorithm(
 
 ---
 
-# Inspect One Solution
+## Inspect One Solution
 
 ```r
 GA_output$One_Solution
@@ -349,7 +348,7 @@ parent_sln_obj = GA_vs_TS_simulation(
 
 ---
 
-# Display Simulation Results
+## Display Simulation Results
 
 ```r
 parent_sln_obj$Simulation_Plot
@@ -358,17 +357,5 @@ parent_sln_obj$PCA_Plot
 ```
 
 ---
-
-# References
-
-**localGEBV Method and Haploblock Formation:**  
-[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv](https://doi.org/10.1101/2025.08.28.672830)
-
-**Origin of the localGEBV Method and Parent Optimization with a Genetic Algorithm:**  
-[Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci](https://doi.org/10.3168/jds.2011-5289)
-
-**The First Implementation of Haploblocking with localGEBV:**  
-[Voss-Fels et al. 2019. Breeding improves wheat productivity under contrasting agrochemical input levels. Nat Plants](https://doi.org/10.1038/s41477-019-0445-5)
-
 **The Concept of the Ultimate Genotype:**  
 [Hays et al. 2024. Potential approaches to create ultimate genotypes in crops and livestock. Nat Genet](https://doi.org/10.1038/s41588-024-01942-0)
