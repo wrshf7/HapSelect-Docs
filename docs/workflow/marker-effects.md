@@ -3,6 +3,7 @@
 This function was created to create the marker effects file using the `geno` input file and a new input called `BLUE`
 
 `BLUE` is a dataframe containing two columns:
+
 1. `Individual`, which gives the individual's identifier found in the genotype file, `geno`. Each individual **MUST** only appear **once**!
 2. `BLUE`, which contains a singular, numeric value. This value can be a Best Linear Unbiased Estimate (BLUE), de-regressed Best Linear Unbiased Prediction (BLUP) extracted from a random effect with an identity covariance structure (i.e., broad-sense heritability/repeatability effect with no additive genetic effect fit), or an adjusted phenotype.
 
