@@ -6,7 +6,7 @@ HapSelect implements a six-stage pipeline that moves from raw genotype data to a
 
 ---
 
-## A — Block Formation
+## A — LD Computation and Block Formation
 
 The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers. We highly recommend using [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute marker effects. If PLINK 1.9 is installed and available in the `PATH` variable, we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
