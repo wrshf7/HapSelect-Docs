@@ -31,6 +31,7 @@ haploblocks <- def_blocks(
 | `parallel` | Use parallel processing via `furrr` |
 
 **`method`**
+
 - `"flanking"` → compares the LD of the adjacent marker only (i.e., compares current first/last marker in the block to the next marker)
 - `"average"` → compares average LD across block (i.e., averages the next marker's LD to all markers currently in the block)
 
