@@ -120,6 +120,9 @@ haploblock_obj <- compute_local_GEBV(
 )
 ```
 
+!!! tip
+    Check out the full workflow if you need a basic model to compute marker effects.
+
 ## Step 5 — Visualize
 
 ```r
