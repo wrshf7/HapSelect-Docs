@@ -630,7 +630,7 @@ ld_decay_plot
 - `"exp"` guarantees monotonic decay
 - Smaller `span` values follow local structure more closely, but may over fit
 - Larger `span` values produce smoother curves, but may over smooth
-- Lower `k` values smooth GAM curves more aggressively
+- Lower `k` values smooth GAM curves more aggressively whereas higher values may overfit
 
 ---
 
