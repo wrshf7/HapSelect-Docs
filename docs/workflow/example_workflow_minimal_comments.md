@@ -27,10 +27,10 @@ geno = HapSelect::geno
 
 ```r
 # simulate unordered map
-map2 = map[sample(1:nrow(map), nrow(map)), ]
+map2 <- map[sample(1:nrow(map), nrow(map)), ]
 
 # reorder
-map2 = order_map(map = map2)
+map2 <- order_map(map = map2)
 ```
 
 ---
@@ -39,7 +39,7 @@ map2 = order_map(map = map2)
 
 ```r
 # very slow; demonstration only
-# ld_pairs = pairwise_ld(geno, parallelize = FALSE)
+# ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 ```
 
 ---
@@ -47,7 +47,7 @@ map2 = order_map(map = map2)
 ### Pairwise LD with PLINK (Recommended)
 
 ```r
-ld_pairs = plink_pairwise_ld_geno(
+ld_pairs <- plink_pairwise_ld_geno(
   geno = geno,
   ld_window = 999999,
   ld_window_kb = 1e6,
@@ -61,7 +61,7 @@ Requires PLINK v1.9 installed and available in the system `PATH`.
 ## Load Example LD Data
 
 ```r
-ld_pairs = HapSelect::ld_pairs
+ld_pairs <- HapSelect::ld_pairs
 ```
 
 ---
@@ -69,7 +69,7 @@ ld_pairs = HapSelect::ld_pairs
 ## Construct Haploblocks
 
 ```r
-haploblocks = def_blocks(
+haploblocks <- def_blocks(
   ld = ld_pairs,
   map = map,
   method = "flanking",
@@ -86,7 +86,7 @@ haploblocks = def_blocks(
 ## Convert to Dataframe
 
 ```r
-haploblocks = block_obj_to_df(haploblocks, map)
+haploblocks <- block_obj_to_df(haploblocks, map)
 ```
 
 ---
@@ -107,9 +107,9 @@ block_summary(block_df = haploblocks)
 - no other effects in the model, see [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modeling.
 
 ```r
-BLUE = HapSelect::BLUE
+BLUE <- HapSelect::BLUE
 
-marker_effects = create_marker_effects_file(
+marker_effects <- create_marker_effects_file(
   geno = geno,
   BLUE = BLUE,
   h2_method = "VanRaden",
@@ -124,7 +124,7 @@ marker_effects = create_marker_effects_file(
 #### N-fold
 
 ```r
-CV = n_fold_cross_validation(
+CV <- n_fold_cross_validation(
   geno = geno,
   BLUE = BLUE,
   nfold = 5L,
@@ -136,7 +136,7 @@ CV = n_fold_cross_validation(
 #### Random Train/Test
 
 ```r
-CV = cross_validation(
+CV <- cross_validation(
   geno = geno,
   BLUE = BLUE,
   train_prop = 0.9,
@@ -151,9 +151,9 @@ CV = cross_validation(
 ## Compute localGEBV
 
 ```r
-marker_effects = HapSelect::marker_effects
+marker_effects <- HapSelect::marker_effects
 
-haploblock_obj = compute_local_GEBV(
+haploblock_obj <- compute_local_GEBV(
   geno = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
@@ -168,7 +168,7 @@ haploblock_obj = compute_local_GEBV(
 ### Marker Effects Plot
 
 ```r
-marker_plot = marker_effects_plot(
+marker_plot <- marker_effects_plot(
   marker_effects = marker_effects$Effect,
   chr = map$Chromosome,
   pos = map$Position,
@@ -183,7 +183,7 @@ marker_plot
 ### Unique Haplotype Effects Plot
 
 ```r
-haplo_eff_plot = unique_haplo_effects_plot(
+haplo_eff_plot <- unique_haplo_effects_plot(
   haplo_obj = haploblock_obj,
   colors = c("#A01FF0", "#A7A8AA"),
   pos_type = "midpoint"
@@ -197,7 +197,7 @@ haplo_eff_plot
 ### Funnel Plot
 
 ```r
-funnel_plot = block_var_funnel_plot(
+funnel_plot <- block_var_funnel_plot(
   haplo_obj = haploblock_obj,
   mean_line = FALSE,
   scale_colors = c("blue", "purple", "red")
@@ -211,7 +211,7 @@ funnel_plot
 ### Haploblock Position Plot
 
 ```r
-haploblock_plot = plot_haploblocks(
+haploblock_plot <- plot_haploblocks(
   haploblock_df = haploblock_obj$Haploblocks,
   block_fill = "#A01FF0",
   chrom_fill = NA,
@@ -227,7 +227,7 @@ haploblock_plot
 ### Marker Density Plot
 
 ```r
-marker_density_plot = plot_marker_density(
+marker_density_plot <- plot_marker_density(
   map = map,
   bin_size = 500e3,
   height = 0.3,
@@ -245,7 +245,7 @@ marker_density_plot
 ### LD Decay Plot
 
 ```r
-ld_decay_plot = plot_ld_decay(
+ld_decay_plot <- plot_ld_decay(
   map = map,
   ld = ld_pairs,
   max_kb = 500,
@@ -267,7 +267,7 @@ ld_decay_plot
 ### Top N Blocks
 
 ```r
-haploblock_obj = select_top_blocks(
+haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   n = 15
 )
@@ -278,7 +278,7 @@ nrow(haploblock_obj$Haploblocks_GA)
 ### Top Percentage of Blocks
 
 ```r
-haploblock_obj = select_top_blocks(
+haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   perc_total = 0.5
 )
@@ -289,7 +289,7 @@ nrow(haploblock_obj$Haploblocks_GA)
 ### Variance Explained Threshold
 
 ```r
-haploblock_obj = select_top_blocks(
+haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   perc_of_total_var = 0.9
 )
@@ -302,7 +302,7 @@ nrow(haploblock_obj$Haploblocks_GA)
 ## Genetic Algorithm
 
 ```r
-GA_output = genetic_algorithm(
+GA_output <- genetic_algorithm(
   localGEBV = haploblock_obj$Haplotype_Effect_Matrix_GA,
   n_founders = 20,
   popSize = 10,
@@ -328,7 +328,7 @@ GA_output$One_Solution
 ## Simulate Recurrent Selection
 
 ```r
-parent_sln_obj = GA_vs_TS_simulation(
+parent_sln_obj <- GA_vs_TS_simulation(
   GA_output = GA_output,
   geno = geno,
   marker_effects = marker_effects,
