@@ -71,6 +71,10 @@ Columns:
 - `Name2`: Similar to `Name1`, this corresponds to the name of the second marker in the pair as seen in the genotype, map, and marker effects file.
 - `LD`: The numerical LD value computed. This is typically an $\text{r}^{2}$ value.
 
+```r
+head(HapSelect::ld_pairs)
+```
+
 ## Benchmarking
 
 HapSelect includes a benchmarking script to compare both implementations on a synthetic dataset:
