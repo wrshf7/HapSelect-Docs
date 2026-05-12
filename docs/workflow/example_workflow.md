@@ -339,7 +339,7 @@ NOT:
 
 ---
 
-## Cross Validation
+### Cross Validation
 
 ### N-fold Cross Validation
 
@@ -400,9 +400,9 @@ haploblock_obj = compute_local_GEBV(
 
 ---
 
-## localGEBV Parameters
+### localGEBV Parameters
 
-### `set_missing_NA`
+#### `set_missing_NA`
 
 If `TRUE`:
 
@@ -414,7 +414,7 @@ If `FALSE`:
 
 ---
 
-### `mean_adjust`
+#### `mean_adjust`
 
 Centers markers internally.
 
@@ -427,7 +427,7 @@ Recommended for 99% of cases, otherwise GEBV and localGEBV will be biased (will 
 mean_adjust = TRUE
 ```
 
-#### Important Information
+##### Important Information
 A good confirmation things are working properly is to reconstruct GEBV from Zu, where Z is the centered marker matrix and u are the marker effects.
 The mean should be 0 (or very close to it) and reflect GBLUP GEBV if using rrBLUP, BayesC, or GBLUP back solve methods.
 If the reconstructed GEBV mean is meaningfully away from 0, it indicates the wrong marker matrix (i.e., needs to be centered) is being used or the marker matrix was not centered when estimating marker effects.
