@@ -76,7 +76,7 @@ CV <- cross_validation(
 )
 ```
 
-A more generalized version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration.
+A more generalized version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration with replacement.
 
 `train_prop` must be a value between 0 and 1 (i.e., the proportion). This is taken as `train_prop` * nubmer of rows rounded down. The rest of the data is utilized for validation.
 
