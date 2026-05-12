@@ -124,9 +124,9 @@ ld_pairs = pairwise_ld(geno, parallelize = FALSE)
 
 ---
 
-# Computing Pairwise LD with PLINK (**Recommended**)
+## Computing Pairwise LD with PLINK (**Recommended**)
 
-## Important Notes
+### Important Notes
 - PLINK 1.9 **MUST** be installed and available in the `PATH` to use this function!
 - See the [Installation Guide](https://wrshf7.github.io/HapSelect-Docs/installation/) for more details
 - LD can be calculated externally, but must be provided in the same format as utilized in this package
@@ -137,7 +137,7 @@ ld_pairs = plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 
 ```
 
-## Parameters
+### Parameters
 
 | Parameter | Description |
 |:---|:---|
