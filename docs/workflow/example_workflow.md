@@ -126,7 +126,7 @@ ld_pairs = pairwise_ld(geno, parallelize = FALSE)
 
 # Computing Pairwise LD with PLINK (**Recommended**)
 
-### Important Notes
+## Important Notes
 - PLINK 1.9 **MUST** be installed and available in the `PATH` to use this function!
 - See the [Installation Guide](https://wrshf7.github.io/HapSelect-Docs/installation/) for more details
 - LD can be calculated externally, but must be provided in the same format as utilized in this package
@@ -161,7 +161,7 @@ The LD dataframe must contain the following columns:
 c("Chrom", "Locus1", "Locus2", "Name1", "Name2", "LD")
 ```
 
-### Other Information
+## Other Information
     - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
     - Columns:
         - `Chrom`: the chromosome each SNP pair belongs to (numeric).
@@ -486,7 +486,7 @@ haplo_eff_plot
 | `colors` | Alternating chromosome colors |
 | `pos_type` | `"midpoint"` or `"start"` positioning of haploblocks |
 
-#### `pos_type`
+## `pos_type`
 
 | Option | Description |
 |:---|:---|
@@ -513,7 +513,7 @@ funnel_plot
 | `mean_line` | Adds dashed mean variance line |
 | `scale_colors` | Vector of length 3 defining low/mid/high effect colors |
 
-#### Notes
+## Notes
 
 - Haploblock variance is log-scaled and normalized between 0 and 1 for display
 - Useful for identifying high-effect haplotypes with large variance
@@ -543,7 +543,7 @@ haploblock_plot
 | `height` | Chromosome thickness |
 | `single_width_bp` | Width of single-marker blocks (mostly deprecated) |
 
-#### Notes
+## Notes
 
 - `chrom_fill = NA` produces transparent chromosomes
 - Smaller `height` values create thinner chromosomes
@@ -578,7 +578,7 @@ marker_density_plot
 | `col_mid` | Mid-density color |
 | `col_high` | High-density color |
 
-#### Notes
+## Notes
 
 - Smaller `bin_size` values increase resolution but also increase noise
 - Larger bins produce smoother chromosome-wide density patterns
@@ -616,7 +616,7 @@ ld_decay_plot
 | `curve_color` | Fitted curve color |
 | `alpha` | Point transparency between 0 and 1 |
 
-#### `method`
+## `method`
 
 | Option | Description |
 |:---|:---|
@@ -625,7 +625,7 @@ ld_decay_plot
 | `"exp"` | Exponential decay model |
 | `"loess"` | LOESS smoothing |
 
-#### Notes
+## Notes
 
 - `"exp"` guarantees monotonic decay and does not utilize `k` or `span`
 - `span` is only utilized by the `loess` method
@@ -661,7 +661,7 @@ haploblock_obj = select_top_blocks(
 | :--- | :--- |
 | `n` | Integer number of top haploblocks to retain based on block variance |
 
-### Notes
+#### Notes
 
 - Very interpretable and simple.
 - Useful when a fixed number of blocks is desired.
@@ -693,7 +693,7 @@ perc_total = 0.5
 
 Retains the top 50% of haploblocks ranked by variance (rounded up).
 
-### Notes
+#### Notes
 
 - Scales automatically with dataset size.
 - Less arbitrary than selecting a fixed number of blocks.
@@ -727,7 +727,7 @@ perc_of_total_var = 0.9
 
 Retains enough haploblocks to explain at least 90% of the total block variance.
 
-### Notes
+#### Notes
 
 - Usually the most biologically meaningful approach.
 - Dynamically adapts to the architecture of the trait.
@@ -782,7 +782,7 @@ GA_output = genetic_algorithm(
 
 ---
 
-# GA Parameters
+## GA Parameters
 
 | Parameter | Description |
 |---|---|
@@ -812,11 +812,11 @@ Improper parameter tuning can lead to:
 
 ---
 
-## `popSize`
+### `popSize`
 
 Controls the number of candidate parental sets evaluated per iteration.
 
-### Trade-offs
+#### Trade-offs
 
 | Smaller `popSize` | Larger `popSize` |
 |:---|:---|
@@ -830,11 +830,11 @@ Increasing `popSize` generally reduces the number of iterations needed for conve
 
 ---
 
-## `maxiter`
+### `maxiter`
 
 Maximum number of iterations allowed.
 
-### Notes
+#### Notes
 
 - Too small → GA may terminate before convergence
 - Too large → unnecessary runtime after convergence
@@ -846,11 +846,11 @@ Generally:
 
 ---
 
-## `run`
+### `run`
 
 Number of iterations allowed without improvement before stopping.
 
-### Trade-offs
+#### Trade-offs
 
 | Smaller `run` | Larger `run` |
 |:---|:---|
@@ -861,13 +861,13 @@ Number of iterations allowed without improvement before stopping.
 
 ---
 
-## `pmutation`
+### `pmutation`
 
 Mutation probability.
 
 Mutation randomly substitutes one individual within populations from the total population.
 
-### Effects
+#### Trade-off
 
 | Low mutation | High mutation |
 |:---|:---|
@@ -880,11 +880,11 @@ Overly large mutation probabilities can prevent convergence entirely because hig
 
 ---
 
-## `pcrossover`
+### `pcrossover`
 
 Probability populations exchange parental subsets (half of each pair swapped). If there are overlapping individuals after swapping, then the duplicates are dropped and non-duplicate individuals are randomly sampled from the total population.
 
-### Effects
+### Trade-offs
 
 | Low crossover | High crossover |
 |:---|:---|
@@ -897,11 +897,11 @@ Very high crossover rates may cause the GA to overshoot promising solutions and 
 
 ---
 
-## `pelite`
+### `pelite`
 
 Restricts replacement individuals to the proportion of the population ranked by GEBV.
 
-### Trade-offs
+#### Trade-offs
 
 | Smaller `pelite` | Larger `pelite` |
 |:---|:---|
@@ -913,20 +913,20 @@ Very aggressive elite selection may reduce genetic diversity within the GA searc
 
 ---
 
-### If convergence is unstable
+## If convergence is unstable
 
 - decrease `pmutation`
 - decrease `pcrossover`
 - increase `pelite`
 - increase `run`
 
-### If convergence is too slow
+## If convergence is too slow
 
 - increase `popSize`
 - slightly increase `pmutation`
 - slightly increase `pcrossover`
 
-### If solutions appear trapped in local optima
+## If solutions appear trapped in local optima
 
 - increase `popSize`
 - increase `pmutation`
@@ -935,7 +935,7 @@ Very aggressive elite selection may reduce genetic diversity within the GA searc
 
 ---
 
-# Inspecting Solutions
+## Inspecting Solutions
 
 ```r
 GA_output$One_Solution
@@ -966,7 +966,7 @@ parent_sln_obj = GA_vs_TS_simulation(
 
 ---
 
-# Display Simulation Results
+## Display Simulation Results
 
 ```r
 parent_sln_obj$Simulation_Plot
@@ -974,7 +974,7 @@ parent_sln_obj$Simulation_Plot
 parent_sln_obj$PCA_Plot
 ```
 
-# Simulation Parameters
+## Simulation Parameters
 
 | Parameter | Description |
 | :--- | :--- |
@@ -995,26 +995,26 @@ parent_sln_obj$PCA_Plot
 
 ---
 
-# Understanding Simulation Parameters
+## Understanding Simulation Parameters
 
-## `num_gen`
+### `num_gen`
 
 Controls how many generations of recurrent selection are simulated.
 
-### Larger Values
+#### Larger Values
 
 - better evaluation of long-term gain
 - reveals genetic plateaus
 - better assesses diversity preservation
 
-### Smaller Values
+#### Smaller Values
 
 - faster simulation
 - focuses on short-term gain
 
 ---
 
-## `num_sim_reps`
+### `num_sim_reps`
 
 Controls the number of replicate simulations.
 
@@ -1024,7 +1024,7 @@ Replicates differ because of:
 - parental chromosome sampling
 - stochastic inheritance
 
-### Larger Values
+#### Larger Values
 
 Advantages:
 
@@ -1038,11 +1038,11 @@ Disadvantages:
 
 ---
 
-## `num_cross_per_gen`
+### `num_cross_per_gen`
 
 Number of progeny generated each generation.
 
-### Larger Values
+#### Larger Values
 
 Advantages:
 
@@ -1057,7 +1057,7 @@ Disadvantages:
 
 ---
 
-## `genetic_map_position`
+### `genetic_map_position`
 
 Optional vector of marker positions in centiMorgans (cM).
 
@@ -1070,7 +1070,7 @@ Providing a true genetic map is recommended whenever available.
 
 ---
 
-## `PCA`
+### `PCA`
 
 If `TRUE`, performs PCA on the genotype matrix and highlights:
 
@@ -1087,7 +1087,7 @@ This helps visualize:
 
 ---
 
-# Displaying Simulation Results
+## Displaying Simulation Results
 
 ```r
 parent_sln_obj$Simulation_Plot
@@ -1105,17 +1105,3 @@ Displays PCA visualization of selected parents.
 
 
 ---
-
-# References
-
-**localGEBV Method and Haploblock Formation:**  
-[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv](https://doi.org/10.1101/2025.08.28.672830)
-
-**Origin of the localGEBV Method and Parent Optimization with a Genetic Algorithm:**  
-[Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci](https://doi.org/10.3168/jds.2011-5289)
-
-**The First Implementation of Haploblocking with localGEBV:**  
-[Voss-Fels et al. 2019. Breeding improves wheat productivity under contrasting agrochemical input levels. Nat Plants](https://doi.org/10.1038/s41477-019-0445-5)
-
-**The Concept of the Ultimate Genotype:**  
-[Hays et al. 2024. Potential approaches to create ultimate genotypes in crops and livestock. Nat Genet](https://doi.org/10.1038/s41588-024-01942-0)
