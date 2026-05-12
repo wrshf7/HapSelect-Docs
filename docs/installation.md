@@ -19,24 +19,15 @@ Some HapSelect functions (PLINK-backed LD) require external tools. Install them 
     Powershell -ExecutionPolicy bypass -File inst/scripts/install/install_windows.ps1
     ```
 
-## R Package
+### Important Notes 
+- The locations described are realtive to the root folder in the R package directory. Please download and extract the .zip file and set your current directory to the root folder.
+- System dependencies include [PLINK 1.9](https://www.cog-genomics.org/plink/) and, for Windows users, [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). Plink 1.9 is optional and the package will install without it, but RTools 4.5 is required for Windows users. PLINK LD function calls will not run, however, without PLINK 1.9 isntalled and available to the system `PATH` variable.
+- Other systems must have a C++ compiler compatible with the `Rcpp` R package. This is normally detected and included by default during R installation.
 
-Install directly from the package source using `devtools`:
 
-```r
-install.packages("devtools")
-devtools::install("path/to/HapSelect")
-```
+## R Dependencies - CRAN
 
-Or from a downloaded `.zip` archive:
-
-```r
-install.packages("/path/to/HapSelect", repos = NULL)
-```
-
-## R Dependencies
-
-HapSelect imports the following packages, which will be installed automatically:
+HapSelect imports the following packages, which will be installed automatically. However, in the case of installation issues with non-zero exit status, please install these individually with `install.packages("package_name")`.
 
 | Package | Purpose |
 |---------|---------|
@@ -48,3 +39,39 @@ HapSelect imports the following packages, which will be installed automatically:
 | `furrr` / `future` | Parallel computation |
 | `Rcpp` | C++ extensions for LD calculation |
 | `progressr` | Progress reporting |
+
+## R Dependencies - GitHub
+
+HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package, which must be installed separately. Please see the linked GitHub for installation instructions.
+
+## R Package - HapSelect
+
+1. Download the `.zip` file [HapSelect](https://github.com/wrshf7/HapSelect).
+2. Extract the `.zip` file.
+3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/Will/Downloads/HapSelect")`).
+4. Use one of the methods below to install from the root of the directory:
+
+
+**Install directly from the package source using `devtools`:**
+
+```r
+install.packages("devtools")
+
+#if setwd("path/to/HapSelect") was not run:
+devtools::install("path/to/HapSelect")
+
+#if the working directory is in the extracted directory:
+devtools::install("./")
+
+```
+
+**Or with the base R command:**
+
+```r
+#if setwd("path/to/HapSelect") was not run:
+install.packages("/path/to/HapSelect", repos = NULL, type = "source")
+
+#if the working directory is in the extracted directory:
+install.packages("./", repos = NULL, type = "source")
+```
+
