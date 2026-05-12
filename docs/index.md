@@ -21,8 +21,8 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 ## Installation
 1. Extract the `.zip` file
 
-2. Ensure RTools4.5 (Windows), genomicSimulation, and (optionally) PLINK 1.9 are installed.
-   - Non-Windows machines must have a C++ compiler compatible with the Rcpp package.
+2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), genomicSimulation, and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed.
+   - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
 3. Either set the working directory in R with: `setwd("path/to/unzipped/file/HapSelect")` or record the full path to the unzipped directory.
