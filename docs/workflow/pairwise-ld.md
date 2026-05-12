@@ -29,7 +29,7 @@ Wraps PLINK v1.9 for fast LD computation. This can be computed from `geno` or fr
 
 ```r
 #from scratch with a genotype file:
-ld_pairs = plink_pairwise_ld_geno(geno = geno, ld_window = 999999, 
+ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999, 
                                 ld_window_kb = 1e6, ld_window_r2 = 0)
 
 #with the PLINK fileset already made:
