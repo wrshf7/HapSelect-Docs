@@ -13,7 +13,7 @@ This function was created to create the marker effects file using the `geno` inp
 
 Controls scaling of marker variance to compute teh additive genetic variance and thus narrow-sense heritability.
 
-Options:
+##### Options:
 
 - `"VanRaden"` (recommended)
 - `"marker_num"` (only generally used if the genotype matrix was scaled; not applicable 99% of the time)
