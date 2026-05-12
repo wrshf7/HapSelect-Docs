@@ -2,7 +2,6 @@
 title: "Example Workflow"
 author: "Will Shaffer"
 date: "2026-05-11"
-output: html_document
 ---
 
 # HapSelect Workflow Tutorial
