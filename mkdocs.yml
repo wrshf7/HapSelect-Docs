@@ -22,7 +22,6 @@ theme:
   features:
     - navigation.sections
     - navigation.top
-    - toc.follow
     - search.suggest
     - search.highlight
     - content.code.copy
@@ -44,7 +43,7 @@ markdown_extensions:
   - md_in_html
   - toc:
       permalink: true
-      toc_depth: "1-2"
+      toc_depth: 1
 
 
 extra_javascript:
