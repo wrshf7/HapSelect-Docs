@@ -49,7 +49,11 @@ Columns:
 |-----------|-------------|
 | character value, marker names (must match geno and map) | numeric allele substitution/marker effect value |
 
-This is the structure that must be provided if custom marker effects are to be provided. 
+```r
+head(HapSelect::marker_effects)
+```
+
+This is the structure that must be provided if marker effects are provided externally. 
 
 !!! tip
     We currently do not allow multiple marker effect columns at this time, but plan to add this functionality in the future as well as multi-trait capability.
