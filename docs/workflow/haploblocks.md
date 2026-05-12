@@ -56,7 +56,7 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 The resulting data frame has one row per haploblock with columns for block ID, chromosome, start/end position, and constituent markers. The constituent markers are `;` delimited.
 
 !!! warning 
-  Do not use any kind of whitespace as a delimeter, this will not be considered a delimeter and will be part of the marker name!
+    Do not use any kind of whitespace as a delimeter, this will not be considered a delimeter and will be part of the marker name!
 
 ## Important Note
 A custom haploblock dataframe may be provided for downstream steps. It must be formatted the same with the same column names, however! At minimum, the `Block`, `Block_ID`, `First_SNP`, `Last_SNP`, and `Chrom` columns must be provided! The `Block` column should contain the list of markers in the block separated by `;` (no whitespace!), the `Block_ID` should be a character and a unique identifier, `First_SNP` and `Last_SNP` should be the character name of the first and last SNP making up the block in `Block`, and `Chrom` should be a numeric positive integer value.
