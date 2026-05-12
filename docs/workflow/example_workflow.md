@@ -627,9 +627,11 @@ ld_decay_plot
 
 #### Notes
 
-- `"exp"` guarantees monotonic decay
+- `"exp"` guarantees monotonic decay and does not utilize `k` or `span`
+- `span` is only utilized by the `loess` method
 - Smaller `span` values follow local structure more closely, but may over fit
 - Larger `span` values produce smoother curves, but may over smooth
+- `k` is only utilized by the `gam_cr` and `gam_tp` methods
 - Lower `k` values smooth GAM curves more aggressively whereas higher values may overfit
 
 ---
