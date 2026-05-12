@@ -17,8 +17,8 @@ Minimal workflow demonstrating:
 ```r
 library(HapSelect)
 
-map  = HapSelect::map
-geno = HapSelect::geno
+map  <- HapSelect::map
+geno <- HapSelect::geno
 ```
 
 ---
