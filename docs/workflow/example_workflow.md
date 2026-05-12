@@ -163,6 +163,7 @@ c("Chrom", "Locus1", "Locus2", "Name1", "Name2", "LD")
 
 ## Other Information
 Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
+
 Columns:
 - `Chrom`: the chromosome each SNP pair belongs to (numeric).
 - `Locus1`: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the **ordered map file** above.
