@@ -1,8 +1,8 @@
 site_name: HapSelect
 site_description: Haplotype block discovery, localGEBV analysis, and parent selection for genomic selection in R
 site_url: https://wrshf7.github.io/HapSelect-Docs/
-repo_url: https://github.com/wrshf7/BlockParty
-repo_name: BlockParty
+repo_url: https://github.com/wrshf7/HapSelect
+repo_name: HapSelect
 
 theme:
   name: material
