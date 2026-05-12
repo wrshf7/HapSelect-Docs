@@ -43,6 +43,7 @@ NOT:
 
 ### Resulting File Structure
 Columns:
+
 | SNP | Effect |
 |-----------|-------------|
 | character value, marker names (must match geno and map!) | numeric allele substitution/marker effect value |
@@ -50,7 +51,7 @@ Columns:
 This is the structure that must be provided if custom marker effects are to be provided. 
 
 !!! tip
-    We currently do not allow multiple marker effects at a time, but plan to add this functionality in the future as well as multi-trait capability.
+    We currently do not allow multiple marker effect columns at this time, but plan to add this functionality in the future as well as multi-trait capability.
 
 ---
 
