@@ -51,7 +51,7 @@ ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
 ## Loading Example LD Data
 
 ```r
-ld_pairs = HapSelect::ld_pairs
+ld_pairs <- HapSelect::ld_pairs
 ```
 
 The LD dataframe must contain the following columns:
