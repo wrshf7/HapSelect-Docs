@@ -56,6 +56,7 @@ HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimula
 
 ```r
 install.packages("devtools")
+library(devtools)
 
 #if setwd("path/to/HapSelect") was not run:
 devtools::install("path/to/HapSelect")
