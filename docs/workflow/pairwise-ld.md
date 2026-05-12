@@ -23,7 +23,7 @@ ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 !!! warning
     This is slow for moderate to large marker panels. Use `plink_pairwise_geno()` or `plink_pairwise_ld()` for production datasets.
 
-### `plink_pairwise_ld()`
+### `plink_pairwise_ld_geno()` and `plink_pairwise_ld()`
 
 Wraps PLINK v1.9 for fast LD computation. This can be computed from `geno` or from a PLINK binary fileset (`.bed`/`.bim`/`.fam`).
 
