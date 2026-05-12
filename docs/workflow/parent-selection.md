@@ -90,7 +90,7 @@ GA_output <- genetic_algorithm(
 | `selfing` | Allow selfing (i.e., for the fitness function allow the same parent at a block). If `FALSE` requires two different parents per chosen block |
 | `pmutation` | Mutation probability - swaps out one random individual for another from the total population |
 | `pcrossover` | Crossover probability - swaps half of each population; if there is overlap, non-overlapping parents are chosen randomly from the total population |
-| `pelite` | Elite proportion - constrains choosing individuals from the total population to the highest `pelite` proportion based on GEBV when needed to find non-overlapping parents for `pcrossover` |
+| `pelite` | Elite proportion (between 0 and 1) - constrains choosing individuals from the total population to the highest `pelite` proportion based on GEBV when needed to find non-overlapping parents for `pcrossover` |
 
 The genetic algorithm (GA) balances:
 
