@@ -61,7 +61,7 @@ The genotype file should contain:
 Genotypes are expected to be numeric dosage coded:
 
 - Diploid: usually `0/1/2`
-- Polyploid: supported up to any integer ploidy
+- Polyploid: supports up to any integer ploidy
 
 Or, when performing a true haplotype analysis, `0/1` only with `k` columns per individual representing a ploidy of `k`
 
