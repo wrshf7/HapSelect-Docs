@@ -1,5 +1,4 @@
 # Marker Effects
-
 ## `create_marker_effects_file()`
 This function was created to create the marker effects file using the `geno` input file and a new input called `BLUE`
 
