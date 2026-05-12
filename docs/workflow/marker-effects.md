@@ -46,7 +46,7 @@ Columns:
 
 | SNP | Effect |
 |-----------|-------------|
-| character value, marker names (must match geno and map!) | numeric allele substitution/marker effect value |
+| character value, marker names (must match geno and map) | numeric allele substitution/marker effect value |
 
 This is the structure that must be provided if custom marker effects are to be provided. 
 
