@@ -357,5 +357,4 @@ parent_sln_obj$PCA_Plot
 ```
 
 ---
-**The Concept of the Ultimate Genotype:**  
-[Hays et al. 2024. Potential approaches to create ultimate genotypes in crops and livestock. Nat Genet](https://doi.org/10.1038/s41588-024-01942-0)
+
