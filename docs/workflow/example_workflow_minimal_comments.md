@@ -119,9 +119,9 @@ marker_effects = create_marker_effects_file(
 
 ---
 
-#E Cross Validation
+## Cross Validation
 
-##E N-fold
+### N-fold
 
 ```r
 CV = n_fold_cross_validation(
@@ -133,7 +133,7 @@ CV = n_fold_cross_validation(
 )
 ```
 
-##E Random Train/Test
+### Random Train/Test
 
 ```r
 CV = cross_validation(
