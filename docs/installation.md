@@ -20,10 +20,10 @@ Some HapSelect functions (PLINK-backed LD) require external tools. Install them 
     ```
 
 ### Important Notes 
-- The locations described are realtive to the root folder in the R package directory. Please download and extract the .zip file and set your current directory to the root folder.
-- System dependencies include [PLINK 1.9](https://www.cog-genomics.org/plink/) and, for Windows users, [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). Plink 1.9 is optional and the package will install without it, but RTools 4.5 is required for Windows users. PLINK LD function calls will not run, however, without PLINK 1.9 isntalled and available to the system `PATH` variable.
-- Other systems must have a C++ compiler compatible with the `Rcpp` R package. This is normally detected and included by default during R installation.
-
+- The locations described are realtive to the root folder in the R package directory. Please download and extract the .zip file and set your current directory to the root folder (see below for instructions).
+- System dependencies included in the install scripts include [PLINK 1.9](https://www.cog-genomics.org/plink/) and, for Windows users, [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). Plink 1.9 is optional and the package will install without it, but RTools 4.5 is required for Windows users. PLINK LD function calls will not run, however, without PLINK 1.9 isntalled and available to the system `PATH` variable.
+    - You can manually install the software using the links above if you do not wish to use the command line or Windows PowerShell to run the install scripts or lack administrator access to do so.
+- Other systems (Unix/Linux and MacOS) must have a C++ compiler compatible with the `Rcpp` R package. This is normally detected and referenced by default during R installation.
 
 ## R Dependencies - CRAN
 
