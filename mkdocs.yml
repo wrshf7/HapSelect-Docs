@@ -53,9 +53,14 @@ nav:
   - Installation: installation.md
   - Getting Started: getting-started.md
   - Workflow:
-    - Pairwise LD: workflow/pairwise-ld.md
-    - Haplotype Blocks: workflow/haploblocks.md
-    - Local GEBV: workflow/local-gebv.md
-    - Visualizations: workflow/visualizations.md
-    - Parent Selection: workflow/parent-selection.md
+    - Complete Workflow with Explanations: workflow/example_workflow.md
+    - Complete Workflow with Minimal Explanation: workflow/example_workflow_minimal_comments.md
+    - Specific Sections:
+        - Pairwise LD: workflow/pairwise-ld.md
+        - Haplotype Blocks: workflow/haploblocks.md
+        - Marker Effects: workflow/marker-effects.md
+        - Local GEBV: workflow/local-gebv.md
+        - Visualizations: workflow/visualizations.md
+        - Parent Selection: workflow/parent-selection.md
+        - Basic Simulation: workflow/basic-siulation.md
   - Function Reference: reference.md
