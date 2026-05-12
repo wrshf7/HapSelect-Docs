@@ -56,5 +56,5 @@ The `marker_effects` data frame must have:
 See [Marker Effects](workflow/marker-effects.md) for more information.
 
 ```r
-head(marker_effects)
+head(HapSelect::marker_effects)
 ```
