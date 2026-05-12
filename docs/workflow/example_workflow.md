@@ -1,9 +1,3 @@
----
-title: "Example Workflow"
-author: "Will Shaffer"
-date: "2026-05-11"
----
-
 # HapSelect Workflow Tutorial
 
 This tutorial demonstrates a complete HapSelect workflow, including:
