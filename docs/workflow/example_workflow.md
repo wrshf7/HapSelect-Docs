@@ -89,13 +89,13 @@ Map files must be ordered by:
 Example:
 
 ```r
-map = HapSelect::map
+map <- HapSelect::map
 
 # simulate unordered map
-map2 = map[sample(1:nrow(map), nrow(map)), ]
+map2 <- map[sample(1:nrow(map), nrow(map)), ]
 
 # reorder map
-map2 = order_map(map = map2)
+map2 <- order_map(map = map2)
 ```
 
 The `order_map()` function:
@@ -113,7 +113,7 @@ The `order_map()` function:
 The package contains a native LD calculator (not recommended for use).
 
 ```r
-ld_pairs = pairwise_ld(geno, parallelize = FALSE)
+ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 ```
 
 #### Important Notes
@@ -132,7 +132,7 @@ ld_pairs = pairwise_ld(geno, parallelize = FALSE)
 - LD can be calculated externally, but must be provided in the same format as utilized in this package
 
 ```r
-ld_pairs = plink_pairwise_ld_geno(geno = geno, ld_window = 999999, 
+ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999, 
                                 ld_window_kb = 1e6, ld_window_r2 = 0)
 
 ```
@@ -152,7 +152,7 @@ ld_pairs = plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 ## Loading Example LD Data
 
 ```r
-ld_pairs = HapSelect::ld_pairs
+ld_pairs <- HapSelect::ld_pairs
 ```
 
 The LD dataframe must contain the following columns:
@@ -178,7 +178,7 @@ Columns:
 ## Constructing Haploblocks
 
 ```r
-haploblocks = def_blocks(
+haploblocks <- def_blocks(
   ld = ld_pairs,
   map = map,
   method = "flanking",
@@ -259,7 +259,7 @@ Options:
 The former function returns a list object which may be useful in some applications. This function will turn it into a more easily digestible format and report some information.
 
 ```r
-haploblocks = block_obj_to_df(haploblocks, map)
+haploblocks <- block_obj_to_df(haploblocks, map)
 ```
 
 ---
@@ -279,7 +279,7 @@ block_summary(block_df = haploblocks)
 ### Loading Example Phenotypes
 
 ```r
-BLUE = HapSelect::BLUE
+BLUE <- HapSelect::BLUE
 ```
 
 The BLUE dataframe should contain:
@@ -298,7 +298,7 @@ See the [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overvie
 ### Compute Marker Effects
 
 ```r
-marker_effects = create_marker_effects_file(
+marker_effects <- create_marker_effects_file(
   geno = geno,
   BLUE = BLUE,
   h2_method = "VanRaden",
@@ -344,7 +344,7 @@ NOT:
 ### N-fold Cross Validation
 
 ```r
-CV = n_fold_cross_validation(
+CV <- n_fold_cross_validation(
   geno = geno,
   BLUE = BLUE,
   nfold = 5L,
@@ -366,7 +366,7 @@ Small datasets will yield unruly results if the training set is too small!
 ### Random Train/Test Cross Validation
 
 ```r
-CV = cross_validation(
+CV <- cross_validation(
   geno = geno,
   BLUE = BLUE,
   train_prop = 0.9,
@@ -386,9 +386,9 @@ New Options:
 
 ```r
 #load example data
-marker_effects = HapSelect::marker_effects
+marker_effects <- HapSelect::marker_effects
 
-haploblock_obj = compute_local_GEBV(
+haploblock_obj <- compute_local_GEBV(
   geno = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
@@ -440,11 +440,17 @@ If you want genotype/haplotype configurations to match the 0/1/2/# dosage format
 ---
 
 ## Visualization Functions
+### Important Information
+All visualizations are `ggplot` objects and can be modified accordingly like any other `ggplot` object. E.g., if one wishes to change the x-axis label of the Haploblock Positions Plot to "cM", the corresponding code would be:
+
+```r
+haploblock_plot <- haploblock_plot + labs(x = "cM")
+```
 
 ### Marker Effects Plot
 
 ```r
-marker_plot = marker_effects_plot(
+marker_plot <- marker_effects_plot(
   marker_effects = marker_effects$Effect,
   chr = map$Chromosome,
   pos = map$Position,
@@ -472,7 +478,7 @@ marker_plot
 ### Unique Haplotype Effects Plot
 
 ```r
-haplo_eff_plot = unique_haplo_effects_plot(
+haplo_eff_plot <- unique_haplo_effects_plot(
   haplo_obj = haploblock_obj,
   colors = c("#A01FF0", "#A7A8AA"),
   pos_type = "midpoint"
@@ -499,7 +505,7 @@ haplo_eff_plot
 ### Funnel Plot
 
 ```r
-funnel_plot = block_var_funnel_plot(
+funnel_plot <- block_var_funnel_plot(
   haplo_obj = haploblock_obj,
   mean_line = FALSE,
   scale_colors = c("blue", "purple", "red")
@@ -525,7 +531,7 @@ funnel_plot
 ### Haploblock Position Plot
 
 ```r
-haploblock_plot = plot_haploblocks(
+haploblock_plot <- plot_haploblocks(
   haploblock_df = haploblock_obj$Haploblocks,
   block_fill = "#A01FF0",
   chrom_fill = NA,
@@ -556,7 +562,7 @@ haploblock_plot
 ### Marker Density Plot
 
 ```r
-marker_density_plot = plot_marker_density(
+marker_density_plot <- plot_marker_density(
   map = map,
   bin_size = 500e3,
   height = 0.3,
@@ -590,7 +596,7 @@ marker_density_plot
 ### LD Decay Plot
 
 ```r
-ld_decay_plot = plot_ld_decay(
+ld_decay_plot <- plot_ld_decay(
   map = map,
   ld = ld_pairs,
   max_kb = 500,
@@ -650,7 +656,7 @@ The `select_top_blocks()` function supports three different selection strategies
 Selects the highest variance haploblocks directly.
 
 ```r
-haploblock_obj = select_top_blocks(
+haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   n = 15
 )
@@ -674,7 +680,7 @@ haploblock_obj = select_top_blocks(
 Selects the top proportion of haploblocks ranked by variance.
 
 ```r
-haploblock_obj = select_top_blocks(
+haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   perc_total = 0.5
 )
@@ -708,7 +714,7 @@ Retains the top 50% of haploblocks ranked by variance (rounded up).
 Retains the minimum number of haploblocks required to explain a specified proportion of the total haploblock variance.
 
 ```r
-haploblock_obj = select_top_blocks(
+haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   perc_of_total_var = 0.9
 )
@@ -768,7 +774,7 @@ Users are encouraged to experiment with multiple selection thresholds depending 
 ## Genetic Algorithm Parent Selection
 
 ```r
-GA_output = genetic_algorithm(
+GA_output <- genetic_algorithm(
   localGEBV = haploblock_obj$Haplotype_Effect_Matrix_GA,
   n_founders = 20,
   popSize = 10,
@@ -947,7 +953,7 @@ GA_output$One_Solution
 ## Simulating Recurrent Selection
 
 ```r
-parent_sln_obj = GA_vs_TS_simulation(
+parent_sln_obj <- GA_vs_TS_simulation(
   GA_output = GA_output,
   geno = geno,
   marker_effects = marker_effects,
