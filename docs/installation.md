@@ -42,7 +42,7 @@ HapSelect imports the following packages, which will be installed automatically.
 
 ## R Dependencies - GitHub
 
-HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package, which must be installed separately. Please see the linked GitHub for installation instructions.
+HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package, which is installed automatically if you choose to use the provided installation scripts. Otherwise it must be installed separately. Please see the linked GitHub for installation instructions.
 
 ## R Package - HapSelect
 

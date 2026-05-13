@@ -741,7 +741,7 @@ Retains enough haploblocks to explain at least 90% of the total block variance.
 - Retains more blocks for highly polygenic traits.
 - Retains fewer blocks when major-effect haploblocks dominate.
 
-# Comparison of Selection Strategies
+## Comparison of Selection Strategies
 
 | Method | Strengths | Weaknesses |
 | :--- | :--- | :--- |
