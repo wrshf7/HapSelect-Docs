@@ -1,10 +1,195 @@
 # Parent Selection
 
-HapSelect uses a genetic algorithm (GA) to select an optimal set of founders that maximizes coverage of high-value haplotype alleles across target haploblocks.
+## How the Genetic Algorithm Works
 
+The HapSelect genetic algorithm (GA) attempts to identify a founder set that maximizes the potential to recover favorable haplotypes across the selected haploblocks.
+
+Rather than optimizing overall GEBV directly, the GA optimizes the ability of the selected founder pool to produce highly favorable offspring combinations across genomic regions.
+
+---
+
+## The Optimization Objective
+
+For each haploblock:
+
+1. All possible pairwise crosses among the selected founders are evaluated
+2. The expected offspring localGEBV for each cross is calculated
+3. The highest-scoring cross for that haploblock is retained
+4. The process repeats across all haploblocks
+5. The fitness values are summed across haploblocks
+
+The GA therefore attempts to maximize:
+
+- favorable haplotype complementarity
+- genomic coverage of elite haplotypes
+- the best achievable offspring configuration across blocks
+
+rather than simply selecting the individuals with the highest total GEBV.
+
+---
+
+## The Fitness Function
+
+Conceptually, the fitness function is:
+
+:contentReference[oaicite:0]{index=0}
+
+where:
+
+| Symbol | Meaning |
+|:---|:---|
+| `J` | Number of selected haploblocks |
+| `localGEBV_ij` | localGEBV of individual `i` at haploblock `j` |
+| `(i,k)` | Pairwise founder combinations |
+
+For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.
+
+---
+
+## Why This Differs From Truncation Selection
+
+Traditional truncation selection (TS):
+
+- selects the individuals with the highest overall GEBV
+- tends to repeatedly favor the same highly elite individuals
+    - these individuals are often related (clustered on the PCA) and therefore share similar "good" and "bad" genomic segments. This increases inbreeding more quickly as well as unfavorable LD.
+- may rapidly reduce diversity
+
+In contrast, the HapSelect GA:
+
+- searches for complementary founder combinations
+- rewards founder sets that collectively cover favorable haplotypes
+- allows different founders to contribute to different genomic regions
+- can retain valuable rare haplotypes ignored by standard TS
+
+This means an individual with only moderate total GEBV may still be highly valuable if it contributes an elite haplotype at a specific high-variance block.
+
+---
+
+## Pairwise Crossing Strategy
+
+The GA assumes that:
+
+- favorable haplotypes can be combined through recombination
+- different founder pairs may be optimal for different haploblocks
+- no single founder pair is necessarily optimal genome-wide
+
+For each haploblock, the algorithm evaluates:
+
+```r
+combn(founders, 2)
+```
+
+to test all possible pairwise combinations among the selected founders.
+
+If:
+
+```r
+selfing = TRUE
+```
+
+then self-crosses are also evaluated.
+
+---
+
+## Evolutionary Search Procedure
+
+The GA evolves founder sets over multiple iterations using:
+
+| Operation | Purpose |
+|:---|:---|
+| Population initialization | Generate random founder sets |
+| Fitness evaluation | Score founder sets using haploblock complementarity |
+| Mutation | Randomly replace founders |
+| Crossover | Swap part of two founder sets |
+| Elite sampling | Bias replacement toward high-performing solutions (greatest GEBV) during Mutation and if Crossover yields overlapping individuals |
+
+The search attempts to balance:
+
+- exploration of new founder combinations
+- exploitation of high-performing founder sets
+
+---
+
+## Mutation
+
+Mutation randomly replaces one founder within a solution:
+
+```r
+pmutation = 0.1
+```
+
+Higher mutation rates:
+
+- increase exploration
+- reduce risk of local optima
+
+but may:
+
+- destabilize convergence
+- slow optimization
+
+---
+
+## Crossover
+
+Crossover exchanges founders between two high-performing solutions.
+
+The algorithm:
+
+1. Retains part of each founder set
+2. Combines non-overlapping founders
+3. Fills missing founders from elite solutions based on `pelite`
+
+This helps preserve useful founder combinations while still exploring new combinations.
+
+---
+
+## Elite Founder Sampling
+
+The:
+
+```r
+pelite
+```
+
+parameter controls how strongly crossover favors founders from high-performing solutions.
+
+Example:
+
+```r
+pelite = 0.2
+```
+
+means replacement founders are preferentially sampled from the top 20% of solutions ranked by fitness (GEBV).
+
+Smaller values:
+
+- increase selection pressure
+- accelerate convergence
+
+Larger values:
+
+- maintain greater diversity
+- improve exploration
+
+---
+
+## Interpretation of the Final Founder Set
+
+The final GA-selected founder set should be interpreted as:
+
+- a complementary breeding population
+- a set of parents with strong collective haplotype coverage
+- a founder pool optimized for long-term recombination potential
+
+rather than simply the top individuals ranked by overall GEBV.
 ## Preparing Input - `select_top_blocks()`
 
 Select top haploblocks by `Block_Var`. The `select_top_blocks()` function can select blocks in three different ways and returns a modified `haploblock_obj` object by adding on two additional dataframes to the list structure.
+
+!!! warning
+    These individuals are selected via a heuristic search optimization and are thus not guaranteed to be the best set of individuals! Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios.
 
 ```r
 #select the top n blocks using the n argument
