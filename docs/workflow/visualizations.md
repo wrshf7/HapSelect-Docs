@@ -250,3 +250,4 @@ plot_ld_decay(
 - `span` is only used by `"loess"`
 - `k` is only used by `"gam_tp"` and `"gam_cr"`
 - Smaller `span` or larger `k` values may increase overfitting
+- `span` should be between 0 and 1 and `k` should be an integer value
