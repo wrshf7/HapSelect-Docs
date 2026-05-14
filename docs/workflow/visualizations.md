@@ -112,7 +112,7 @@ block_var_funnel_plot(
 | Parameter | Default | Description |
 |:---|:---|:---|
 | `mean_line` | `FALSE` | Adds dashed mean variance line |
-| `scale_colors` | `c("blue", "purple", "red")` | Vector of length 3 defining low/mid/high variance colors |
+| `scale_colors` | `c("blue", "purple", "red")` | Vector of length 3 defining low/mid/high localGEBV effect colors |
 
 ### Notes
 
