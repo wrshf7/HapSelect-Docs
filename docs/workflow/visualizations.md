@@ -116,8 +116,8 @@ block_var_funnel_plot(
 
 ### Notes
 
-- Haploblock variance is internally log-scaled for visualization
-- Useful for identifying high-variance haploblocks
+- Haploblock variance is internally log-scaled for visualization and then min-max scaled between 0 and 1.
+- Useful for visualizing high-variance haploblocks
 
 ---
 
