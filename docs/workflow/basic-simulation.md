@@ -171,7 +171,7 @@ If:
 genetic_map_position = NULL
 ```
 
-then marker positions are inferred proportionally from physical distance.
+then marker positions are inferred proportionally from physical distance relative to the first and last marker positions (i.e., the first marker is 0 cM and the last is 100 cM with the rest based on proportion of distance between the first and last marker).
 
 Each chromosome is assumed to span:
 
