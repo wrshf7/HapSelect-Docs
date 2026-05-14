@@ -285,7 +285,7 @@ Recommended setting:
 mean_adjust = TRUE
 ```
 
-This should only be disabled if marker effects were estimated from an uncentered genotype matrix.
+This should only be disabled if you know what you are doing!
 
 ---
 
