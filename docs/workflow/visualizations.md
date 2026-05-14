@@ -29,7 +29,8 @@ Manhattan-style plot of estimated marker effects across the genome.
 marker_effects_plot(
   marker_effects = marker_effects$Effect,
   chr            = map$Chromosome,
-  pos            = map$Position
+  pos            = map$Position,
+  colors         = c("#A01FF0", "#A7A8AA")
 )
 ```
 
@@ -43,9 +44,9 @@ marker_effects_plot(
 
 ### Optional Parameters
 
-| Parameter | Description |
-|:---|:---|
-| `colors` | Vector of length 2 defining alternating chromosome colors |
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `colors` | `c("#A01FF0", "#A7A8AA")` | Vector of length 2 defining alternating chromosome colors |
 
 ### Notes
 
@@ -60,7 +61,9 @@ Displays the distribution of unique haplotype effects within each haploblock.
 
 ```r
 unique_haplo_effects_plot(
-  haplo_obj = haploblock_obj
+  haplo_obj = haploblock_obj,
+  colors    = c("#A01FF0", "#A7A8AA"),
+  pos_type  = "midpoint"
 )
 ```
 
@@ -72,10 +75,10 @@ unique_haplo_effects_plot(
 
 ### Optional Parameters
 
-| Parameter | Description |
-|:---|:---|
-| `colors` | Vector of length 2 defining alternating chromosome colors |
-| `pos_type` | Haploblock positioning method |
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `colors` | `c("#A01FF0", "#A7A8AA")` | Vector of length 2 defining alternating chromosome colors |
+| `pos_type` | `"midpoint"` | Haploblock positioning method |
 
 ### `pos_type` Options
 
@@ -92,8 +95,9 @@ Plots haploblock variance (`Block_Var`) against haploblock size.
 
 ```r
 block_var_funnel_plot(
-  haplo_obj = haploblock_obj,
-  mean_line = FALSE
+  haplo_obj    = haploblock_obj,
+  mean_line    = FALSE,
+  scale_colors = c("blue", "purple", "red")
 )
 ```
 
@@ -105,10 +109,10 @@ block_var_funnel_plot(
 
 ### Optional Parameters
 
-| Parameter | Description |
-|:---|:---|
-| `mean_line` | Adds dashed mean variance line |
-| `scale_colors` | Vector of length 3 defining low/mid/high variance colors |
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `mean_line` | `FALSE` | Adds dashed mean variance line |
+| `scale_colors` | `c("blue", "purple", "red")` | Vector of length 3 defining low/mid/high variance colors |
 
 ### Notes
 
@@ -123,7 +127,11 @@ Visualizes haploblock boundaries across chromosomes.
 
 ```r
 plot_haploblocks(
-  haploblock_df = haploblock_obj$Haploblocks
+  haploblock_df = haploblock_obj$Haploblocks,
+  block_fill    = "#A01FF0",
+  chrom_fill    = NA,
+  height        = 0.30,
+  single_width_bp = NULL
 )
 ```
 
@@ -135,12 +143,12 @@ plot_haploblocks(
 
 ### Optional Parameters
 
-| Parameter | Description |
-|:---|:---|
-| `block_fill` | Haploblock fill color |
-| `chrom_fill` | Chromosome background color |
-| `height` | Chromosome track thickness |
-| `single_width_bp` | Width of single-marker blocks (mostly deprecated) |
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `block_fill` | `"#A01FF0"` | Haploblock fill color |
+| `chrom_fill` | `NA` | Chromosome background color |
+| `height` | `0.30` | Chromosome track thickness |
+| `single_width_bp` | `NULL` | Width of single-marker blocks (mostly deprecated) |
 
 ### Notes
 
@@ -155,8 +163,13 @@ Displays marker density across chromosomes using fixed genomic bins.
 
 ```r
 plot_marker_density(
-  map_df = map,
-  bin_size = 500000
+  map_df     = map,
+  bin_size   = 500000,
+  height     = 0.30,
+  chrom_fill = NA,
+  col_low    = "white",
+  col_mid    = "purple",
+  col_high   = "red"
 )
 ```
 
@@ -168,14 +181,14 @@ plot_marker_density(
 
 ### Optional Parameters
 
-| Parameter | Description |
-|:---|:---|
-| `bin_size` | Genomic bin size used for marker counting |
-| `height` | Chromosome track thickness |
-| `chrom_fill` | Chromosome background color |
-| `col_low` | Low-density color |
-| `col_mid` | Mid-density color |
-| `col_high` | High-density color |
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `bin_size` | `500000` | Genomic bin size used for marker counting |
+| `height` | `0.30` | Chromosome track thickness |
+| `chrom_fill` | `NA` | Chromosome background color |
+| `col_low` | `"white"` | Low-density color |
+| `col_mid` | `"purple"` | Mid-density color |
+| `col_high` | `"red"` | High-density color |
 
 ### Notes
 
@@ -191,12 +204,15 @@ Plots linkage disequilibrium (`r²`) against physical distance.
 
 ```r
 plot_ld_decay(
-  map    = map,
-  ld     = ld_pairs,
-  max_kb = 500,
-  span   = 0.3,
-  k      = 10,
-  method = "gam_cr"
+  map         = map,
+  ld          = ld_pairs,
+  max_kb      = 500,
+  span        = 0.3,
+  k           = 10,
+  method      = "gam_cr",
+  point_color = "#A7A8AA",
+  curve_color = "#A01FF0",
+  alpha       = 0.2
 )
 ```
 
@@ -209,15 +225,15 @@ plot_ld_decay(
 
 ### Optional Parameters
 
-| Parameter | Description |
-|:---|:---|
-| `max_kb` | Maximum pairwise marker distance in kb |
-| `method` | Curve fitting method |
-| `span` | LOESS smoothing parameter |
-| `k` | Integer number of GAM basis functions |
-| `point_color` | LD point color |
-| `curve_color` | Fitted curve color |
-| `alpha` | Point transparency between 0 and 1 |
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `max_kb` | `500` | Maximum pairwise marker distance in kb |
+| `method` | `"gam_cr"` | Curve fitting method |
+| `span` | `0.3` | LOESS smoothing parameter |
+| `k` | `10` | Integer number of GAM basis functions |
+| `point_color` | `"#A7A8AA"` | LD point color |
+| `curve_color` | `"#A01FF0"` | Fitted curve color |
+| `alpha` | `0.2` | Point transparency between 0 and 1 |
 
 ### `method` Options
 
