@@ -32,14 +32,15 @@ rather than simply selecting the individuals with the highest total GEBV.
 
 Conceptually, the fitness function is:
 
-:contentReference[oaicite:0]{index=0}
-
+$$
+\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(i,k)} \left( \frac{localGEBV_{ij} + localGEBV_{kj}}{2} \right)
+$$
 where:
 
 | Symbol | Meaning |
 |:---|:---|
 | `J` | Number of selected haploblocks |
-| `localGEBV_ij` | localGEBV of individual `i` at haploblock `j` |
+| $localGEBV_{ij}$ | localGEBV of individual `i` at haploblock `j` |
 | `(i,k)` | Pairwise founder combinations |
 
 For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.
