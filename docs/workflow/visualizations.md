@@ -183,7 +183,7 @@ plot_marker_density(
 
 | Parameter | Default | Description |
 |:---|:---|:---|
-| `bin_size` | `500000` | Genomic bin size used for marker counting |
+| `bin_size` | `500000` | Genomic bin size used for marker counting in units of map input (usually base pairs or cM) |
 | `height` | `0.30` | Chromosome track thickness |
 | `chrom_fill` | `NA` | Chromosome background color |
 | `col_low` | `"white"` | Low-density color |
