@@ -39,9 +39,9 @@ where:
 
 | Symbol | Meaning |
 |:---|:---|
-| `J` | Number of selected haploblocks |
-| `$localGEBV_{ij}$` | localGEBV of individual `i` at haploblock `j` |
-| `(i,k)` | Pairwise founder combinations |
+| *J* | Number of selected haploblocks |
+| $localGEBV_{ij}$ | localGEBV of individual `i` at haploblock `j` |
+| *(i,k)* | Pairwise founder combinations |
 
 For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.
 
