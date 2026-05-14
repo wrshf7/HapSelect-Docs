@@ -64,5 +64,5 @@ nav:
         - Local GEBV: workflow/local-gebv.md
         - Visualizations: workflow/visualizations.md
         - Parent Selection: workflow/parent-selection.md
-        - Basic Simulation: workflow/basic-siulation.md
+        - Basic Simulation: workflow/basic-simulation.md
   - Function Reference: reference.md
