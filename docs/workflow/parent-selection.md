@@ -181,19 +181,17 @@ Larger values:
 
 ## Interpretation of the Final Founder Set
 
-The final GA-selected founder set should be interpreted as:
+The final GA-selected founder set should (generally) be interpreted as:
 
 - a complementary breeding population
 - a set of parents with strong collective haplotype coverage
 - a founder pool optimized for long-term recombination potential
 
 rather than simply the top individuals ranked by overall GEBV.
+
 ## Preparing Input - `select_top_blocks()`
 
 Select top haploblocks by `Block_Var`. The `select_top_blocks()` function can select blocks in three different ways and returns a modified `haploblock_obj` object by adding on two additional dataframes to the list structure.
-
-!!! warning
-    These individuals are selected via a heuristic search optimization and are thus not guaranteed to be the best set of individuals! Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios.
 
 ```r
 #select the top n blocks using the n argument
@@ -250,11 +248,16 @@ However, retaining too few blocks may:
 - miss favorable rare haplotypes
 - oversimplify trait architecture
 - reduce long-term genetic gain potential
+- may ignore how the contribution small, cumulative effects have to overall fitness and optimization
 
 Users are encouraged to experiment with multiple selection thresholds depending on breeding goals and computational resources. The [Basic Simulation](workflow/basic-simulation.md) functions will be useful for interpreting the GA output.
 
 
 ## `genetic_algorithm()`
+
+!!! warning
+    These individuals are selected via a heuristic search optimization and are thus never guaranteed to be the best set of individuals! The heuristic search optimization is necessary to make most problems computationally feasible. Generally, unless stuck in a very pre-mature local optima, the results are the best or close to the best solution. Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios. The `GA_output` object contains all solutions.
+
 
 ```r
 GA_output <- genetic_algorithm(
