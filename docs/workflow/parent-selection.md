@@ -160,15 +160,17 @@ parameter controls how strongly crossover favors founders from high-performing s
 Example:
 
 ```r
+#expressed in probability: i.e., between 0 and 1
 pelite = 0.2
 ```
 
-means replacement founders are preferentially sampled from the top 20% of solutions ranked by fitness (GEBV).
+means replacement founders are preferentially sampled from the top 20% of solutions ranked by overall fitness (GEBV).
 
 Smaller values:
 
 - increase selection pressure
-- accelerate convergence
+- may accelerate convergence if elite individuals contain most of the best haplotypes
+    - this may also cause convergence to a local optima if the value is too high
 
 Larger values:
 
