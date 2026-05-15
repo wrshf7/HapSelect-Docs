@@ -129,7 +129,7 @@ Higher mutation rates:
 but may:
 
 - destabilize convergence
-- slow optimization
+- slow optimization if many "good" founder sets are systematically disrupted every generation
 
 ---
 
