@@ -117,6 +117,7 @@ The search attempts to balance:
 Mutation randomly replaces one founder within a solution:
 
 ```r
+#expressed in probability: i.e., between 0 and 1
 pmutation = 0.1
 ```
 
