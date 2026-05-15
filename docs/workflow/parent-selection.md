@@ -276,17 +276,6 @@ GA_output <- genetic_algorithm(
 )
 ```
 
-| Parameter | Description |
-|---|---|
-| `n_founders` | Integer number of parents to choose |
-| `popSize` | Integer number of parental sets per simulation iteration |
-| `maxiter` | Maximum iterations before termination |
-| `run` | Iterations without improvement before stopping |
-| `selfing` | Allow selfing (i.e., for the fitness function allow the same parent at a block). If `FALSE` requires two different parents per chosen block |
-| `pmutation` | Mutation probability - swaps out one random individual for another from the total population |
-| `pcrossover` | Crossover probability - swaps half of each population; if there is overlap, non-overlapping parents are chosen randomly from the total population |
-| `pelite` | Elite proportion (between 0 and 1) - constrains choosing individuals from the total population to the highest `pelite` proportion based on GEBV when needed to find non-overlapping parents for `pcrossover` |
-
 <table>
   <colgroup>
     <col style="width: 20%; white-space: nowrap;">
@@ -318,7 +307,7 @@ GA_output <- genetic_algorithm(
 
     <tr>
       <td><code>run</code></td>
-      <td>Iterations without improvement before stopping</td>
+      <td>Iterations without improvement before terminating</td>
     </tr>
 
     <tr>
