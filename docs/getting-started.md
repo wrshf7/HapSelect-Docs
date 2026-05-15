@@ -62,7 +62,7 @@ map <- HapSelect::map
 geno <- HapSelect::geno
 
 #Optional inputs created in the R package:
-ld_pairs <- HapSelect::pairwise_ld
+ld_pairs <- HapSelect::ld_pairs
 marker_effects <- HapSelect::marker_effects
 BLUE <- HapSelect::BLUE # example file to compute marker effects
 
