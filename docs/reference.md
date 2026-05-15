@@ -20,6 +20,16 @@ Quick reference for all exported HapSelect functions.
 | `block_obj_to_df(block_obj, map)` | Convert block list to a tidy data frame |
 | `block_summary(block_df)` | Compute summary statistics across all blocks |
 
+## Genomic Prediction
+
+| Function | Description |
+|----------|-------------|
+| `create_marker_effects_file(geno, BLUE, h2_method, ploidy)` | Fit marker effects and return an effects data frame (wraps `solve_marker_effects`) |
+| `solve_marker_effects(geno, BLUE, h2_method, ploidy)` | Solve marker effects via RR-BLUP and report variance components |
+| `compute_prediction_accuracy(geno, marker_effects, BLUE)` | Correlate predicted GEBVs with observed phenotypes |
+| `n_fold_cross_validation(geno, BLUE, nfold, h2_method, ploidy)` | Estimate prediction accuracy by n-fold cross-validation |
+| `cross_validation(geno, BLUE, train_prop, fold, h2_method, ploidy)` | Estimate prediction accuracy by random train/validation splits |
+
 ## Local GEBV
 
 | Function | Description |
@@ -33,16 +43,6 @@ Quick reference for all exported HapSelect functions.
 |----------|-------------|
 | `haploblock_var_test(haploblock_obj, geno, gen_var, threshold)` | Chi-square test of block variance against a null expectation; adds p-values and FDR to the haploblock table |
 
-## Genomic Prediction
-
-| Function | Description |
-|----------|-------------|
-| `create_marker_effects_file(geno, BLUE, h2_method, ploidy)` | Fit marker effects and return an effects data frame (wraps `solve_marker_effects`) |
-| `solve_marker_effects(geno, BLUE, h2_method, ploidy)` | Solve marker effects via RR-BLUP and report variance components |
-| `compute_prediction_accuracy(geno, marker_effects, BLUE)` | Correlate predicted GEBVs with observed phenotypes |
-| `n_fold_cross_validation(geno, BLUE, nfold, h2_method, ploidy)` | Estimate prediction accuracy by n-fold cross-validation |
-| `cross_validation(geno, BLUE, train_prop, fold, h2_method, ploidy)` | Estimate prediction accuracy by random train/validation splits |
-
 ## Visualisations
 
 | Function | Description |
@@ -54,7 +54,7 @@ Quick reference for all exported HapSelect functions.
 | `plot_marker_density(map, bin_size, height, chrom_fill, col_low, col_mid, col_high)` | Marker density histogram |
 | `plot_ld_decay(map, ld, max_kb, point_color, curve_color, alpha, span, method, k)` | Smoothed LD decay curve |
 
-## Parent Selection and Basic Simulation
+## Parent Selection & Basic Simulation
 
 | Function | Description |
 |----------|-------------|
