@@ -6,6 +6,10 @@ The HapSelect genetic algorithm (GA) attempts to identify a founder set that max
 
 Rather than optimizing overall GEBV directly, the GA optimizes the ability of the selected founder pool to produce highly favorable offspring combinations across genomic regions.
 
+The GA core algorithm relies on the following R package while the fitness, mutation, and crossover functions are custom designed in HapSelect:
+
+[GA: Genetic Algorithms](https://cran.r-project.org/web/packages/GA/index.html)
+
 ---
 
 ## The Optimization Objective
