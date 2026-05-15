@@ -129,7 +129,7 @@ ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 #### Important Notes
 - PLINK 1.9 **MUST** be installed and available in the `PATH` to use this function!
 - See the [Installation Guide](https://wrshf7.github.io/HapSelect-Docs/installation/) for more details
-- LD can be calculated externally, but must be provided in the same format as utilized in this package
+- LD can be calculated externally, but must be provided in the same format as utilised in this package
 
 ```r
 ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999, 
@@ -264,7 +264,7 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 
 ---
 
-### Summarize Haploblocks
+### Summarise Haploblocks
 
 Reports various summary statistics about blocks including average number of SNP per block, average size per block (not including single marker blocks), proportion of blocks comprised of a single marker, etc.
 
@@ -290,8 +290,8 @@ The BLUE dataframe should contain:
 | Column 2 | A singular adjusted phenotype / BLUE / de-regressed BLUP |
 
 #### Important Note
-We do not currently support other effects in the model or multiple observations per individual. If more advanced modeling is needed, please utilize other software.
-See the [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modeling.
+We do not currently support other effects in the model or multiple observations per individual. If more advanced modelling is needed, please utilise other software.
+See the [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modelling.
 
 ---
 
@@ -353,7 +353,7 @@ CV <- n_fold_cross_validation(
 )
 ```
 
-This splits the data up into `5L` groups in this example and utilizes 4 for training and 1 for validation. Each group is utilized once for valdiation.
+This splits the data up into `5L` groups in this example and utilises 4 for training and 1 for validation. Each group is utilised once for valdiation.
 
 New Options:
 - `nfold` the number of groups to split the data into as an integer
@@ -377,7 +377,7 @@ CV <- cross_validation(
 ```
 
 New Options:
-- `train_prop` the proportion of data utilized to train (rounded down) with the rest utilized for validation
+- `train_prop` the proportion of data utilised to train (rounded down) with the rest utilised for validation
 - `fold` the numb of times to randomly sample a training and validation set with replacement
 
 ---
@@ -439,9 +439,9 @@ If you want genotype/haplotype configurations to match the 0/1/2/# dosage format
 
 ---
 
-## Visualization Functions
+## Visualisation Functions
 ### Important Information
-All visualizations are `ggplot` objects and can be modified accordingly like any other `ggplot` object. E.g., if one wishes to change the x-axis label of the Haploblock Positions Plot to "cM", the corresponding code would be:
+All visualisations are `ggplot` objects and can be modified accordingly like any other `ggplot` object. E.g., if one wishes to change the x-axis label of the Haploblock Positions Plot to "cM", the corresponding code would be:
 
 ```r
 haploblock_plot <- haploblock_plot + labs(x = "cM")
@@ -634,11 +634,11 @@ ld_decay_plot
 
 #### Notes
 
-- `"exp"` guarantees monotonic decay and does not utilize `k` or `span`
-- `span` is only utilized by the `loess` method
+- `"exp"` guarantees monotonic decay and does not utilise `k` or `span`
+- `span` is only utilised by the `loess` method
 - Smaller `span` values follow local structure more closely, but may over fit
 - Larger `span` values produce smoother curves, but may over smooth
-- `k` is only utilized by the `gam_cr` and `gam_tp` methods
+- `k` is only utilised by the `gam_cr` and `gam_tp` methods
 - Lower `k` values smooth GAM curves more aggressively whereas higher values may overfit
 
 ---
@@ -755,14 +755,14 @@ Retains enough haploblocks to explain at least 90% of the total block variance.
 
 Increasing the number of retained haploblocks:
 
-- increases optimization dimensionality
+- increases optimisation dimensionality
 - increases GA runtime
 - increases memory usage
 - may slow convergence substantially
 
 However, retaining too few blocks may:
 
-- miss favorable rare haplotypes
+- miss favourable rare haplotypes
 - oversimplify trait architecture
 - reduce long-term genetic gain potential
 
@@ -996,7 +996,7 @@ parent_sln_obj$PCA_Plot
 | `num_TS_parents` | Number of truncation-selected parents. If `NULL`, same as number of GA parents |
 | `mean_adjust` | Whether to internally center genotypes (almost always `TRUE`) |
 | `max_cM_chr` | Assumed chromosome genetic map length if no genetic map provided |
-| `PCA` | Whether to compute PCA visualization (`TRUE` or `FALSE`) |
+| `PCA` | Whether to compute PCA visualisation (`TRUE` or `FALSE`) |
 | `colors` | Colors for PCA categories and simulation plot, must provide 4 |
 | `alpha` | Transparency levels for PCA categories, must provide 4 |
 
@@ -1086,7 +1086,7 @@ If `TRUE`, performs PCA on the genotype matrix and highlights:
 - overlapping parents
 - non-selected individuals
 
-This helps visualize:
+This helps visualise:
 
 - diversity retention
 - population structure
@@ -1108,7 +1108,7 @@ Displays simulated long-term genetic gain trajectories.
 parent_sln_obj$PCA_Plot
 ```
 
-Displays PCA visualization of selected parents.
+Displays PCA visualisation of selected parents.
 
 
 ---

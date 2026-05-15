@@ -21,7 +21,7 @@ ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 ```
 
 !!! warning
-    This is slow for moderate to large marker panels. Use `plink_pairwise_geno()` or `plink_pairwise_ld()` for production datasets.
+    This is slow for moderate to large marker panels. Use `plink_pairwise_ld_geno()` or `plink_pairwise_ld()` for production datasets.
 
 ### `plink_pairwise_ld_geno()` and `plink_pairwise_ld()`
 

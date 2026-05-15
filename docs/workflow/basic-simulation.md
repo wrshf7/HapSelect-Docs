@@ -5,7 +5,7 @@ The `GA_vs_TS_simulation()` function performs a simplified recurrent genomic sel
 - parents selected using the HapSelect genetic algorithm (GA)
 - parents selected using standard genomic truncation selection (TS)
 
-The simulation evaluates long-term breeding value trajectories across generations and can optionally visualize population structure using PCA.
+The simulation evaluates long-term breeding value trajectories across generations and can optionally visualise population structure using PCA.
 
 ---
 
@@ -18,15 +18,15 @@ The simulation performs the following steps:
 3. Converts physical marker positions to genetic positions (if needed)
 4. Simulates recurrent crossing and selection across generations
 5. Repeats the simulation multiple times to quantify Monte Carlo variability
-6. Summarizes breeding value trajectories
-7. Generates trajectory and PCA visualizations
+6. Summarises breeding value trajectories
+7. Generates trajectory and PCA visualisations
 
 The simulation is intentionally simple and designed primarily for:
 
 - comparing parent selection strategies
 - evaluating long-term gain potential
 - exploring diversity retention
-- demonstrating GA optimization behavior
+- demonstrating GA optimisation behaviour
 
 ---
 
@@ -75,7 +75,7 @@ parent_sln_obj <- GA_vs_TS_simulation(
 | `num_TS_parents` | `NULL` | Number of truncation-selected parents |
 | `mean_adjust` | `TRUE` | Whether to internally center markers |
 | `max_cM_chr` | `100` | Chromosome genetic length assumption if no genetic map is supplied |
-| `PCA` | `TRUE` | Whether to compute PCA visualization |
+| `PCA` | `TRUE` | Whether to compute PCA visualisation |
 | `colors` | `c("green", "#d95f02", "#A01FF0", "gray80")` | Plot colors |
 | `alpha` | `c(1,1,1,0.5)` | PCA transparency values |
 
@@ -265,7 +265,7 @@ Controls the number of progeny generated each generation.
 Advantages:
 
 - stronger selection intensity
-- greater opportunity for favorable recombination
+- greater opportunity for favourable recombination
 - smoother trajectories
 
 Disadvantages:
@@ -293,14 +293,14 @@ This should only be disabled if you know what you are doing!
 
 If `TRUE`, PCA is performed on the genotype matrix.
 
-The PCA visualization highlights:
+The PCA visualisation highlights:
 
 - GA-selected parents
 - TS-selected parents
 - overlapping parents
 - non-selected individuals
 
-This helps visualize:
+This helps visualise:
 
 - diversity retention
 - population structure
@@ -329,7 +329,7 @@ colors = c(
 | 4 | Non-selected individuals |
 
 !!! tip
-    Even if `PCA = FALSE`, this should still be specified with 4 colors as the first two are utilized simultaneously for the `Simulation_Plot`
+    Even if `PCA = FALSE`, this should still be specified with 4 colors as the first two are utilised simultaneously for the `Simulation_Plot`
 
 ---
 
@@ -395,7 +395,7 @@ parent_sln_obj$Simulation_Plot
 
 ## `PCA_Plot`
 
-A PCA visualization of the genotype matrix showing selected parents.
+A PCA visualisation of the genotype matrix showing selected parents.
 
 Display:
 
@@ -450,7 +450,7 @@ parent_sln_obj$PCA_Plot
 
 # Notes
 
-- Simulations utilize random mating
+- Simulations utilise random mating
 - Selection occurs entirely on GEBV
 - Missing genotype values are internally replaced prior to simulation
 - Temporary files are automatically created and deleted internally

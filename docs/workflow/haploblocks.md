@@ -27,7 +27,7 @@ haploblocks <- def_blocks(
 | `threshold` | Minimum r² value to consider adding a marker to the block |
 | `tolerance` | Integer number of markers allowed to fall below threshold before terminating a block |
 | `tol_reset` | If `TRUE`, reset tolerance counter when a marker is successfully added to a block |
-| `start` | Seed strategy for block boundaries (`"LD"` or `"Beginning"`) |
+| `start` | Seed strategy for block boundaries (`"LD"` or `"beginning"`) |
 | `parallel` | Use parallel processing via `furrr` |
 
 **`method`**
@@ -36,7 +36,7 @@ haploblocks <- def_blocks(
 - `"average"` → compares average LD across block (i.e., averages the next marker's LD to all markers currently in the block)
 
 **`tolerance`**
-- If the next marker to compare does not meet or exceed `threshold`, the counter is incremented by 1. Once the counter is greater than the `tolerance` value the block is terminated. Any markers between a successfully added marker and a the block that did not meet the threshold will also be added to the block. This paramemter helps to accomodate for reference alignment error, genotyping error, structural variation, and other systematic errors
+- If the next marker to compare does not meet or exceed `threshold`, the counter is incremented by 1. Once the counter is greater than the `tolerance` value the block is terminated. Any markers between a successfully added marker and a the block that did not meet the threshold will also be added to the block. This parameter helps to accommodate for reference alignment error, genotyping error, structural variation, and other systematic errors
 
 **`tol_reset`**
 - `TRUE` the `tolerance` counter is reset to 0 when a marker meets the threshold.
@@ -44,7 +44,7 @@ haploblocks <- def_blocks(
 
 **`start`**
 - `LD` -> starts from the highest LD pair and the block will be extended both to the left and to the right according to the distance coordinate. The tolerance counter is reset between left extension and right extension.
-- `Beginning` -> starts at the beginning of the chromosome, so blocks are only extended to the right.
+- `"beginning"` -> starts at the beginning of the chromosome, so blocks are only extended to the right.
 
 ## `block_obj_to_df()`
 

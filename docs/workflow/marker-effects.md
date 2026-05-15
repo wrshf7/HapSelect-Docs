@@ -11,16 +11,16 @@ This function was created to create the marker effects file using the `geno` inp
 
 #### `h2_method`
 
-Controls scaling of marker variance to compute teh additive genetic variance and thus narrow-sense heritability.
+Controls scaling of marker variance to compute the additive genetic variance and thus narrow-sense heritability.
 
 ##### Options:
 
 - `"VanRaden"` (recommended)
 - `"marker_num"` (only generally used if the genotype matrix was scaled; not applicable 99% of the time)
 
-The `"VanRaden` method is most commonly utilized in animal and plant breeding. It follows method 1 of [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980). The marker variance is multiplied by $2*\sum{p(1-p)}$ such that each marker is scaled equivalently and is assumed to contribute equivalent variance (infinitesimal model like GBLUP or BayesC).
+The `"VanRaden"` method is most commonly utilised in animal and plant breeding. It follows method 1 of [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980). The marker variance is multiplied by $2*\sum{p(1-p)}$ such that each marker is scaled equivalently and is assumed to contribute equivalent variance (infinitesimal model like GBLUP or BayesC).
 
-`"marker_num"` should only be utilzied when the genotypes have been pre-scaled to unit variance (i.e., not dosage values).
+`"marker_num"` should only be utilised when the genotypes have been pre-scaled to unit variance (i.e., not dosage values).
 
 We plan to offer Yang's method in the future.
 
@@ -61,7 +61,7 @@ This is the structure that must be provided if marker effects are provided exter
 ---
 
 ## `n_fold_cross_validation()`
-This function performs the marker effects calculation, but is utilized to evaluate model performance.
+This function performs the marker effects calculation, but is utilised to evaluate model performance.
 
 ```r
 CV <- n_fold_cross_validation(
@@ -73,7 +73,7 @@ CV <- n_fold_cross_validation(
 )
 ```
 
-The data is split into `nfold` groups, where each group is utilzied once for validation while training occurs on the other groups. That is, `nfold` - 1 groups are utilzied for training and 1 group is utilzied for validation. This is repeated until each group is utilized for validation.
+The data is split into `nfold` groups, where each group is utilised once for validation while training occurs on the other groups. That is, `nfold` - 1 groups are utilised for training and 1 group is utilised for validation. This is repeated until each group is utilised for validation.
 
 `nfold` **MUST** be an integer (i.e., `5L` and not `5`)
 
@@ -92,12 +92,12 @@ CV <- cross_validation(
 )
 ```
 
-A more generalized version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration with replacement.
+A more generalised version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration with replacement.
 
-`train_prop` must be a value between 0 and 1 (i.e., the proportion). This is taken as `train_prop` * nubmer of rows rounded down. The rest of the data is utilized for validation.
+`train_prop` must be a value between 0 and 1 (i.e., the proportion). This is taken as `train_prop` * number of rows rounded down. The rest of the data is utilised for validation.
 
-`fold` is an integer value (e.g., `5L` and not `5`) that is utilized to repeat the random sampling with replacement `fold` times for `fold` validations.
+`fold` is an integer value (e.g., `5L` and not `5`) that is utilised to repeat the random sampling with replacement `fold` times for `fold` validations.
 
 ## Important Information
 !!! warning
-    You should not try to utilize the validation functions on a small population size as it is highly inadvisable to train marker effects on small population sizes. What is considered "small" is relative to the number of markers, heritability, effective population size, and population structure. For crops, less than 200 individuals would be inadvisable. For livestock, this number is likely much greater.
+    You should not try to utilise the validation functions on a small population size as it is highly inadvisable to train marker effects on small population sizes. What is considered "small" is relative to the number of markers, heritability, effective population size, and population structure. For crops, less than 200 individuals would be inadvisable. For livestock, this number is likely much greater.

@@ -6,7 +6,7 @@ Minimal workflow demonstrating:
 2. Haploblock construction
 3. Marker effect estimation
 4. localGEBV computation
-5. Visualization
+5. Visualisation
 6. GA parent selection
 7. Recurrent truncation selection simulation on GA selected parents and TS selected parents
 
@@ -91,7 +91,7 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 
 ---
 
-### Summarize Haploblocks
+### Summarise Haploblocks
 
 ```r
 block_summary(block_df = haploblocks)
@@ -104,7 +104,7 @@ block_summary(block_df = haploblocks)
 #### Important Note:
 - One BLUE, deregressed BLUP, or adjusted phenotype per individual only
 - rrBLUP implementation
-- no other effects in the model, see [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modeling.
+- no other effects in the model, see [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modelling.
 
 ```r
 BLUE <- HapSelect::BLUE
@@ -164,7 +164,7 @@ haploblock_obj <- compute_local_GEBV(
 
 ---
 
-## Visualizations
+## Visualisations
 ### Marker Effects Plot
 
 ```r

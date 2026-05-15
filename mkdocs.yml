@@ -62,7 +62,7 @@ nav:
         - Haplotype Blocks: workflow/haploblocks.md
         - Marker Effects: workflow/marker-effects.md
         - Local GEBV: workflow/local-gebv.md
-        - Visualizations: workflow/visualizations.md
+        - Visualisations: workflow/visualizations.md
         - Parent Selection: workflow/parent-selection.md
         - Basic Simulation: workflow/basic-simulation.md
   - Function Reference: reference.md

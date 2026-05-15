@@ -2,9 +2,9 @@
 
 ## How the Genetic Algorithm Works
 
-The HapSelect genetic algorithm (GA) attempts to identify a founder set that maximizes the potential to recover favorable haplotypes across the selected haploblocks.
+The HapSelect genetic algorithm (GA) attempts to identify a founder set that maximises the potential to recover favourable haplotypes across the selected haploblocks.
 
-Rather than optimizing overall GEBV directly, the GA optimizes the ability of the selected founder pool to produce highly favorable offspring combinations across genomic regions.
+Rather than optimising overall GEBV directly, the GA optimises the ability of the selected founder pool to produce highly favourable offspring combinations across genomic regions.
 
 The GA core algorithm relies on the following R package while the fitness, mutation, and crossover functions are custom designed in HapSelect:
 
@@ -12,7 +12,7 @@ The GA core algorithm relies on the following R package while the fitness, mutat
 
 ---
 
-## The Optimization Objective
+## The Optimisation Objective
 
 For each haploblock:
 
@@ -22,9 +22,9 @@ For each haploblock:
 4. The process repeats across all haploblocks
 5. The fitness values are summed across haploblocks
 
-The GA therefore attempts to maximize:
+The GA therefore attempts to maximise:
 
-- favorable haplotype complementarity
+- favourable haplotype complementarity
 - genomic coverage of elite haplotypes
 - the best achievable offspring configuration across blocks
 
@@ -56,14 +56,14 @@ For each block, the GA identifies the founder pair with the highest expected off
 Traditional truncation selection (TS):
 
 - selects the individuals with the highest overall GEBV
-- tends to repeatedly favor the same highly elite individuals
-    - these individuals are often related (clustered on the PCA) and therefore share similar "good" and "bad" genomic segments. This increases inbreeding more quickly as well as unfavorable LD.
+- tends to repeatedly favour the same highly elite individuals
+    - these individuals are often related (clustered on the PCA) and therefore share similar "good" and "bad" genomic segments. This increases inbreeding more quickly as well as unfavourable LD.
 - may rapidly reduce diversity
 
 In contrast, the HapSelect GA:
 
 - searches for complementary founder combinations
-- rewards founder sets that collectively cover favorable haplotypes
+- rewards founder sets that collectively cover favourable haplotypes
 - allows different founders to contribute to different genomic regions
 - can retain valuable rare haplotypes ignored by standard TS
 
@@ -75,7 +75,7 @@ This means an individual with only moderate total GEBV may still be highly valua
 
 The GA assumes that:
 
-- favorable haplotypes can be combined through recombination
+- favourable haplotypes can be combined through recombination
 - different founder pairs may be optimal for different haploblocks
 - no single founder pair is necessarily optimal genome-wide
 
@@ -103,7 +103,7 @@ The GA evolves founder sets over multiple iterations using:
 
 | Operation | Purpose |
 |:---|:---|
-| Population initialization | Generate random founder sets |
+| Population initialisation | Generate random founder sets |
 | Fitness evaluation | Score founder sets using haploblock complementarity |
 | Mutation | Randomly replace founders |
 | Crossover | Swap part of two founder sets |
@@ -132,8 +132,8 @@ Higher mutation rates:
 
 but may:
 
-- destabilize convergence
-- slow optimization if many "good" founder sets are systematically disrupted every generation
+- destabilise convergence
+- slow optimisation if many "good" founder sets are systematically disrupted every generation
 
 ---
 
@@ -159,7 +159,7 @@ The:
 pelite
 ```
 
-parameter controls how strongly crossover favors founders from high-performing solutions.
+parameter controls how strongly crossover favours founders from high-performing solutions.
 
 Example:
 
@@ -189,7 +189,7 @@ The final GA-selected founder set should (generally) be interpreted as:
 
 - a complementary breeding population
 - a set of parents with strong collective haplotype coverage
-- a founder pool optimized for long-term recombination potential
+- a founder pool optimised for long-term recombination potential
 
 rather than simply the top individuals ranked by overall GEBV.
 
@@ -210,7 +210,7 @@ haploblock_obj <- select_top_blocks(
   perc_total = 0.5
 )
 
-#select the nubmer of blocks explaining at least x% of the total block variance utilizing the perc_total argument
+#select the number of blocks explaining at least x% of the total block variance utilising the perc_of_total_var argument
 haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
   perc_of_total_var = 0.9
@@ -241,25 +241,25 @@ The output is a modified `haploblock_obj` that contains subsetted matrices and d
 
 Increasing the number of retained haploblocks:
 
-- increases optimization dimensionality
+- increases optimisation dimensionality
 - increases GA runtime
 - increases memory usage
 - may slow convergence substantially
 
 However, retaining too few blocks may:
 
-- miss favorable rare haplotypes
+- miss favourable rare haplotypes
 - oversimplify trait architecture
 - reduce long-term genetic gain potential
-- may ignore how the contribution small, cumulative effects have to overall fitness and optimization
+- may ignore how the contribution small, cumulative effects have to overall fitness and optimisation
 
-Users are encouraged to experiment with multiple selection thresholds depending on breeding goals and computational resources. The [Basic Simulation](workflow/basic-simulation.md) functions will be useful for interpreting the GA output.
+Users are encouraged to experiment with multiple selection thresholds depending on breeding goals and computational resources. The [Basic Simulation](basic-simulation.md) functions will be useful for interpreting the GA output.
 
 
 ## `genetic_algorithm()`
 
 !!! warning
-    These individuals are selected via a heuristic search optimization and are thus never guaranteed to be the best set of individuals! The heuristic search optimization is necessary to make most problems computationally feasible. Generally, unless stuck in a very pre-mature local optima, the results are the best or close to the best solution. Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios. The `GA_output` object contains all solutions.
+    These individuals are selected via a heuristic search optimisation and are thus never guaranteed to be the best set of individuals! The heuristic search optimisation is necessary to make most problems computationally feasible. Generally, unless stuck in a very pre-mature local optima, the results are the best or close to the best solution. Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios. The `GA_output` object contains all solutions.
 
 
 ```r

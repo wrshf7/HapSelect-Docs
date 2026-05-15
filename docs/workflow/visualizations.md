@@ -1,6 +1,6 @@
-# Visualizations
+# Visualisations
 
-HapSelect provides several `ggplot2`-based visualization functions for exploring:
+HapSelect provides several `ggplot2`-based visualisation functions for exploring:
 
 - marker effects
 - haploblock structure
@@ -9,7 +9,7 @@ HapSelect provides several `ggplot2`-based visualization functions for exploring
 - marker density
 - LD decay
 
-All visualization functions return `ggplot2` objects and can be modified using standard `ggplot2` syntax.
+All visualisation functions return `ggplot2` objects and can be modified using standard `ggplot2` syntax.
 
 Example:
 
@@ -116,14 +116,14 @@ block_var_funnel_plot(
 
 ### Notes
 
-- Haploblock variance is internally log-scaled for visualization and then min-max scaled between 0 and 1.
-- Useful for visualizing high-variance haploblocks
+- Haploblock variance is internally log-scaled for visualisation and then min-max scaled between 0 and 1.
+- Useful for visualising high-variance haploblocks
 
 ---
 
 ## Haploblock Structure Plot
 
-Visualizes haploblock boundaries across chromosomes.
+Visualises haploblock boundaries across chromosomes.
 
 ```r
 plot_haploblocks(
@@ -163,7 +163,7 @@ Displays marker density across chromosomes using fixed genomic bins.
 
 ```r
 plot_marker_density(
-  map_df     = map,
+  map        = map,
   bin_size   = 500000,
   height     = 0.30,
   chrom_fill = NA,
@@ -177,7 +177,7 @@ plot_marker_density(
 
 | Parameter | Description |
 |:---|:---|
-| `map_df` | Ordered map dataframe |
+| `map` | Ordered map dataframe |
 
 ### Optional Parameters
 

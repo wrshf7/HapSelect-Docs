@@ -51,7 +51,7 @@ install.packages("HapSelect", type = "source", repos = NULL)
 <strong>localGEBV Method and Haploblock Formation:</strong><br>
 [Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv (under review).](https://doi.org/10.1101/2025.08.28.672830)
 
-<strong>Origin of the localGEBV Method and Parent Optimization with a Genetic Algorithm:</strong><br>
+<strong>Origin of the localGEBV Method and Parent Optimisation with a Genetic Algorithm:</strong><br>
 [Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci.](https://doi.org/10.3168/jds.2011-5289)
 
 <strong>The First Implementation of Haploblocking with localGEBV:</strong><br>

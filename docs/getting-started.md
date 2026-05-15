@@ -26,27 +26,27 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
 
 - **LD file** - pairwise LD between each marker within a chromosome.
     - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
-    - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed, because R is not built for large, iterative computions require to compute LD pairs. Even small to moderate sized SNP panels will take too long in R.
+    - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed, because R is not built for large, iterative computations required to compute LD pairs. Even small to moderate sized SNP panels will take too long in R.
     - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
     - Columns:
         - `Chrom`: the chromosome each SNP pair belongs to.
         - `Locus1`: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the **ordered map file** (see below for more details).
         - `Locus2`: similar to `Locus1`, this is the numerical integer of the second marker in the marker pair.
-        - `Name1`: Character name of the first marker in the pair as seen in the genotype, map, and marker effeccts file.
+        - `Name1`: Character name of the first marker in the pair as seen in the genotype, map, and marker effects file.
         - `Name2`: Similar to `Name1`, this corresponds to the name of the second marker in the pair as seen in the genotype, map, and marker effects file.
         - `LD`: The numerical LD value computed. This is typically an $R^{2}$ value.
 
 - **Marker effects file** — estimated SNP effects from a genomic prediction model
     - Can be computed for basic cases in the package with BLUE/dergressed BLUP/singular adjusted phenotype or provided externally.
     - First column: `SNP` corresponding to the `SNP` column in the map and genotype file. It should be formatted as a character vector.
-    - Second column: `Effect` the allele subsititution (marker) effects corresponding to the SNP in column one.
+    - Second column: `Effect` the allele substitution (marker) effects corresponding to the SNP in column one.
 
 - **Haploblock file** - dataframe produced as a standard part of the workflow.
     - May be provided if custom haploblocking is desired (e.g., blocking based on physical/map distance, number of markers per block, etc.)
         - We plan to provide haploblocking by distance/number of markers functionality in a future update.
     - Columns:
         - `Block`: SNP names within a block as identified in the map, genotype, and marker effects files. They should be separated by a ";" (no whitespaces as this will break downstream computations!). It must be a character!
-        - `Block_ID`: Unique block identifier. We utilize the format "chromosome:block_nested_within_chromosome". As an example, "3:132" corresponds to the 132nd block on chromosome 3. It must be a character!
+        - `Block_ID`: Unique block identifier. We utilise the format "chromosome:block_nested_within_chromosome". As an example, "3:132" corresponds to the 132nd block on chromosome 3. It must be a character!
         - `Num_SNP`: The number of SNP in the block (number of markers in `Block`, must be numeric).
         - `First_SNP`: The first marker (based on physical/map position) in the block (must be a character).
         - `Last_SNP`: The last marker (based on physical/map position) in the block (must be a character).
@@ -62,9 +62,9 @@ map <- HapSelect::map
 geno <- HapSelect::geno
 
 #Optional inputs created in the R package:
-ld_pairs <- HapSelect::ld_pairs
+ld_pairs <- HapSelect::pairwise_ld
 marker_effects <- HapSelect::marker_effects
-BLUE <- HapSelect::BLUE (example file to compute marker effects)
+BLUE <- HapSelect::BLUE # example file to compute marker effects
 
 #Haploblock dataframe can be computed by running the def_blocks() and block_obj_to_df() functions on the example data
 
@@ -116,14 +116,14 @@ haploblock_obj <- compute_local_GEBV(
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,
-  center         = TRUE
+  mean_adjust    = TRUE
 )
 ```
 
 !!! tip
     Check out the full workflow if you need a basic model to compute marker effects.
 
-## Step 5 — Visualize
+## Step 5 — Visualise
 
 ```r
 marker_effects_plot(marker_effects = marker_effects$Effect,

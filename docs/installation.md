@@ -33,7 +33,7 @@ HapSelect imports the following packages, which will be installed automatically.
 |---------|---------|
 | `rrBLUP` | Marker effect estimation |
 | `GA` | Genetic algorithm for parent selection |
-| `ggplot2` | Visualizations |
+| `ggplot2` | Visualisations |
 | `cowplot` | Plot composition |
 | `dplyr` / `purrr` | Data manipulation |
 | `furrr` / `future` | Parallel computation |
