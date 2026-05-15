@@ -220,11 +220,10 @@ haploblock_obj <- select_top_blocks(
 - `n = number` requires an integer number of blocks, denoted by `number` to select with the greatest haploblock variance
 - `perc_total` denotes the proportion (between 0 and 1) of blocks to select (rounded up) from the total number of blocks with the greatest variance
 - `perc_of_total_var` denotes selecting the proportion (between 0 and 1) of blocks (rounded up) that explain at least that proportion of the total block variance and have the greatest variance (i.e., the minimum number of blocks required to achieve the target proportion). This is the recommended option to use because it:
-
-- Is usually the most biologically meaningful approach.
-- Dynamically adapts to the architecture of the trait.
-- Retains more blocks for highly polygenic traits.
-- Retains fewer blocks when major-effect haploblocks dominate.
+    - Is usually the most biologically meaningful approach.
+    - Dynamically adapts to the architecture of the trait.
+    - Retains more blocks for highly polygenic traits.
+    - Retains fewer blocks when major-effect haploblocks dominate.
 
 ### Comparison of Selection Strategies
 
