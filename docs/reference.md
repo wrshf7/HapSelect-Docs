@@ -54,7 +54,7 @@ Quick reference for all exported HapSelect functions.
 | `plot_marker_density(map, bin_size, height, chrom_fill, col_low, col_mid, col_high)` | Marker density histogram |
 | `plot_ld_decay(map, ld, max_kb, point_color, curve_color, alpha, span, method, k)` | Smoothed LD decay curve |
 
-## Parent Selection
+## Parent Selection and Basic Simulation
 
 | Function | Description |
 |----------|-------------|
@@ -68,6 +68,6 @@ Quick reference for all exported HapSelect functions.
 |---------|-------------|
 | `map` | Example marker map |
 | `geno` | Example genotype matrix |
-| `pairwise_ld` | Precomputed LD for example data |
+| `ld_pairs` | Precomputed LD for example data |
 | `marker_effects` | Example marker effect estimates |
 | `marker_pecov` | Example marker prediction error covariance matrix |
