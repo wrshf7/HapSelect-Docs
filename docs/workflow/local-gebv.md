@@ -6,7 +6,7 @@ $$
 \text{localGEBV}_{ij} = \sum_{m \in \text{block}_j} \overline{z_{im}} \cdot \hat{u}_m
 $$
 
-where \(\overline{z_{im}}\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect. If `mean_adjust = FALSE`, then it is not centered and is the actual value.
+where \(\overline{z_{im}}\) is the **centered** (see [VanRaden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect. If `mean_adjust = FALSE`, then it is not centered and is the actual value.
 
 Haploblock variance is then computed as:
 
