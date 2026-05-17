@@ -1,6 +1,7 @@
 # LocalGEBV
 
 Local genomic estimated breeding values (localGEBV) quantify the breeding value contribution of each haploblock for each individual. The localGEBV are calculated as:
+
 $$
 \text{localGEBV}_{ij} = \sum_{m \in \text{block}_j} \overline{z_{im}} \cdot \hat{u}_m
 $$
