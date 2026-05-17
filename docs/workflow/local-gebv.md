@@ -26,7 +26,7 @@ haploblock_obj <- compute_local_GEBV(
 
 -`TRUE` if a haplotype/marker configuration for an individual in a haploblock is missing $>=$ 1 genotype call, the localGEBV value for that individual's block is set to `NA`.
 
--`FALSE` localGEBV are calculated with all non-missing genotypes. The missing genotypes are imputed to the mean and thus do not affect the localGEBV value.
+-`FALSE` localGEBV are calculated with all non-missing genotypes. The missing genotypes are imputed to the mean and thus do not affect the localGEBV value. In the case of `mean_adjust = TRUE`, this is 0. For uncentered marker matrices, this is the genotype mean (2p for a diploid, or kp for other ploidy where k is ploidy and p is the alternative allele frequency).
 
 ### `mean_adjust`
 
