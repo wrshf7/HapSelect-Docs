@@ -1,0 +1,1754 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Haplotype block discovery, localGEBV analysis, and parent selection for genomic selection in R">
+      
+      
+      
+        <link rel="canonical" href="https://wrshf7.github.io/HapSelect-Docs/workflow/parent-selection/">
+      
+      
+        <link rel="prev" href="../visualizations/">
+      
+      
+        <link rel="next" href="../basic-simulation/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Parent Selection - HapSelect</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#parent-selection" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HapSelect" class="md-header__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HapSelect
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Parent Selection
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HapSelect" class="md-nav__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    HapSelect
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Explanations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_workflow_minimal_comments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Minimal Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specific Sections
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specific Sections
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pairwise-ld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairwise LD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../haploblocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Haplotype Blocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../marker-effects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marker Effects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local-gebv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local GEBV
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualisations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parent Selection
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parent Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-genetic-algorithm-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the Genetic Algorithm Works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-optimisation-objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Optimisation Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-fitness-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fitness Function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-differs-from-truncation-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Differs From Truncation Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pairwise-crossing-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pairwise Crossing Strategy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evolutionary-search-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evolutionary Search Procedure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crossover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crossover
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elite-founder-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Elite Founder Sampling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpretation-of-the-final-founder-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpretation of the Final Founder Set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preparing-input-select_top_blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preparing Input - select_top_blocks()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#genetic_algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        genetic_algorithm()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic-simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#how-the-genetic-algorithm-works" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        How the Genetic Algorithm Works
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-optimisation-objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Optimisation Objective
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-fitness-function" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        The Fitness Function
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#why-this-differs-from-truncation-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Why This Differs From Truncation Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pairwise-crossing-strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pairwise Crossing Strategy
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#evolutionary-search-procedure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Evolutionary Search Procedure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#mutation" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Mutation
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#crossover" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Crossover
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#elite-founder-sampling" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Elite Founder Sampling
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#interpretation-of-the-final-founder-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Interpretation of the Final Founder Set
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#preparing-input-select_top_blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Preparing Input - select_top_blocks()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#genetic_algorithm" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        genetic_algorithm()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#output" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Output
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="parent-selection">Parent Selection<a class="headerlink" href="#parent-selection" title="Permanent link">&para;</a></h1>
+<h2 id="how-the-genetic-algorithm-works">How the Genetic Algorithm Works<a class="headerlink" href="#how-the-genetic-algorithm-works" title="Permanent link">&para;</a></h2>
+<p>The HapSelect genetic algorithm (GA) attempts to identify a founder set that maximises the potential to recover favourable haplotypes across the selected haploblocks.</p>
+<p>Rather than optimising overall GEBV directly, the GA optimises the ability of the selected founder pool to produce highly favourable offspring combinations across genomic regions.</p>
+<p>The GA core algorithm relies on the following R package while the fitness, mutation, and crossover functions are custom designed in HapSelect:</p>
+<p><a href="https://cran.r-project.org/web/packages/GA/index.html">GA: Genetic Algorithms</a></p>
+<hr />
+<h2 id="the-optimisation-objective">The Optimisation Objective<a class="headerlink" href="#the-optimisation-objective" title="Permanent link">&para;</a></h2>
+<p>For each haploblock:</p>
+<ol>
+<li>All possible pairwise crosses among the selected founders are evaluated</li>
+<li>The expected offspring localGEBV for each cross is calculated</li>
+<li>The highest-scoring cross for that haploblock is retained</li>
+<li>The process repeats across all haploblocks</li>
+<li>The fitness values are summed across haploblocks</li>
+</ol>
+<p>The GA therefore attempts to maximise:</p>
+<ul>
+<li>favourable haplotype complementarity</li>
+<li>genomic coverage of elite haplotypes</li>
+<li>the best achievable offspring configuration across blocks</li>
+</ul>
+<p>rather than simply selecting the individuals with the highest total GEBV.</p>
+<hr />
+<h2 id="the-fitness-function">The Fitness Function<a class="headerlink" href="#the-fitness-function" title="Permanent link">&para;</a></h2>
+<p>Conceptually, the fitness function is:</p>
+<p>$$
+\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(i,k)} \left( \frac{localGEBV_{ij} + localGEBV_{kj}}{2} \right)
+$$
+where:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Symbol</th>
+<th style="text-align: left;">Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><em>J</em></td>
+<td style="text-align: left;">Number of selected haploblocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><span class="arithmatex">\(localGEBV_{ij}\)</span></td>
+<td style="text-align: left;">localGEBV of individual <code>i</code> at haploblock <code>j</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><em>(i,k)</em></td>
+<td style="text-align: left;">Pairwise founder combinations</td>
+</tr>
+</tbody>
+</table>
+<p>For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.</p>
+<hr />
+<h2 id="why-this-differs-from-truncation-selection">Why This Differs From Truncation Selection<a class="headerlink" href="#why-this-differs-from-truncation-selection" title="Permanent link">&para;</a></h2>
+<p>Traditional truncation selection (TS):</p>
+<ul>
+<li>selects the individuals with the highest overall GEBV</li>
+<li>tends to repeatedly favour the same highly elite individuals<ul>
+<li>these individuals are often related (clustered on the PCA) and therefore share similar "good" and "bad" genomic segments. This increases inbreeding more quickly as well as unfavourable LD.</li>
+</ul>
+</li>
+<li>may rapidly reduce diversity</li>
+</ul>
+<p>In contrast, the HapSelect GA:</p>
+<ul>
+<li>searches for complementary founder combinations</li>
+<li>rewards founder sets that collectively cover favourable haplotypes</li>
+<li>allows different founders to contribute to different genomic regions</li>
+<li>can retain valuable rare haplotypes ignored by standard TS</li>
+</ul>
+<p>This means an individual with only moderate total GEBV may still be highly valuable if it contributes an elite haplotype at a specific high-variance block.</p>
+<hr />
+<h2 id="pairwise-crossing-strategy">Pairwise Crossing Strategy<a class="headerlink" href="#pairwise-crossing-strategy" title="Permanent link">&para;</a></h2>
+<p>The GA assumes that:</p>
+<ul>
+<li>favourable haplotypes can be combined through recombination</li>
+<li>different founder pairs may be optimal for different haploblocks</li>
+<li>no single founder pair is necessarily optimal genome-wide</li>
+</ul>
+<p>For each haploblock, the algorithm evaluates:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">combn</span><span class="p">(</span><span class="n">founders</span><span class="p">,</span><span class="w"> </span><span class="m">2</span><span class="p">)</span>
+</code></pre></div>
+<p>to test all possible pairwise combinations among the selected founders.</p>
+<p>If:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">selfing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span>
+</code></pre></div>
+<p>then self-crosses are also evaluated.</p>
+<hr />
+<h2 id="evolutionary-search-procedure">Evolutionary Search Procedure<a class="headerlink" href="#evolutionary-search-procedure" title="Permanent link">&para;</a></h2>
+<p>The GA evolves founder sets over multiple iterations using:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Operation</th>
+<th style="text-align: left;">Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Population initialisation</td>
+<td style="text-align: left;">Generate random founder sets</td>
+</tr>
+<tr>
+<td style="text-align: left;">Fitness evaluation</td>
+<td style="text-align: left;">Score founder sets using haploblock complementarity</td>
+</tr>
+<tr>
+<td style="text-align: left;">Mutation</td>
+<td style="text-align: left;">Randomly replace founders</td>
+</tr>
+<tr>
+<td style="text-align: left;">Crossover</td>
+<td style="text-align: left;">Swap part of two founder sets</td>
+</tr>
+<tr>
+<td style="text-align: left;">Elite sampling</td>
+<td style="text-align: left;">Bias replacement toward high-performing solutions (greatest GEBV) during Mutation and if Crossover yields overlapping individuals</td>
+</tr>
+</tbody>
+</table>
+<p>The search attempts to balance:</p>
+<ul>
+<li>exploration of new founder combinations</li>
+<li>exploitation of high-performing founder sets</li>
+</ul>
+<hr />
+<h2 id="mutation">Mutation<a class="headerlink" href="#mutation" title="Permanent link">&para;</a></h2>
+<p>Mutation randomly replaces one founder within a solution:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">#expressed in probability: i.e., between 0 and 1</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">pmutation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.1</span>
+</code></pre></div>
+<p>Higher mutation rates:</p>
+<ul>
+<li>increase exploration</li>
+<li>reduce risk of local optima</li>
+</ul>
+<p>but may:</p>
+<ul>
+<li>destabilise convergence</li>
+<li>slow optimisation if many "good" founder sets are systematically disrupted every generation</li>
+</ul>
+<hr />
+<h2 id="crossover">Crossover<a class="headerlink" href="#crossover" title="Permanent link">&para;</a></h2>
+<p>Crossover exchanges founders between two high-performing solutions.</p>
+<p>The algorithm:</p>
+<ol>
+<li>Retains part of each founder set</li>
+<li>Combines non-overlapping founders</li>
+<li>Fills missing founders from elite solutions based on <code>pelite</code></li>
+</ol>
+<p>This helps preserve useful founder combinations while still exploring new combinations.</p>
+<hr />
+<h2 id="elite-founder-sampling">Elite Founder Sampling<a class="headerlink" href="#elite-founder-sampling" title="Permanent link">&para;</a></h2>
+<p>The:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">pelite</span>
+</code></pre></div>
+<p>parameter controls how strongly crossover favours founders from high-performing solutions.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">#expressed in probability: i.e., between 0 and 1</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">pelite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.2</span>
+</code></pre></div>
+<p>means replacement founders are preferentially sampled from the top 20% of solutions ranked by overall fitness (GEBV).</p>
+<p>Smaller values:</p>
+<ul>
+<li>increase selection pressure</li>
+<li>may accelerate convergence if elite individuals contain most of the best haplotypes<ul>
+<li>this may also cause convergence to a local optima if the value is too high</li>
+</ul>
+</li>
+</ul>
+<p>Larger values:</p>
+<ul>
+<li>maintain greater diversity</li>
+<li>improve exploration</li>
+</ul>
+<hr />
+<h2 id="interpretation-of-the-final-founder-set">Interpretation of the Final Founder Set<a class="headerlink" href="#interpretation-of-the-final-founder-set" title="Permanent link">&para;</a></h2>
+<p>The final GA-selected founder set should (generally) be interpreted as:</p>
+<ul>
+<li>a complementary breeding population</li>
+<li>a set of parents with strong collective haplotype coverage</li>
+<li>a founder pool optimised for long-term recombination potential</li>
+</ul>
+<p>rather than simply the top individuals ranked by overall GEBV.</p>
+<h2 id="preparing-input-select_top_blocks">Preparing Input - <code>select_top_blocks()</code><a class="headerlink" href="#preparing-input-select_top_blocks" title="Permanent link">&para;</a></h2>
+<p>Select top haploblocks by <code>Block_Var</code>. The <code>select_top_blocks()</code> function can select blocks in three different ways and returns a modified <code>haploblock_obj</code> object by adding on two additional dataframes to the list structure.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1">#select the top n blocks using the n argument</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">select_top_blocks</span><span class="p">(</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">  </span><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="p">)</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="c1">#select the top x% of blocks using the perc_total argument</span>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">select_top_blocks</span><span class="p">(</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">  </span><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">  </span><span class="n">perc_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="p">)</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="c1">#select the number of blocks explaining at least x% of the total block variance utilising the perc_of_total_var argument</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">select_top_blocks</span><span class="p">(</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">  </span><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a><span class="w">  </span><span class="n">perc_of_total_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.9</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a><span class="p">)</span>
+</code></pre></div>
+<ul>
+<li><code>n = number</code> requires an integer number of blocks, denoted by <code>number</code> to select with the greatest haploblock variance</li>
+<li><code>perc_total</code> denotes the proportion (between 0 and 1) of blocks to select (rounded up) from the total number of blocks with the greatest variance</li>
+<li><code>perc_of_total_var</code> denotes selecting the proportion (between 0 and 1) of blocks (rounded up) that explain at least that proportion of the total block variance and have the greatest variance (i.e., the minimum number of blocks required to achieve the target proportion). This is the recommended option to use because it:<ul>
+<li>Is usually the most biologically meaningful approach.</li>
+<li>Dynamically adapts to the architecture of the trait.</li>
+<li>Retains more blocks for highly polygenic traits.</li>
+<li>Retains fewer blocks when major-effect haploblocks dominate.</li>
+</ul>
+</li>
+</ul>
+<h3 id="comparison-of-selection-strategies">Comparison of Selection Strategies<a class="headerlink" href="#comparison-of-selection-strategies" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Strengths</th>
+<th style="text-align: left;">Weaknesses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Top <code>n</code> blocks</td>
+<td style="text-align: left;">Simple and interpretable</td>
+<td style="text-align: left;">Arbitrary cutoff</td>
+</tr>
+<tr>
+<td style="text-align: left;">Top percentage</td>
+<td style="text-align: left;">Scales with dataset size</td>
+<td style="text-align: left;">May retain weak blocks or discard high-variance blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;">Variance explained</td>
+<td style="text-align: left;">Biologically adaptive</td>
+<td style="text-align: left;">Number of retained blocks varies between traits and architecture</td>
+</tr>
+</tbody>
+</table>
+<p>The output is a modified <code>haploblock_obj</code> that contains subsetted matrices and dataframes needed for the GA.</p>
+<hr />
+<h3 id="computational-considerations">Computational Considerations<a class="headerlink" href="#computational-considerations" title="Permanent link">&para;</a></h3>
+<p>Increasing the number of retained haploblocks:</p>
+<ul>
+<li>increases optimisation dimensionality</li>
+<li>increases GA runtime</li>
+<li>increases memory usage</li>
+<li>may slow convergence substantially</li>
+</ul>
+<p>However, retaining too few blocks may:</p>
+<ul>
+<li>miss favourable rare haplotypes</li>
+<li>oversimplify trait architecture</li>
+<li>reduce long-term genetic gain potential</li>
+<li>may ignore how the contribution small, cumulative effects have to overall fitness and optimisation</li>
+</ul>
+<p>Users are encouraged to experiment with multiple selection thresholds depending on breeding goals and computational resources. The <a href="../basic-simulation/">Basic Simulation</a> functions will be useful for interpreting the GA output.</p>
+<h2 id="genetic_algorithm"><code>genetic_algorithm()</code><a class="headerlink" href="#genetic_algorithm" title="Permanent link">&para;</a></h2>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>These individuals are selected via a heuristic search optimisation and are thus never guaranteed to be the best set of individuals! The heuristic search optimisation is necessary to make most problems computationally feasible. Generally, unless stuck in a very pre-mature local optima, the results are the best or close to the best solution. Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios. The <code>GA_output</code> object contains all solutions.</p>
+</div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">GA_output</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">genetic_algorithm</span><span class="p">(</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">  </span><span class="n">localGEBV</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">localGEBV</span><span class="p">,</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">  </span><span class="n">n_founders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">  </span><span class="n">popSize</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">  </span><span class="n">maxiter</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">  </span><span class="n">run</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">  </span><span class="n">selfing</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">  </span><span class="n">pmutation</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="m">0.2</span><span class="p">,</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">  </span><span class="n">pcrossover</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span><span class="p">,</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">  </span><span class="n">pelite</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span>
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="p">)</span>
+</code></pre></div>
+<table>
+  <colgroup>
+    <col style="width: 20%; white-space: nowrap;">
+    <col style="width: 80%;">
+  </colgroup>
+
+  <thead>
+    <tr>
+      <th>Parameter</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <tr>
+      <td><code>n_founders</code></td>
+      <td>Integer number of parents to choose</td>
+    </tr>
+
+    <tr>
+      <td><code>popSize</code></td>
+      <td>Integer number of parental sets per simulation iteration</td>
+    </tr>
+
+    <tr>
+      <td><code>maxiter</code></td>
+      <td>Maximum iterations before termination</td>
+    </tr>
+
+    <tr>
+      <td><code>run</code></td>
+      <td>Iterations without improvement before terminating</td>
+    </tr>
+
+    <tr>
+      <td><code>selfing</code></td>
+      <td>
+        Allow selfing (i.e., for the fitness function allow the same
+        parent at a block). If <code>FALSE</code>, requires two different
+        parents per chosen block.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>pmutation</code></td>
+      <td>
+        Mutation probability — swaps out one random individual for another
+        from the total population.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>pcrossover</code></td>
+      <td>
+        Crossover probability — swaps half of each population; if there is
+        overlap, non-overlapping parents are chosen randomly from the total
+        population.
+      </td>
+    </tr>
+
+    <tr>
+      <td><code>pelite</code></td>
+      <td>
+        Elite proportion (between 0 and 1) — constrains choosing
+        individuals from the total population to the highest
+        <code>pelite</code> proportion based on GEBV when needed to find
+        non-overlapping parents for <code>pcrossover</code>.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p>The genetic algorithm (GA) balances:</p>
+<ol>
+<li>
+<p><strong>Exploration</strong><br />
+   Searching broadly across possible parental combinations</p>
+</li>
+<li>
+<p><strong>Exploitation</strong><br />
+   Refining highly fit parental combinations already discovered</p>
+</li>
+</ol>
+<p>Improper parameter tuning can lead to:</p>
+<ul>
+<li>premature convergence</li>
+<li>failure to converge</li>
+<li>excessive runtime</li>
+<li>oscillation around suboptimal solutions</li>
+</ul>
+<hr />
+<h3 id="popsize"><code>popSize</code><a class="headerlink" href="#popsize" title="Permanent link">&para;</a></h3>
+<p>Controls the number of candidate parental sets evaluated per iteration.</p>
+<h4 id="trade-offs">Trade-offs<a class="headerlink" href="#trade-offs" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Smaller <code>popSize</code></th>
+<th style="text-align: left;">Larger <code>popSize</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Faster individual iterations</td>
+<td style="text-align: left;">Slower individual iterations</td>
+</tr>
+<tr>
+<td style="text-align: left;">Less memory usage</td>
+<td style="text-align: left;">Higher memory usage</td>
+</tr>
+<tr>
+<td style="text-align: left;">Late convergence</td>
+<td style="text-align: left;">Better exploration and earlier convergence</td>
+</tr>
+<tr>
+<td style="text-align: left;">Higher risk of local optima</td>
+<td style="text-align: left;">Lower risk of local optima</td>
+</tr>
+</tbody>
+</table>
+<p>Increasing <code>popSize</code> generally reduces the number of iterations needed for convergence, but each iteration becomes more computationally expensive.</p>
+<hr />
+<h3 id="maxiter"><code>maxiter</code><a class="headerlink" href="#maxiter" title="Permanent link">&para;</a></h3>
+<p>Maximum number of iterations allowed.</p>
+<h4 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Too small → GA may terminate before convergence</li>
+<li>Too large → unnecessary runtime after convergence</li>
+</ul>
+<p>Generally:</p>
+<ul>
+<li>small problems converge quickly</li>
+<li>highly polygenic architectures with many parents may require many iterations</li>
+</ul>
+<hr />
+<h3 id="run"><code>run</code><a class="headerlink" href="#run" title="Permanent link">&para;</a></h3>
+<p>Number of iterations allowed without improvement before stopping.</p>
+<h4 id="trade-offs_1">Trade-offs<a class="headerlink" href="#trade-offs_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Smaller <code>run</code></th>
+<th style="text-align: left;">Larger <code>run</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Faster termination</td>
+<td style="text-align: left;">More exhaustive search</td>
+</tr>
+<tr>
+<td style="text-align: left;">May stop too early</td>
+<td style="text-align: left;">Longer runtime</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk missing optimum</td>
+<td style="text-align: left;">Better convergence stability</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="pmutation"><code>pmutation</code><a class="headerlink" href="#pmutation" title="Permanent link">&para;</a></h3>
+<p>Mutation probability.</p>
+<p>Mutation randomly substitutes one individual within populations from the total population.</p>
+<h4 id="trade-off">Trade-off<a class="headerlink" href="#trade-off" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Low mutation</th>
+<th style="text-align: left;">High mutation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Stable convergence</td>
+<td style="text-align: left;">More exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk local optima</td>
+<td style="text-align: left;">Risk instability and "overshooting"</td>
+</tr>
+</tbody>
+</table>
+<h5 id="important-notes">Important Notes<a class="headerlink" href="#important-notes" title="Permanent link">&para;</a></h5>
+<p>Overly large mutation probabilities can prevent convergence entirely because high-performing parental sets are continuously disrupted.</p>
+<hr />
+<h3 id="pcrossover"><code>pcrossover</code><a class="headerlink" href="#pcrossover" title="Permanent link">&para;</a></h3>
+<p>Probability populations exchange parental subsets (half of each pair swapped). If there are overlapping individuals after swapping, then the duplicates are dropped and non-duplicate individuals are randomly sampled from the total population.</p>
+<h4 id="trade-offs_2">Trade-offs<a class="headerlink" href="#trade-offs_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Low crossover</th>
+<th style="text-align: left;">High crossover</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Less swapping</td>
+<td style="text-align: left;">Greater swapping</td>
+</tr>
+<tr>
+<td style="text-align: left;">Slower exploration</td>
+<td style="text-align: left;">Faster exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">More stable solutions</td>
+<td style="text-align: left;">Greater instability</td>
+</tr>
+</tbody>
+</table>
+<p>Very high crossover rates may cause the GA to overshoot promising solutions and continuously disrupt near-optimal parental combinations.</p>
+<hr />
+<h3 id="pelite"><code>pelite</code><a class="headerlink" href="#pelite" title="Permanent link">&para;</a></h3>
+<p>Restricts replacement individuals to the proportion of the population ranked by GEBV.</p>
+<h4 id="trade-offs_3">Trade-offs<a class="headerlink" href="#trade-offs_3" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Smaller <code>pelite</code></th>
+<th style="text-align: left;">Larger <code>pelite</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Faster convergence</td>
+<td style="text-align: left;">Greater diversity</td>
+</tr>
+<tr>
+<td style="text-align: left;">Stronger selection pressure</td>
+<td style="text-align: left;">Better exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk premature convergence</td>
+<td style="text-align: left;">Slower convergence</td>
+</tr>
+</tbody>
+</table>
+<p>Very aggressive elite selection may reduce genetic diversity within the GA search process and increase the likelihood of local optima.</p>
+<hr />
+<h3 id="if-convergence-is-unstable">If convergence is unstable:<a class="headerlink" href="#if-convergence-is-unstable" title="Permanent link">&para;</a></h3>
+<ul>
+<li>decrease <code>pmutation</code></li>
+<li>decrease <code>pcrossover</code></li>
+<li>increase <code>pelite</code></li>
+<li>increase <code>run</code></li>
+</ul>
+<h3 id="if-convergence-is-too-slow">If convergence is too slow:<a class="headerlink" href="#if-convergence-is-too-slow" title="Permanent link">&para;</a></h3>
+<ul>
+<li>increase <code>popSize</code></li>
+<li>slightly increase <code>pmutation</code></li>
+<li>slightly increase <code>pcrossover</code></li>
+</ul>
+<h3 id="if-solutions-appear-trapped-in-local-optima">If solutions appear trapped in local optima:<a class="headerlink" href="#if-solutions-appear-trapped-in-local-optima" title="Permanent link">&para;</a></h3>
+<ul>
+<li>increase <code>popSize</code></li>
+<li>increase <code>pmutation</code></li>
+<li>increase <code>pelite</code></li>
+<li>increase <code>run</code></li>
+</ul>
+<hr />
+<h2 id="output">Output<a class="headerlink" href="#output" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># One optimal set of selected parents</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">GA_output</span><span class="o">$</span><span class="n">One_Solution</span>
+</code></pre></div>
+<p>The output contains the selected parent IDs and names. More information is available in the internal <code>GA</code> object about GA performance, change in the best localGEBV and meanGEBV of the parental sets over iterations, etc. There may be more than one set of parents that give rise to the same optimum. Additional sets of parents are contained in the <code>GA</code> object and only the first set is presented in <code>$One_Solution</code></p>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

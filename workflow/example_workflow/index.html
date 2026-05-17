@@ -1,0 +1,2505 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Haplotype block discovery, localGEBV analysis, and parent selection for genomic selection in R">
+      
+      
+      
+        <link rel="canonical" href="https://wrshf7.github.io/HapSelect-Docs/workflow/example_workflow/">
+      
+      
+        <link rel="prev" href="../../getting-started/">
+      
+      
+        <link rel="next" href="../example_workflow_minimal_comments/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.6">
+    
+    
+      
+        <title>Complete Workflow with Explanations - HapSelect</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.484c7ddc.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#hapselect-workflow-tutorial" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HapSelect" class="md-header__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HapSelect
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Complete Workflow with Explanations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HapSelect" class="md-nav__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    HapSelect
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Explanations
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Explanations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#loading-example-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Example Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input File Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ordering-the-map-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordering the Map File
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#computing-pairwise-ld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Computing Pairwise LD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loading-example-ld-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Example LD Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructing-haploblocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructing Haploblocks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#convert-haploblocks-to-a-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convert Haploblocks to a Dataframe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimating-marker-effects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimating Marker Effects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#computing-localgebv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Computing localGEBV
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualisation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualisation Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selecting-haploblocks-for-the-ga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting Haploblocks for the GA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-of-selection-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison of Selection Strategies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#genetic-algorithm-parent-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Genetic Algorithm Parent Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simulating-recurrent-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simulating Recurrent Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_workflow_minimal_comments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Minimal Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_5_3" id="__nav_5_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specific Sections
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_5_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specific Sections
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pairwise-ld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairwise LD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../haploblocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Haplotype Blocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../marker-effects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marker Effects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local-gebv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Local GEBV
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualisations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parent-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parent Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic-simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#loading-example-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Example Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#input-file-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Input File Structure
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ordering-the-map-file" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ordering the Map File
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#computing-pairwise-ld" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Computing Pairwise LD
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#loading-example-ld-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Loading Example LD Data
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constructing-haploblocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Constructing Haploblocks
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#convert-haploblocks-to-a-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Convert Haploblocks to a Dataframe
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#estimating-marker-effects" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Estimating Marker Effects
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#computing-localgebv" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Computing localGEBV
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#visualisation-functions" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Visualisation Functions
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#selecting-haploblocks-for-the-ga" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Selecting Haploblocks for the GA
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#comparison-of-selection-strategies" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Comparison of Selection Strategies
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#genetic-algorithm-parent-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Genetic Algorithm Parent Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simulating-recurrent-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Simulating Recurrent Selection
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="hapselect-workflow-tutorial">HapSelect Workflow Tutorial<a class="headerlink" href="#hapselect-workflow-tutorial" title="Permanent link">&para;</a></h1>
+<p>This tutorial demonstrates a complete HapSelect workflow, including:</p>
+<ol>
+<li>Preparing genotype and map files</li>
+<li>Computing linkage disequilibrium (LD)</li>
+<li>Constructing haploblocks</li>
+<li>Estimating marker effects</li>
+<li>Computing localGEBV</li>
+<li>Visualizing haploblocks, marker effects, localGEBV, haploblock variance, LD decay, and more</li>
+<li>Parent selection with the genetic algorithm (GA)</li>
+<li>Simulating recurrent truncation selection (TS) with GA selected parents vs TS selected parents</li>
+</ol>
+<hr />
+<h2 id="loading-example-data">Loading Example Data<a class="headerlink" href="#loading-example-data" title="Permanent link">&para;</a></h2>
+<p>HapSelect ships with several small example datasets:</p>
+<ul>
+<li><code>map</code></li>
+<li><code>geno</code></li>
+<li><code>ld_pairs</code></li>
+<li><code>BLUE</code></li>
+<li><code>marker_effects</code></li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">library</span><span class="p">(</span><span class="n">HapSelect</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="input-file-structure">Input File Structure<a class="headerlink" href="#input-file-structure" title="Permanent link">&para;</a></h2>
+<h3 id="map-file">Map File<a class="headerlink" href="#map-file" title="Permanent link">&para;</a></h3>
+<p>The map file must contain:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">SNP</td>
+<td style="text-align: left;">Character marker/SNP identifier</td>
+</tr>
+<tr>
+<td style="text-align: left;">Chromosome</td>
+<td style="text-align: left;">Numeric chromosome identifier</td>
+</tr>
+<tr>
+<td style="text-align: left;">Position</td>
+<td style="text-align: left;">Numeric physical position or genetic map position</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nf">head</span><span class="p">(</span><span class="n">HapSelect</span><span class="o">::</span><span class="n">map</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="genotype-file">Genotype File<a class="headerlink" href="#genotype-file" title="Permanent link">&para;</a></h3>
+<p>The genotype file should contain:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Columns</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">First 3 columns</td>
+<td style="text-align: left;">Map information (SNP, Chromosome, Position) in the same order and format</td>
+</tr>
+<tr>
+<td style="text-align: left;">Remaining columns</td>
+<td style="text-align: left;">Individuals/accessions genotypes with the column name denoting the individual</td>
+</tr>
+</tbody>
+</table>
+<p>Genotypes are expected to be numeric dosage coded:</p>
+<ul>
+<li>Diploid: usually <code>0/1/2</code></li>
+<li>Polyploid: supports up to any integer ploidy</li>
+</ul>
+<p>Or, when performing a true haplotype analysis, <code>0/1</code> only with <code>k</code> columns per individual representing a ploidy of <code>k</code></p>
+<p>Missing values should ideally be:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kc">NA</span>
+</code></pre></div>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nf">head</span><span class="p">(</span><span class="n">HapSelect</span><span class="o">::</span><span class="n">geno</span><span class="p">[,</span><span class="m">1</span><span class="o">:</span><span class="m">10</span><span class="p">])</span>
+</code></pre></div>
+<hr />
+<h2 id="ordering-the-map-file">Ordering the Map File<a class="headerlink" href="#ordering-the-map-file" title="Permanent link">&para;</a></h2>
+<p>Map files must be ordered by:</p>
+<ol>
+<li>Chromosome</li>
+<li>Position</li>
+</ol>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">map</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">HapSelect</span><span class="o">::</span><span class="n">map</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="c1"># simulate unordered map</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">map2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">map</span><span class="p">[</span><span class="nf">sample</span><span class="p">(</span><span class="m">1</span><span class="o">:</span><span class="nf">nrow</span><span class="p">(</span><span class="n">map</span><span class="p">),</span><span class="w"> </span><span class="nf">nrow</span><span class="p">(</span><span class="n">map</span><span class="p">)),</span><span class="w"> </span><span class="p">]</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># reorder map</span>
+<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="n">map2</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">order_map</span><span class="p">(</span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map2</span><span class="p">)</span>
+</code></pre></div>
+<p>The <code>order_map()</code> function:</p>
+<ul>
+<li>checks some formatting</li>
+<li>ensures proper ordering</li>
+<li>standardizes column names (assumes columns are in the right order)</li>
+</ul>
+<hr />
+<h2 id="computing-pairwise-ld">Computing Pairwise LD<a class="headerlink" href="#computing-pairwise-ld" title="Permanent link">&para;</a></h2>
+<h3 id="native-ld-computation">Native LD Computation<a class="headerlink" href="#native-ld-computation" title="Permanent link">&para;</a></h3>
+<p>The package contains a native LD calculator (not recommended for use).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">ld_pairs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">pairwise_ld</span><span class="p">(</span><span class="n">geno</span><span class="p">,</span><span class="w"> </span><span class="n">parallelize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="important-notes">Important Notes<a class="headerlink" href="#important-notes" title="Permanent link">&para;</a></h4>
+<ul>
+<li>This is primarily for demonstration purposes</li>
+<li>It will be very slow for moderate to large datasets</li>
+<li>PLINK v1.9 is strongly recommended for real analyses</li>
+</ul>
+<hr />
+<h3 id="computing-pairwise-ld-with-plink-recommended">Computing Pairwise LD with PLINK (<strong>Recommended</strong>)<a class="headerlink" href="#computing-pairwise-ld-with-plink-recommended" title="Permanent link">&para;</a></h3>
+<h4 id="important-notes_1">Important Notes<a class="headerlink" href="#important-notes_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>PLINK 1.9 <strong>MUST</strong> be installed and available in the <code>PATH</code> to use this function!</li>
+<li>See the <a href="https://wrshf7.github.io/HapSelect-Docs/installation/">Installation Guide</a> for more details</li>
+<li>LD can be calculated externally, but must be provided in the same format as utilised in this package</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">ld_pairs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">plink_pairwise_ld_geno</span><span class="p">(</span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span><span class="w"> </span><span class="n">ld_window</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">999999</span><span class="p">,</span><span class="w"> </span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">                                </span><span class="n">ld_window_kb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1e6</span><span class="p">,</span><span class="w"> </span><span class="n">ld_window_r2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="p">)</span>
+</code></pre></div>
+<h4 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>prefix</code></td>
+<td style="text-align: left;">PLINK binary prefix</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ld_window</code></td>
+<td style="text-align: left;">Maximum number of SNP pairs ahead to compute LD</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ld_window_kb</code></td>
+<td style="text-align: left;">LD window size in kb</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ld_window_r2</code></td>
+<td style="text-align: left;">Minimum LD threshold before termination of LD calculation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>extra_args</code></td>
+<td style="text-align: left;">Additional PLINK arguments</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="loading-example-ld-data">Loading Example LD Data<a class="headerlink" href="#loading-example-ld-data" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">ld_pairs</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">HapSelect</span><span class="o">::</span><span class="n">ld_pairs</span>
+</code></pre></div>
+<p>The LD dataframe must contain the following columns:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nf">c</span><span class="p">(</span><span class="s">&quot;Chrom&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Locus1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Locus2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Name1&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;Name2&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;LD&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="other-information">Other Information<a class="headerlink" href="#other-information" title="Permanent link">&para;</a></h3>
+<p>Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.</p>
+<p>Columns:
+- <code>Chrom</code>: the chromosome each SNP pair belongs to (numeric).
+- <code>Locus1</code>: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the <strong>ordered map file</strong> above.
+- <code>Locus2</code>: similar to <code>Locus1</code>, this is the numerical integer of the second marker in the marker pair.
+- <code>Name1</code>: Character name of the first marker in the pair as seen in the genotype, map, and marker effects file.
+- <code>Name2</code>: Similar to <code>Name1</code>, this corresponds to the name of the second marker in the pair as seen in the genotype, map, and marker effects file.
+- <code>LD</code>: The numerical LD value computed. This is typically an <span class="arithmatex">\(\text{r}^{2}\)</span> value.</p>
+<hr />
+<h2 id="constructing-haploblocks">Constructing Haploblocks<a class="headerlink" href="#constructing-haploblocks" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">  </span><span class="n">ld</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ld_pairs</span><span class="p">,</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">  </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;flanking&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">  </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.2</span><span class="p">,</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a><span class="w">  </span><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">4</span><span class="p">,</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a><span class="w">  </span><span class="n">tol_reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">  </span><span class="n">start</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;LD&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a><span class="w">  </span><span class="n">parallel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="haploblocking-parameters">Haploblocking Parameters<a class="headerlink" href="#haploblocking-parameters" title="Permanent link">&para;</a></h3>
+<h4 id="method"><code>method</code><a class="headerlink" href="#method" title="Permanent link">&para;</a></h4>
+<p>Controls how LD is evaluated when extending blocks.</p>
+<p>Options:</p>
+<ul>
+<li><code>"flanking"</code> → compares the LD of the adjacent marker only (i.e., compares current first/last marker in the block to the next marker)</li>
+<li><code>"average"</code> → compares average LD across block (i.e., averages the next marker's LD to all markers currently in the block)</li>
+</ul>
+<hr />
+<h4 id="threshold"><code>threshold</code><a class="headerlink" href="#threshold" title="Permanent link">&para;</a></h4>
+<p>LD cutoff (<code>r²</code>) used to terminate blocks.</p>
+<p>Typical values:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="m">0.3</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="m">0.7</span>
+</code></pre></div>
+<ul>
+<li>Higher values create smaller haploblocks (great for greater resolution in QTL discovery applications)</li>
+<li>Lower values are less aggressive, but may extend blocks past biological or statistical inference. Lower values may more fully capture QTL effects if heavily dispersed</li>
+<li>In diverse datasets, lower values are generally needed, but in breeding lines (crops), higher values are likely better</li>
+<li>Users should experiment with different LD thresholds to find which meets their needs</li>
+</ul>
+<hr />
+<h4 id="tolerance"><code>tolerance</code><a class="headerlink" href="#tolerance" title="Permanent link">&para;</a></h4>
+<p>Allows temporary LD drops within a block. This may be caused by reference alignment error, genotyping error, or other issues.
+This value should be specified as a positive integer.</p>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2</span>
+</code></pre></div>
+<p>allows two low-LD markers before terminating the block. If the third marker meets the threshold, the block will not be terminated and all three markers will be included in the block.</p>
+<hr />
+<h4 id="tol_reset"><code>tol_reset</code><a class="headerlink" href="#tol_reset" title="Permanent link">&para;</a></h4>
+<p>If <code>TRUE</code>, tolerance resets after successful marker addition (i.e., sets the counter back to 0). If <code>FALSE</code>, the counter keeps iterating even after a successful marker addition and will terminate upon exceeding the integer specified and not include the marker(s).</p>
+<hr />
+<h4 id="start"><code>start</code><a class="headerlink" href="#start" title="Permanent link">&para;</a></h4>
+<p>Controls how blocks initiate.</p>
+<p>Options:</p>
+<ul>
+<li><code>"LD"</code> → start from strongest LD pairs and build to the left and to the right. The <code>tolerance</code> is unique to each side.</li>
+<li><code>"beginning"</code> → sequential chromosome scan starting from the first marker and only extending "right" (i.e., to the next marker based on position).</li>
+</ul>
+<hr />
+<h2 id="convert-haploblocks-to-a-dataframe">Convert Haploblocks to a Dataframe<a class="headerlink" href="#convert-haploblocks-to-a-dataframe" title="Permanent link">&para;</a></h2>
+<p>The former function returns a list object which may be useful in some applications. This function will turn it into a more easily digestible format and report some information.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">block_obj_to_df</span><span class="p">(</span><span class="n">haploblocks</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="summarise-haploblocks">Summarise Haploblocks<a class="headerlink" href="#summarise-haploblocks" title="Permanent link">&para;</a></h3>
+<p>Reports various summary statistics about blocks including average number of SNP per block, average size per block (not including single marker blocks), proportion of blocks comprised of a single marker, etc.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="nf">block_summary</span><span class="p">(</span><span class="n">block_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblocks</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h2 id="estimating-marker-effects">Estimating Marker Effects<a class="headerlink" href="#estimating-marker-effects" title="Permanent link">&para;</a></h2>
+<h3 id="loading-example-phenotypes">Loading Example Phenotypes<a class="headerlink" href="#loading-example-phenotypes" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">BLUE</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">HapSelect</span><span class="o">::</span><span class="n">BLUE</span>
+</code></pre></div>
+<p>The BLUE dataframe should contain:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Column 1</td>
+<td style="text-align: left;">Individual IDs matching the genotype file</td>
+</tr>
+<tr>
+<td style="text-align: left;">Column 2</td>
+<td style="text-align: left;">A singular adjusted phenotype / BLUE / de-regressed BLUP</td>
+</tr>
+</tbody>
+</table>
+<h4 id="important-note">Important Note<a class="headerlink" href="#important-note" title="Permanent link">&para;</a></h4>
+<p>We do not currently support other effects in the model or multiple observations per individual. If more advanced modelling is needed, please utilise other software.
+See the <a href="https://wrshf7.github.io/HapSelect-Docs/overview/">Documentation Overview</a> for more details and alternative R packages for independent modelling.</p>
+<hr />
+<h3 id="compute-marker-effects">Compute Marker Effects<a class="headerlink" href="#compute-marker-effects" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">marker_effects</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">create_marker_effects_file</span><span class="p">(</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">  </span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="w">  </span><span class="n">BLUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLUE</span><span class="p">,</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a><span class="w">  </span><span class="n">h2_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;VanRaden&quot;</span><span class="p">,</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a><span class="w">  </span><span class="n">ploidy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2L</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h4 id="marker-effect-parameters">Marker Effect Parameters<a class="headerlink" href="#marker-effect-parameters" title="Permanent link">&para;</a></h4>
+<h5 id="h2_method"><code>h2_method</code><a class="headerlink" href="#h2_method" title="Permanent link">&para;</a></h5>
+<p>Controls scaling of marker variance to compute narrow-sense heritability.</p>
+<p>Options:</p>
+<ul>
+<li><code>"VanRaden"</code> (recommended)</li>
+<li><code>"marker_num"</code> (only generally used if the genotype matrix was scaled; not applicable 99% of the time)</li>
+</ul>
+<hr />
+<h5 id="ploidy"><code>ploidy</code><a class="headerlink" href="#ploidy" title="Permanent link">&para;</a></h5>
+<p>Integer ploidy level.</p>
+<p>Must be provided as an integer. Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="m">2L</span>
+</code></pre></div>
+<p>NOT:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="m">2</span>
+</code></pre></div>
+<hr />
+<h3 id="cross-validation">Cross Validation<a class="headerlink" href="#cross-validation" title="Permanent link">&para;</a></h3>
+<h3 id="n-fold-cross-validation">N-fold Cross Validation<a class="headerlink" href="#n-fold-cross-validation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="n">CV</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">n_fold_cross_validation</span><span class="p">(</span>
+<a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a><span class="w">  </span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span>
+<a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="w">  </span><span class="n">BLUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLUE</span><span class="p">,</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="w">  </span><span class="n">nfold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5L</span><span class="p">,</span>
+<a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a><span class="w">  </span><span class="n">h2_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;VanRaden&quot;</span><span class="p">,</span>
+<a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="w">  </span><span class="n">ploidy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2L</span>
+<a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="p">)</span>
+</code></pre></div>
+<p>This splits the data up into <code>5L</code> groups in this example and utilises 4 for training and 1 for validation. Each group is utilised once for valdiation.</p>
+<p>New Options:
+- <code>nfold</code> the number of groups to split the data into as an integer</p>
+<p>Note:
+Small datasets will yield unruly results if the training set is too small!</p>
+<hr />
+<h3 id="random-traintest-cross-validation">Random Train/Test Cross Validation<a class="headerlink" href="#random-traintest-cross-validation" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="n">CV</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">cross_validation</span><span class="p">(</span>
+<a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="w">  </span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span>
+<a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a><span class="w">  </span><span class="n">BLUE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">BLUE</span><span class="p">,</span>
+<a id="__codelineno-19-4" name="__codelineno-19-4" href="#__codelineno-19-4"></a><span class="w">  </span><span class="n">train_prop</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.9</span><span class="p">,</span>
+<a id="__codelineno-19-5" name="__codelineno-19-5" href="#__codelineno-19-5"></a><span class="w">  </span><span class="n">fold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">5L</span><span class="p">,</span>
+<a id="__codelineno-19-6" name="__codelineno-19-6" href="#__codelineno-19-6"></a><span class="w">  </span><span class="n">h2_method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;VanRaden&quot;</span><span class="p">,</span>
+<a id="__codelineno-19-7" name="__codelineno-19-7" href="#__codelineno-19-7"></a><span class="w">  </span><span class="n">ploidy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">2L</span>
+<a id="__codelineno-19-8" name="__codelineno-19-8" href="#__codelineno-19-8"></a><span class="p">)</span>
+</code></pre></div>
+<p>New Options:
+- <code>train_prop</code> the proportion of data utilised to train (rounded down) with the rest utilised for validation
+- <code>fold</code> the numb of times to randomly sample a training and validation set with replacement</p>
+<hr />
+<h2 id="computing-localgebv">Computing localGEBV<a class="headerlink" href="#computing-localgebv" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="c1">#load example data</span>
+<a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a><span class="n">marker_effects</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">HapSelect</span><span class="o">::</span><span class="n">marker_effects</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>
+<a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">compute_local_GEBV</span><span class="p">(</span>
+<a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a><span class="w">  </span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span>
+<a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a><span class="w">  </span><span class="n">marker_effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">marker_effects</span><span class="p">,</span>
+<a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a><span class="w">  </span><span class="n">haploblocks_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblocks</span><span class="p">,</span>
+<a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a><span class="w">  </span><span class="n">set_missing_NA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a><span class="w">  </span><span class="n">mean_adjust</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a><span class="w">  </span><span class="n">parallel</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span>
+<a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="localgebv-parameters">localGEBV Parameters<a class="headerlink" href="#localgebv-parameters" title="Permanent link">&para;</a></h3>
+<h4 id="set_missing_na"><code>set_missing_NA</code><a class="headerlink" href="#set_missing_na" title="Permanent link">&para;</a></h4>
+<p>If <code>TRUE</code>:</p>
+<ul>
+<li>any haploblock with ≥1 missing genotype becomes <code>NA</code></li>
+</ul>
+<p>If <code>FALSE</code>:</p>
+<ul>
+<li>localGEBV is computed using the non-missing markers</li>
+</ul>
+<hr />
+<h4 id="mean_adjust"><code>mean_adjust</code><a class="headerlink" href="#mean_adjust" title="Permanent link">&para;</a></h4>
+<p>Centers markers internally.</p>
+<p>This is usually required because marker effects are typically estimated from centered genotype matrices.
+Only set to <code>FALSE</code> if you are highly confident in what you are doing!</p>
+<p>Recommended for 99% of cases, otherwise GEBV and localGEBV will be biased (will not affect the haploblock variance):</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="n">mean_adjust</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span>
+</code></pre></div>
+<h5 id="important-information">Important Information<a class="headerlink" href="#important-information" title="Permanent link">&para;</a></h5>
+<p>A good confirmation things are working properly is to reconstruct GEBV from Zu, where Z is the centered marker matrix and u are the marker effects.
+The mean should be 0 (or very close to it) and reflect GBLUP GEBV if using rrBLUP, BayesC, or GBLUP back solve methods.
+If the reconstructed GEBV mean is meaningfully away from 0, it indicates the wrong marker matrix (i.e., needs to be centered) is being used or the marker matrix was not centered when estimating marker effects.</p>
+<p>The package will internally center markers if <code>mean_adjust = TRUE</code>. If the matrix is already centered, centering won't change the values
+or centering can be set to <code>FALSE</code>.</p>
+<p>If you want genotype/haplotype configurations to match the 0/1/2/# dosage format, provide the uncentered genotype matrix and set <code>mean_adjust = TRUE</code>. Otherwise, the reported genotype/haplotype configurations will reflect centered values. For clarity, you must provide dosage format (usually 0/1/2 for diploid, any integer for polypoid).</p>
+<hr />
+<h2 id="visualisation-functions">Visualisation Functions<a class="headerlink" href="#visualisation-functions" title="Permanent link">&para;</a></h2>
+<h3 id="important-information_1">Important Information<a class="headerlink" href="#important-information_1" title="Permanent link">&para;</a></h3>
+<p>All visualisations are <code>ggplot</code> objects and can be modified accordingly like any other <code>ggplot</code> object. E.g., if one wishes to change the x-axis label of the Haploblock Positions Plot to "cM", the corresponding code would be:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="n">haploblock_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="n">haploblock_plot</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nf">labs</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;cM&quot;</span><span class="p">)</span>
+</code></pre></div>
+<h3 id="marker-effects-plot">Marker Effects Plot<a class="headerlink" href="#marker-effects-plot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="n">marker_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">marker_effects_plot</span><span class="p">(</span>
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a><span class="w">  </span><span class="n">marker_effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">marker_effects</span><span class="o">$</span><span class="n">Effect</span><span class="p">,</span>
+<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a><span class="w">  </span><span class="n">chr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">$</span><span class="n">Chromosome</span><span class="p">,</span>
+<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="w">  </span><span class="n">pos</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="o">$</span><span class="n">Position</span><span class="p">,</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="w">  </span><span class="n">colors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;#A01FF0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;#A7A8AA&quot;</span><span class="p">)</span>
+<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="p">)</span>
+<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a>
+<a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a><span class="n">marker_plot</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>marker_effects</code></td>
+<td style="text-align: left;">Numeric vector of marker effects</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>chr</code></td>
+<td style="text-align: left;">Numeric chromosome vector corresponding to each marker</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pos</code></td>
+<td style="text-align: left;">Numeric marker positions vector (genetic map or physical position)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>colors</code></td>
+<td style="text-align: left;">Vector of length 2 of alternating chromosome colors</td>
+</tr>
+</tbody>
+</table>
+<h4 id="notes">Notes<a class="headerlink" href="#notes" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Chromosomes alternate between the two provided colors</li>
+<li>Missing values (<code>NA</code>) are automatically removed before plotting</li>
+<li>Chromosomes should generally be numeric for proper ordering</li>
+</ul>
+<hr />
+<h3 id="unique-haplotype-effects-plot">Unique Haplotype Effects Plot<a class="headerlink" href="#unique-haplotype-effects-plot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="n">haplo_eff_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">unique_haplo_effects_plot</span><span class="p">(</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="w">  </span><span class="n">haplo_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a><span class="w">  </span><span class="n">colors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;#A01FF0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;#A7A8AA&quot;</span><span class="p">),</span>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="w">  </span><span class="n">pos_type</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;midpoint&quot;</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a><span class="p">)</span>
+<a id="__codelineno-24-6" name="__codelineno-24-6" href="#__codelineno-24-6"></a>
+<a id="__codelineno-24-7" name="__codelineno-24-7" href="#__codelineno-24-7"></a><span class="n">haplo_eff_plot</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>haplo_obj</code></td>
+<td style="text-align: left;">Object returned from <code>compute_local_GEBV()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>colors</code></td>
+<td style="text-align: left;">Alternating chromosome colors</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pos_type</code></td>
+<td style="text-align: left;"><code>"midpoint"</code> or <code>"start"</code> positioning of haploblocks</td>
+</tr>
+</tbody>
+</table>
+<h4 id="pos_type"><code>pos_type</code><a class="headerlink" href="#pos_type" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>"midpoint"</code></td>
+<td style="text-align: left;">Plot effects at the midpoint of the haploblock</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>"start"</code></td>
+<td style="text-align: left;">Plot effects at the first marker in the haploblock</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="funnel-plot">Funnel Plot<a class="headerlink" href="#funnel-plot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="n">funnel_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">block_var_funnel_plot</span><span class="p">(</span>
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a><span class="w">  </span><span class="n">haplo_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a><span class="w">  </span><span class="n">mean_line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span>
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="w">  </span><span class="n">scale_colors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;blue&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;purple&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;red&quot;</span><span class="p">)</span>
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a><span class="p">)</span>
+<a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a><span class="n">funnel_plot</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>haplo_obj</code></td>
+<td style="text-align: left;">Object returned from <code>compute_local_GEBV()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>mean_line</code></td>
+<td style="text-align: left;">Adds dashed mean variance line</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>scale_colors</code></td>
+<td style="text-align: left;">Vector of length 3 defining low/mid/high effect colors</td>
+</tr>
+</tbody>
+</table>
+<h4 id="notes_1">Notes<a class="headerlink" href="#notes_1" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Haploblock variance is log-scaled and normalized between 0 and 1 for display</li>
+<li>Useful for identifying high-effect haplotypes with large variance</li>
+</ul>
+<hr />
+<h3 id="haploblock-position-plot">Haploblock Position Plot<a class="headerlink" href="#haploblock-position-plot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="n">haploblock_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">plot_haploblocks</span><span class="p">(</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="w">  </span><span class="n">haploblock_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="o">$</span><span class="n">Haploblocks</span><span class="p">,</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a><span class="w">  </span><span class="n">block_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;#A01FF0&quot;</span><span class="p">,</span>
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a><span class="w">  </span><span class="n">chrom_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a><span class="w">  </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.30</span><span class="p">,</span>
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a><span class="w">  </span><span class="n">single_width_bp</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a><span class="p">)</span>
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a><span class="n">haploblock_plot</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>haploblock_df</code></td>
+<td style="text-align: left;">Haploblock dataframe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>block_fill</code></td>
+<td style="text-align: left;">Color of haploblocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>chrom_fill</code></td>
+<td style="text-align: left;">Chromosome background color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>height</code></td>
+<td style="text-align: left;">Chromosome thickness</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>single_width_bp</code></td>
+<td style="text-align: left;">Width of single-marker blocks (mostly deprecated)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="notes_2">Notes<a class="headerlink" href="#notes_2" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>chrom_fill = NA</code> produces transparent chromosomes</li>
+<li>Smaller <code>height</code> values create thinner chromosomes</li>
+<li>Larger values create thicker chromosome tracks</li>
+<li><code>single_width_bp</code> does not control width of single marker blocks anymore: it is a mostly deprecated option</li>
+</ul>
+<hr />
+<h3 id="marker-density-plot">Marker Density Plot<a class="headerlink" href="#marker-density-plot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a><span class="n">marker_density_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">plot_marker_density</span><span class="p">(</span>
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a><span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a><span class="w">  </span><span class="n">bin_size</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500e3</span><span class="p">,</span>
+<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a><span class="w">  </span><span class="n">height</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.3</span><span class="p">,</span>
+<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a><span class="w">  </span><span class="n">chrom_fill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NA</span><span class="p">,</span>
+<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a><span class="w">  </span><span class="n">col_low</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;white&quot;</span><span class="p">,</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a><span class="w">  </span><span class="n">col_mid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;purple&quot;</span><span class="p">,</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a><span class="w">  </span><span class="n">col_high</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;red&quot;</span>
+<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a><span class="p">)</span>
+<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>
+<a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a><span class="n">marker_density_plot</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>map</code></td>
+<td style="text-align: left;">Ordered map dataframe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>bin_size</code></td>
+<td style="text-align: left;">Window size (based on position) used to count markers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>height</code></td>
+<td style="text-align: left;">Chromosome thickness</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>chrom_fill</code></td>
+<td style="text-align: left;">Chromosome background color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>col_low</code></td>
+<td style="text-align: left;">Low-density color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>col_mid</code></td>
+<td style="text-align: left;">Mid-density color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>col_high</code></td>
+<td style="text-align: left;">High-density color</td>
+</tr>
+</tbody>
+</table>
+<h4 id="notes_3">Notes<a class="headerlink" href="#notes_3" title="Permanent link">&para;</a></h4>
+<ul>
+<li>Smaller <code>bin_size</code> values increase resolution but also increase noise</li>
+<li>Larger bins produce smoother chromosome-wide density patterns</li>
+<li>Final bins are automatically capped at chromosome ends</li>
+</ul>
+<hr />
+<h3 id="ld-decay-plot">LD Decay Plot<a class="headerlink" href="#ld-decay-plot" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="n">ld_decay_plot</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">plot_ld_decay</span><span class="p">(</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">  </span><span class="n">ld</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ld_pairs</span><span class="p">,</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="w">  </span><span class="n">max_kb</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">500</span><span class="p">,</span>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">  </span><span class="n">span</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.3</span><span class="p">,</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="w">  </span><span class="n">k</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10L</span><span class="p">,</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="w">  </span><span class="n">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;gam_cr&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a><span class="w">  </span><span class="n">point_color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;#A7A8AA&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a><span class="w">  </span><span class="n">curve_color</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;#A01FF0&quot;</span><span class="p">,</span>
+<a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="w">  </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.2</span>
+<a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a><span class="p">)</span>
+<a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>
+<a id="__codelineno-28-13" name="__codelineno-28-13" href="#__codelineno-28-13"></a><span class="n">ld_decay_plot</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>map</code></td>
+<td style="text-align: left;">Ordered map dataframe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ld</code></td>
+<td style="text-align: left;">LD dataframe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_kb</code></td>
+<td style="text-align: left;">Maximum pairwise distance in kb to consider</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>method</code></td>
+<td style="text-align: left;">Curve fitting method</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>span</code></td>
+<td style="text-align: left;">LOESS smoothing parameter between 0 and 1</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>k</code></td>
+<td style="text-align: left;">Integer number of GAM basis functions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>point_color</code></td>
+<td style="text-align: left;">LD point color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>curve_color</code></td>
+<td style="text-align: left;">Fitted curve color</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>alpha</code></td>
+<td style="text-align: left;">Point transparency between 0 and 1</td>
+</tr>
+</tbody>
+</table>
+<h4 id="method_1"><code>method</code><a class="headerlink" href="#method_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Option</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>"gam_tp"</code></td>
+<td style="text-align: left;">Thin-plate regression spline GAM</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>"gam_cr"</code></td>
+<td style="text-align: left;">Cubic regression spline GAM</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>"exp"</code></td>
+<td style="text-align: left;">Exponential decay model</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>"loess"</code></td>
+<td style="text-align: left;">LOESS smoothing</td>
+</tr>
+</tbody>
+</table>
+<h4 id="notes_4">Notes<a class="headerlink" href="#notes_4" title="Permanent link">&para;</a></h4>
+<ul>
+<li><code>"exp"</code> guarantees monotonic decay and does not utilise <code>k</code> or <code>span</code></li>
+<li><code>span</code> is only utilised by the <code>loess</code> method</li>
+<li>Smaller <code>span</code> values follow local structure more closely, but may over fit</li>
+<li>Larger <code>span</code> values produce smoother curves, but may over smooth</li>
+<li><code>k</code> is only utilised by the <code>gam_cr</code> and <code>gam_tp</code> methods</li>
+<li>Lower <code>k</code> values smooth GAM curves more aggressively whereas higher values may overfit</li>
+</ul>
+<hr />
+<h2 id="selecting-haploblocks-for-the-ga">Selecting Haploblocks for the GA<a class="headerlink" href="#selecting-haploblocks-for-the-ga" title="Permanent link">&para;</a></h2>
+<p>Before running the genetic algorithm (GA), haploblocks can be filtered to reduce dimensionality and focus on the most important genomic regions.</p>
+<p>The <code>select_top_blocks()</code> function supports three different selection strategies.</p>
+<hr />
+<h3 id="1-select-the-top-n-haploblocks">1. Select the Top <code>n</code> Haploblocks<a class="headerlink" href="#1-select-the-top-n-haploblocks" title="Permanent link">&para;</a></h3>
+<p>Selects the highest variance haploblocks directly.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">select_top_blocks</span><span class="p">(</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="w">  </span><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">15</span>
+<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="p">)</span>
+</code></pre></div>
+<h4 id="parameters_1">Parameters<a class="headerlink" href="#parameters_1" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>n</code></td>
+<td style="text-align: left;">Integer number of top haploblocks to retain based on block variance</td>
+</tr>
+</tbody>
+</table>
+<h5 id="notes_5">Notes<a class="headerlink" href="#notes_5" title="Permanent link">&para;</a></h5>
+<ul>
+<li>Very interpretable and simple.</li>
+<li>Useful when a fixed number of blocks is desired.</li>
+</ul>
+<hr />
+<h3 id="2-select-the-top-percentage-of-haploblocks">2. Select the Top Percentage of Haploblocks<a class="headerlink" href="#2-select-the-top-percentage-of-haploblocks" title="Permanent link">&para;</a></h3>
+<p>Selects the top proportion of haploblocks ranked by variance.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">select_top_blocks</span><span class="p">(</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="w">  </span><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span><span class="n">perc_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="p">)</span>
+</code></pre></div>
+<h4 id="parameters_2">Parameters<a class="headerlink" href="#parameters_2" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>perc_total</code></td>
+<td style="text-align: left;">Proportion of haploblocks to retain (between 0 and 1)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="n">perc_total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span>
+</code></pre></div>
+<p>Retains the top 50% of haploblocks ranked by variance (rounded up).</p>
+<h5 id="notes_6">Notes<a class="headerlink" href="#notes_6" title="Permanent link">&para;</a></h5>
+<ul>
+<li>Scales automatically with dataset size.</li>
+<li>Less arbitrary than selecting a fixed number of blocks.</li>
+<li>Still ignores cumulative variance explained.</li>
+<li>May retain many low-information blocks in large datasets.</li>
+</ul>
+<hr />
+<h3 id="3-select-haploblocks-explaining-a-percentage-of-total-variance">3. Select Haploblocks Explaining a Percentage of Total Variance<a class="headerlink" href="#3-select-haploblocks-explaining-a-percentage-of-total-variance" title="Permanent link">&para;</a></h3>
+<p>Retains the minimum number of haploblocks required to explain a specified proportion of the total haploblock variance.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">select_top_blocks</span><span class="p">(</span>
+<a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a><span class="w">  </span><span class="n">haploblock_obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="p">,</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="w">  </span><span class="n">perc_of_total_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.9</span>
+<a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a><span class="p">)</span>
+</code></pre></div>
+<h4 id="parameters_3">Parameters<a class="headerlink" href="#parameters_3" title="Permanent link">&para;</a></h4>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>perc_of_total_var</code></td>
+<td style="text-align: left;">Minimum proportion of cumulative block variance to explain between 0 and 1 (0 means none, 1 means all)</td>
+</tr>
+</tbody>
+</table>
+<p>Example:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-33-1" name="__codelineno-33-1" href="#__codelineno-33-1"></a><span class="n">perc_of_total_var</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.9</span>
+</code></pre></div>
+<p>Retains enough haploblocks to explain at least 90% of the total block variance.</p>
+<h5 id="notes_7">Notes<a class="headerlink" href="#notes_7" title="Permanent link">&para;</a></h5>
+<ul>
+<li>Usually the most biologically meaningful approach.</li>
+<li>Dynamically adapts to the architecture of the trait.</li>
+<li>Retains more blocks for highly polygenic traits.</li>
+<li>Retains fewer blocks when major-effect haploblocks dominate.</li>
+</ul>
+<h2 id="comparison-of-selection-strategies">Comparison of Selection Strategies<a class="headerlink" href="#comparison-of-selection-strategies" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Method</th>
+<th style="text-align: left;">Strengths</th>
+<th style="text-align: left;">Weaknesses</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Top <code>n</code> blocks</td>
+<td style="text-align: left;">Simple and interpretable</td>
+<td style="text-align: left;">Arbitrary cutoff</td>
+</tr>
+<tr>
+<td style="text-align: left;">Top percentage</td>
+<td style="text-align: left;">Scales with dataset size</td>
+<td style="text-align: left;">May retain weak blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;">Variance explained</td>
+<td style="text-align: left;">Biologically adaptive</td>
+<td style="text-align: left;">Number of retained blocks varies between traits</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="computational-considerations">Computational Considerations<a class="headerlink" href="#computational-considerations" title="Permanent link">&para;</a></h3>
+<p>Increasing the number of retained haploblocks:</p>
+<ul>
+<li>increases optimisation dimensionality</li>
+<li>increases GA runtime</li>
+<li>increases memory usage</li>
+<li>may slow convergence substantially</li>
+</ul>
+<p>However, retaining too few blocks may:</p>
+<ul>
+<li>miss favourable rare haplotypes</li>
+<li>oversimplify trait architecture</li>
+<li>reduce long-term genetic gain potential</li>
+</ul>
+<p>Users are encouraged to experiment with multiple selection thresholds depending on breeding goals and computational resources.</p>
+<hr />
+<h2 id="genetic-algorithm-parent-selection">Genetic Algorithm Parent Selection<a class="headerlink" href="#genetic-algorithm-parent-selection" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-34-1" name="__codelineno-34-1" href="#__codelineno-34-1"></a><span class="n">GA_output</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">genetic_algorithm</span><span class="p">(</span>
+<a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a><span class="w">  </span><span class="n">localGEBV</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblock_obj</span><span class="o">$</span><span class="n">Haplotype_Effect_Matrix_GA</span><span class="p">,</span>
+<a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="w">  </span><span class="n">n_founders</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="w">  </span><span class="n">popSize</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">10</span><span class="p">,</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a><span class="w">  </span><span class="n">maxiter</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">300</span><span class="p">,</span>
+<a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a><span class="w">  </span><span class="n">run</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">150</span><span class="p">,</span>
+<a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a><span class="w">  </span><span class="n">selfing</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">,</span>
+<a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a><span class="w">  </span><span class="n">pmutation</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.2</span><span class="p">,</span>
+<a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a><span class="w">  </span><span class="n">pcrossover</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span><span class="p">,</span>
+<a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a><span class="w">  </span><span class="n">pelite</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.5</span>
+<a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="ga-parameters">GA Parameters<a class="headerlink" href="#ga-parameters" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>n_founders</code></td>
+<td>Integer number of parents to choose</td>
+</tr>
+<tr>
+<td><code>popSize</code></td>
+<td>Integer number of parental sets per simulation iteration</td>
+</tr>
+<tr>
+<td><code>maxiter</code></td>
+<td>Maximum iterations before termination</td>
+</tr>
+<tr>
+<td><code>run</code></td>
+<td>Iterations without improvement before stopping</td>
+</tr>
+<tr>
+<td><code>selfing</code></td>
+<td>Allow selfing (i.e., for the fitness function allow the same parent at a block). If <code>FALSE</code> requires two different parents per chosen block</td>
+</tr>
+<tr>
+<td><code>pmutation</code></td>
+<td>Mutation probability - swaps out one random individual for another from the total population</td>
+</tr>
+<tr>
+<td><code>pcrossover</code></td>
+<td>Crossover probability - swaps half of each population; if there is overlap, non-overlapping parents are chosen randomly from the total population</td>
+</tr>
+<tr>
+<td><code>pelite</code></td>
+<td>Elite proportion (between 0 and 1) - constrains choosing individuals from the total population to the highest <code>pelite</code> proportion based on GEBV when needed to find non-overlapping parents for <code>pcrossover</code></td>
+</tr>
+</tbody>
+</table>
+<p>The genetic algorithm (GA) balances:</p>
+<ol>
+<li>
+<p><strong>Exploration</strong><br />
+   Searching broadly across possible parental combinations</p>
+</li>
+<li>
+<p><strong>Exploitation</strong><br />
+   Refining highly fit parental combinations already discovered</p>
+</li>
+</ol>
+<p>Improper parameter tuning can lead to:</p>
+<ul>
+<li>premature convergence</li>
+<li>failure to converge</li>
+<li>excessive runtime</li>
+<li>oscillation around suboptimal solutions</li>
+</ul>
+<hr />
+<h4 id="popsize"><code>popSize</code><a class="headerlink" href="#popsize" title="Permanent link">&para;</a></h4>
+<p>Controls the number of candidate parental sets evaluated per iteration.</p>
+<h5 id="trade-offs">Trade-offs<a class="headerlink" href="#trade-offs" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Smaller <code>popSize</code></th>
+<th style="text-align: left;">Larger <code>popSize</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Faster individual iterations</td>
+<td style="text-align: left;">Slower individual iterations</td>
+</tr>
+<tr>
+<td style="text-align: left;">Less memory usage</td>
+<td style="text-align: left;">Higher memory usage</td>
+</tr>
+<tr>
+<td style="text-align: left;">Late convergence</td>
+<td style="text-align: left;">Better exploration and earlier convergence</td>
+</tr>
+<tr>
+<td style="text-align: left;">Higher risk of local optima</td>
+<td style="text-align: left;">Lower risk of local optima</td>
+</tr>
+</tbody>
+</table>
+<p>Increasing <code>popSize</code> generally reduces the number of iterations needed for convergence, but each iteration becomes more computationally expensive.</p>
+<hr />
+<h4 id="maxiter"><code>maxiter</code><a class="headerlink" href="#maxiter" title="Permanent link">&para;</a></h4>
+<p>Maximum number of iterations allowed.</p>
+<h5 id="notes_8">Notes<a class="headerlink" href="#notes_8" title="Permanent link">&para;</a></h5>
+<ul>
+<li>Too small → GA may terminate before convergence</li>
+<li>Too large → unnecessary runtime after convergence</li>
+</ul>
+<p>Generally:</p>
+<ul>
+<li>small problems converge quickly</li>
+<li>highly polygenic architectures with many parents may require many iterations</li>
+</ul>
+<hr />
+<h4 id="run"><code>run</code><a class="headerlink" href="#run" title="Permanent link">&para;</a></h4>
+<p>Number of iterations allowed without improvement before stopping.</p>
+<h5 id="trade-offs_1">Trade-offs<a class="headerlink" href="#trade-offs_1" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Smaller <code>run</code></th>
+<th style="text-align: left;">Larger <code>run</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Faster termination</td>
+<td style="text-align: left;">More exhaustive search</td>
+</tr>
+<tr>
+<td style="text-align: left;">May stop too early</td>
+<td style="text-align: left;">Longer runtime</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk missing optimum</td>
+<td style="text-align: left;">Better convergence stability</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h4 id="pmutation"><code>pmutation</code><a class="headerlink" href="#pmutation" title="Permanent link">&para;</a></h4>
+<p>Mutation probability.</p>
+<p>Mutation randomly substitutes one individual within populations from the total population.</p>
+<h5 id="trade-off">Trade-off<a class="headerlink" href="#trade-off" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Low mutation</th>
+<th style="text-align: left;">High mutation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Stable convergence</td>
+<td style="text-align: left;">More exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk local optima</td>
+<td style="text-align: left;">Risk instability and "overshooting"</td>
+</tr>
+</tbody>
+</table>
+<h5 id="important-notes_2">Important Notes<a class="headerlink" href="#important-notes_2" title="Permanent link">&para;</a></h5>
+<p>Overly large mutation probabilities can prevent convergence entirely because high-performing parental sets are continuously disrupted.</p>
+<hr />
+<h4 id="pcrossover"><code>pcrossover</code><a class="headerlink" href="#pcrossover" title="Permanent link">&para;</a></h4>
+<p>Probability populations exchange parental subsets (half of each pair swapped). If there are overlapping individuals after swapping, then the duplicates are dropped and non-duplicate individuals are randomly sampled from the total population.</p>
+<h5 id="trade-offs_2">Trade-offs<a class="headerlink" href="#trade-offs_2" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Low crossover</th>
+<th style="text-align: left;">High crossover</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Less swapping</td>
+<td style="text-align: left;">Greater swapping</td>
+</tr>
+<tr>
+<td style="text-align: left;">Slower exploration</td>
+<td style="text-align: left;">Faster exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">More stable solutions</td>
+<td style="text-align: left;">Greater instability</td>
+</tr>
+</tbody>
+</table>
+<p>Very high crossover rates may cause the GA to overshoot promising solutions and continuously disrupt near-optimal parental combinations.</p>
+<hr />
+<h4 id="pelite"><code>pelite</code><a class="headerlink" href="#pelite" title="Permanent link">&para;</a></h4>
+<p>Restricts replacement individuals to the proportion of the population ranked by GEBV.</p>
+<h5 id="trade-offs_3">Trade-offs<a class="headerlink" href="#trade-offs_3" title="Permanent link">&para;</a></h5>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Smaller <code>pelite</code></th>
+<th style="text-align: left;">Larger <code>pelite</code></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Faster convergence</td>
+<td style="text-align: left;">Greater diversity</td>
+</tr>
+<tr>
+<td style="text-align: left;">Stronger selection pressure</td>
+<td style="text-align: left;">Better exploration</td>
+</tr>
+<tr>
+<td style="text-align: left;">Risk premature convergence</td>
+<td style="text-align: left;">Slower convergence</td>
+</tr>
+</tbody>
+</table>
+<p>Very aggressive elite selection may reduce genetic diversity within the GA search process and increase the likelihood of local optima.</p>
+<hr />
+<h3 id="if-convergence-is-unstable">If convergence is unstable:<a class="headerlink" href="#if-convergence-is-unstable" title="Permanent link">&para;</a></h3>
+<ul>
+<li>decrease <code>pmutation</code></li>
+<li>decrease <code>pcrossover</code></li>
+<li>increase <code>pelite</code></li>
+<li>increase <code>run</code></li>
+</ul>
+<h3 id="if-convergence-is-too-slow">If convergence is too slow:<a class="headerlink" href="#if-convergence-is-too-slow" title="Permanent link">&para;</a></h3>
+<ul>
+<li>increase <code>popSize</code></li>
+<li>slightly increase <code>pmutation</code></li>
+<li>slightly increase <code>pcrossover</code></li>
+</ul>
+<h3 id="if-solutions-appear-trapped-in-local-optima">If solutions appear trapped in local optima:<a class="headerlink" href="#if-solutions-appear-trapped-in-local-optima" title="Permanent link">&para;</a></h3>
+<ul>
+<li>increase <code>popSize</code></li>
+<li>increase <code>pmutation</code></li>
+<li>increase <code>pelite</code></li>
+<li>increase <code>run</code></li>
+</ul>
+<hr />
+<h3 id="inspecting-solutions">Inspecting Solutions:<a class="headerlink" href="#inspecting-solutions" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-35-1" name="__codelineno-35-1" href="#__codelineno-35-1"></a><span class="n">GA_output</span><span class="o">$</span><span class="n">One_Solution</span>
+</code></pre></div>
+<hr />
+<h2 id="simulating-recurrent-selection">Simulating Recurrent Selection<a class="headerlink" href="#simulating-recurrent-selection" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-36-1" name="__codelineno-36-1" href="#__codelineno-36-1"></a><span class="n">parent_sln_obj</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">GA_vs_TS_simulation</span><span class="p">(</span>
+<a id="__codelineno-36-2" name="__codelineno-36-2" href="#__codelineno-36-2"></a><span class="w">  </span><span class="n">GA_output</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">GA_output</span><span class="p">,</span>
+<a id="__codelineno-36-3" name="__codelineno-36-3" href="#__codelineno-36-3"></a><span class="w">  </span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span>
+<a id="__codelineno-36-4" name="__codelineno-36-4" href="#__codelineno-36-4"></a><span class="w">  </span><span class="n">marker_effects</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">marker_effects</span><span class="p">,</span>
+<a id="__codelineno-36-5" name="__codelineno-36-5" href="#__codelineno-36-5"></a><span class="w">  </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-36-6" name="__codelineno-36-6" href="#__codelineno-36-6"></a><span class="w">  </span><span class="n">genetic_map_position</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<a id="__codelineno-36-7" name="__codelineno-36-7" href="#__codelineno-36-7"></a><span class="w">  </span><span class="n">num_gen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a><span class="w">  </span><span class="n">num_sim_reps</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">30</span><span class="p">,</span>
+<a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a><span class="w">  </span><span class="n">num_cross_per_gen</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1000</span><span class="p">,</span>
+<a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a><span class="w">  </span><span class="n">num_TS_parents</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a><span class="w">  </span><span class="n">mean_adjust</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a><span class="w">  </span><span class="n">max_cM_chr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">100</span><span class="p">,</span>
+<a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a><span class="w">  </span><span class="n">PCA</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a><span class="w">  </span><span class="n">colors</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">&quot;green&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;#d95f02&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;#A01FF0&quot;</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;gray80&quot;</span><span class="p">),</span>
+<a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a><span class="w">  </span><span class="n">alpha</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">1</span><span class="p">,</span><span class="m">0.5</span><span class="p">)</span>
+<a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="display-simulation-results">Display Simulation Results<a class="headerlink" href="#display-simulation-results" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-37-1" name="__codelineno-37-1" href="#__codelineno-37-1"></a><span class="n">parent_sln_obj</span><span class="o">$</span><span class="n">Simulation_Plot</span>
+<a id="__codelineno-37-2" name="__codelineno-37-2" href="#__codelineno-37-2"></a>
+<a id="__codelineno-37-3" name="__codelineno-37-3" href="#__codelineno-37-3"></a><span class="n">parent_sln_obj</span><span class="o">$</span><span class="n">PCA_Plot</span>
+</code></pre></div>
+<h3 id="simulation-parameters">Simulation Parameters<a class="headerlink" href="#simulation-parameters" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>GA_output</code></td>
+<td style="text-align: left;">Output object from the GA</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>geno</code></td>
+<td style="text-align: left;">Genotype dataframe from before</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>marker_effects</code></td>
+<td style="text-align: left;">Marker effects dataframe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>map</code></td>
+<td style="text-align: left;">Ordered map dataframe</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>genetic_map_position</code></td>
+<td style="text-align: left;">Optional genetic map positions vector in centiMorgans in the same order as the map</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>num_gen</code></td>
+<td style="text-align: left;">Integer number of recurrent truncation selection generations</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>num_sim_reps</code></td>
+<td style="text-align: left;">Integer number of independent simulation replicates</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>num_cross_per_gen</code></td>
+<td style="text-align: left;">Integer number of progeny generated per generation via random mating</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>num_TS_parents</code></td>
+<td style="text-align: left;">Number of truncation-selected parents. If <code>NULL</code>, same as number of GA parents</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>mean_adjust</code></td>
+<td style="text-align: left;">Whether to internally center genotypes (almost always <code>TRUE</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_cM_chr</code></td>
+<td style="text-align: left;">Assumed chromosome genetic map length if no genetic map provided</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>PCA</code></td>
+<td style="text-align: left;">Whether to compute PCA visualisation (<code>TRUE</code> or <code>FALSE</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>colors</code></td>
+<td style="text-align: left;">Colors for PCA categories and simulation plot, must provide 4</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>alpha</code></td>
+<td style="text-align: left;">Transparency levels for PCA categories, must provide 4</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="understanding-simulation-parameters">Understanding Simulation Parameters<a class="headerlink" href="#understanding-simulation-parameters" title="Permanent link">&para;</a></h3>
+<h4 id="num_gen"><code>num_gen</code><a class="headerlink" href="#num_gen" title="Permanent link">&para;</a></h4>
+<p>Controls how many generations of recurrent selection are simulated.</p>
+<h5 id="larger-values">Larger Values<a class="headerlink" href="#larger-values" title="Permanent link">&para;</a></h5>
+<ul>
+<li>better evaluation of long-term gain</li>
+<li>reveals genetic plateaus</li>
+<li>better assesses diversity preservation</li>
+</ul>
+<h5 id="smaller-values">Smaller Values<a class="headerlink" href="#smaller-values" title="Permanent link">&para;</a></h5>
+<ul>
+<li>faster simulation</li>
+<li>focuses on short-term gain</li>
+</ul>
+<hr />
+<h4 id="num_sim_reps"><code>num_sim_reps</code><a class="headerlink" href="#num_sim_reps" title="Permanent link">&para;</a></h4>
+<p>Controls the number of replicate simulations.</p>
+<p>Replicates differ because of:</p>
+<ul>
+<li>recombination randomness</li>
+<li>parental chromosome sampling</li>
+<li>stochastic inheritance</li>
+</ul>
+<h5 id="larger-values_1">Larger Values<a class="headerlink" href="#larger-values_1" title="Permanent link">&para;</a></h5>
+<p>Advantages:</p>
+<ul>
+<li>smoother estimates</li>
+<li>more reliable confidence intervals</li>
+<li>reduced stochastic noise</li>
+</ul>
+<p>Disadvantages:</p>
+<ul>
+<li>increased runtime and memory</li>
+</ul>
+<hr />
+<h4 id="num_cross_per_gen"><code>num_cross_per_gen</code><a class="headerlink" href="#num_cross_per_gen" title="Permanent link">&para;</a></h4>
+<p>Number of progeny generated each generation.</p>
+<h5 id="larger-values_2">Larger Values<a class="headerlink" href="#larger-values_2" title="Permanent link">&para;</a></h5>
+<p>Advantages:</p>
+<ul>
+<li>stronger selection intensity</li>
+<li>improved ability to identify elite progeny</li>
+<li>smoother trajectories</li>
+</ul>
+<p>Disadvantages:</p>
+<ul>
+<li>slower simulations</li>
+<li>increased memory usage</li>
+</ul>
+<hr />
+<h4 id="genetic_map_position"><code>genetic_map_position</code><a class="headerlink" href="#genetic_map_position" title="Permanent link">&para;</a></h4>
+<p>Optional vector of marker positions in centiMorgans (cM).</p>
+<p>If omitted:</p>
+<ul>
+<li>chromosomes are assumed to span <code>max_cM_chr</code></li>
+<li>genetic map positions are inferred proportionally from physical distance</li>
+</ul>
+<p>Providing a true genetic map is recommended whenever available.</p>
+<hr />
+<h4 id="pca"><code>PCA</code><a class="headerlink" href="#pca" title="Permanent link">&para;</a></h4>
+<p>If <code>TRUE</code>, performs PCA on the genotype matrix and highlights:</p>
+<ul>
+<li>GA-selected parents</li>
+<li>TS-selected parents</li>
+<li>overlapping parents</li>
+<li>non-selected individuals</li>
+</ul>
+<p>This helps visualise:</p>
+<ul>
+<li>diversity retention</li>
+<li>population structure</li>
+<li>overlap between strategies</li>
+</ul>
+<hr />
+<h3 id="displaying-simulation-results">Displaying Simulation Results<a class="headerlink" href="#displaying-simulation-results" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-38-1" name="__codelineno-38-1" href="#__codelineno-38-1"></a><span class="n">parent_sln_obj</span><span class="o">$</span><span class="n">Simulation_Plot</span>
+</code></pre></div>
+<p>Displays simulated long-term genetic gain trajectories.</p>
+<hr />
+<div class="highlight"><pre><span></span><code><a id="__codelineno-39-1" name="__codelineno-39-1" href="#__codelineno-39-1"></a><span class="n">parent_sln_obj</span><span class="o">$</span><span class="n">PCA_Plot</span>
+</code></pre></div>
+<p>Displays PCA visualisation of selected parents.</p>
+<hr />
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.79ae519e.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
