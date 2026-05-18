@@ -61,7 +61,7 @@ nav:
         - Pairwise LD: workflow/pairwise-ld.md
         - Haplotype Blocks: workflow/haploblocks.md
         - Marker Effects: workflow/marker-effects.md
-        - Local GEBV: workflow/local-gebv.md
+        - LocalGEBV: workflow/local-gebv.md
         - Visualisations: workflow/visualizations.md
         - Parent Selection: workflow/parent-selection.md
         - Basic Simulation: workflow/basic-simulation.md
