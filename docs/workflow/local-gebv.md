@@ -43,7 +43,7 @@ haploblock_obj <- compute_local_GEBV(
 
 ### `mean_adjust`
 
--`TRUE` centers the genotypes according to [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980). This is a necessary step in the vast majority of cases to prevent biasing localGEBV and GEBV. It does not affect haploblock variance, but it may affect how parents are chosen in the GA.
+-`TRUE` centers the genotypes according to [VanRaden, 2008](https://doi.org/10.3168/jds.2007-0980). This is a necessary step in the vast majority of cases to prevent biasing localGEBV and GEBV. It does not affect haploblock variance, but it may affect how parents are chosen in the GA.
 
 -`FALSE` does not center the genotypes. 
 
