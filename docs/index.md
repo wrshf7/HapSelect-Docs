@@ -1,6 +1,6 @@
 # HapSelect
 
-HapSelect is an R package for haplotype based genomic selection. It partitions the genome into linkage disequilibrium blocks (haploblocks), estimates the breeding value contribution of each block per individual (localGEBV or true haplotype effect), uses a genetic algorithm (GA) to select the set of parents that maximises coverage of high-value haplotype alleles, and performs basic simulation to compare GA parents to truncation selection (TS) parents performance over time.
+HapSelect is an R package for haploblock-based genomic selection. It partitions the genome into linkage disequilibrium blocks (haploblocks), estimates regional genetic value using either a localGEBV framework or a true haplotype-effect framework, identifies high-value genomic regions, optimizes parent selection using a genetic algorithm, and performs simulation to compare alternative selection strategies.
 
 The package is designed for breeding programs running genomic selection, where identifying and targeting the genomic regions with the most exploitable diversity can improve the efficiency of parent choice.
 
@@ -11,10 +11,10 @@ The package is designed for breeding programs running genomic selection, where i
 | Pairwise LD | Compute r² between all marker pairs | `pairwise_ld()` / `plink_pairwise_ld()` |
 | Haploblocking | Partition genome into LD-based haploblocks | `def_blocks()` |
 | Genomic Prediction | Compute marker effects and prediction accuracy | `create_marker_effects_file()`, `n_fold_cross_validation()`, `cross_validation()` |
-| LocalGEBV | Estimate per-block breeding value per individual | `compute_local_GEBV()` |
-| Visualisation | Explore haploblock structure, localGEBV patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
-| Parent selection | Optimise founder set using a genetic algorithm | `genetic_algorithm()` |
-| Basic Simulation | Compare GA and TS parent performance over time and explore how diversity is captured using the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package. | `GA_vs_TS_simulation()` |
+| LocalGEBV/Haplotype Effect | Estimate per-block GEBV or haplotype effects per individual | `compute_local_GEBV()` / `compute_haplotype_effects()` |
+| Visualisation | Explore haploblock structure, localGEBV/haplotype patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
+| Parent selection | Optimise parent selection using a genetic algorithm | `local_gebv_parent_selection()` / `haplotype_parent_selection()`|
+| Basic Simulation | Compare GA and TS parent performance over time and explore how diversity is captured using the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package. | `localGEBV_vs_TS_simulation()` / `Haplotype_vs_TS_simulation()` |
 
 See the [Overview](overview.md) for a full explanation of the method, or jump to [Getting Started](getting-started.md) to run the example workflow.
 
