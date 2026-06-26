@@ -83,7 +83,7 @@ $$
 
 where \(\overline{z_{im}}\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect.
 
-This produces an **\(\text{N × J}\) matrix** of localGEBV values — one value per individual per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
+This produces an **\(\text{J × N}\) matrix** of localGEBV values — one value per individual for \(N\) individuals per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
 
 ```r
 haploblock_obj <- compute_local_GEBV(
@@ -102,7 +102,7 @@ $$
 
 where all terms are the same, except \(\overline{z_{ikm}}\) is the **centered** allele of individual \(i\) on chromosome \(k\) at marker \(m\) in haploblock \(j\) and the result is the haplotype effect of individual \(i\) for chromosome \(k\) and haploblock \(j\)
 
-This produces an **\(\text{N × JK}\) matrix** of haplotype effects — one value per individual per chromosome for \(K\) chromosome sets per haploblock for \(J\) haploblocks.
+This produces an **\(\text{J × NK}\) matrix** of haplotype effects — one value per individual per chromosome for \(K\) chromosome sets per haploblock for \(J\) haploblocks.
 
 ---
 
