@@ -22,13 +22,21 @@ A custom haploblock dataframe can be provided, but it must follow the output str
 
 ```r
 #compute pairwise LD
-ld_pairs   <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
-              ld_window_kb = 1e6, ld_window_r2 = 0)
+ld_pairs   <- plink_pairwise_ld_geno(
+  geno           = geno,
+  ld_window      = 999999,
+  ld_window_kb   = 1e6,
+  ld_window_r2   = 0
+)
 
 #make a haploblock list object
-haploblocks <- def_blocks(ld = ld_pairs, map = map, method = "flanking",
-                          threshold = 0.2, tolerance = 4, tol_reset = TRUE,
-                          start = "LD", parallel = FALSE)
+haploblocks <- def_blocks(
+  ld         = ld_pairs,
+  map        = map,
+  method     = "flanking",
+  threshold  = 0.2,
+  tolerance  = 4
+)
 
 #turn the list object into a singular data frame
 haploblocks <- block_obj_to_df(haploblocks, map)
@@ -126,18 +134,18 @@ haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_of_tot
 
 #Parent Selection (localGEBV)
 GA_output = local_gebv_parent_selection(
-    haploblock_obj = haploblock_obj, 
-    n_founders = 20,                    
-    popSize = 10,                       
-    strategy = "no_selfing"             
+    haploblock_obj   = haploblock_obj, 
+    n_founders       = 20,                    
+    popSize          = 10,                       
+    strategy         = "no_selfing"             
 )
 
 #Parent Selection (haplotypes - diploid only!)
 GA_output = ohs_parent_selection(
-    haploblock_obj = haploblock_obj,
-    n_founders = 20,                    
-    popSize = 10,                       
-    strategy = "OHS"                    
+    haploblock_obj   = haploblock_obj,
+    n_founders       = 20,                    
+    popSize          = 10,                       
+    strategy         = "OHS"                    
 )
 ```
 
@@ -155,18 +163,18 @@ For more information on parameters, see [Basic Simulation](workflow/basic-simula
 ```r
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
 parent_sln_obj = OHS_vs_TS_simulation(
-    GA_output = GA_output,
-    geno_phased = geno,                                    
+    GA_output      = GA_output,
+    geno_phased    = geno,                                    
     marker_effects = marker_effects,                       
-    map = map
+    map            = map
 )
 
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
 parent_sln_obj = localGEBV_vs_TS_simulation(
-    GA_output = GA_output,
-    geno = geno,                                           
+    GA_output      = GA_output,
+    geno           = geno,                                           
     marker_effects = marker_effects,                       
-    map = map
+    map            = map
 )
 
 ```
