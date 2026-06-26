@@ -1,6 +1,6 @@
 # Getting Started
 
-This page walks through the complete HapSelect workflow using the built-in example data.
+This page walks through the complete HapSelect using localGEBV or haplotypes using the built-in example datasets.
 
 ## Load the Package
 
@@ -17,17 +17,27 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
     - Second column should be named `Chromosome` and should be numeric for proper sorting.
     - Third column should be named `Position` and should be numeric. It can be a physical position or genetic map position.
 
-- **Genotype matrix** — individuals × markers, coded as allele dosage (0/1/2 for diploid).
+- **Genotype matrix (localGEBV)** — markers × individuals, coded as allele dosage (0/1/2 for diploid, 0/1/.../n for polyploid) at a biallelic marker.
     - First three columns should be identical to the map file.
     - Columns `4:ncol(genotype_file)` should be individuals and their genotype for each marker (rows are markers, columns are individuals).
     - Names of columns 4 onwards should be the individuals' identifiers.
     - Genotypes should be dosage format: i.e., number of copies of the alternative allele (integer counts only for consistency).
     - `NA` values are allowed and are handled differently at each stage via options in the relevant functions.
 
+- **Phased genotype matrix (haplotypes)** — markers × chromosomes coded as the allele (0 for reference, 1 for alternative) at a biallelic marker.
+    - First three columns should be identical to the map file.
+    - Columns `4:ncol(genotype_file)` should be individuals and their genotype for each marker (rows are markers, columns are individuals).
+    - Names of columns 4 onwards should be the individuals' chromosomal identifiers. The nomencalture adopted in `HapSelect` is `individualID_chromosomeNum` as the identifier, where the last `_` in the string is used to identify the chromosome.
+    - Alleles should be dosage format: i.e., 0 for the reference allele and 1 for the alternative allele.
+    - `NA` values are allowed and are handled differently at each stage via options in the relevant functions.
+
+!!! warning
+    Computing LD, haploblocks, and haplotype effects are supported for polyploids in localGEBV and haplotype methods, but parent selection algorithms and simulation currently support polyploids for localGEBV ONLY! The haplotype method is constrained to diploid past computing haplotype effects!
+
 - **LD file** - pairwise LD between each marker within a chromosome.
     - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
     - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed, because R is not built for large, iterative computations required to compute LD pairs. Even small to moderate sized SNP panels will take too long in R.
-    - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
+    - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function call.
     - Columns:
         - `Chrom`: the chromosome each SNP pair belongs to.
         - `Locus1`: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the **ordered map file** (see below for more details).
@@ -37,7 +47,7 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
         - `LD`: The numerical LD value computed. This is typically an $R^{2}$ value.
 
 - **Marker effects file** — estimated SNP effects from a genomic prediction model
-    - Can be computed for basic cases in the package with BLUE/dergressed BLUP/singular adjusted phenotype or provided externally.
+    - Can be computed for basic cases in the package (localGEBV genotype dosage matrix only!) with BLUE/dergressed BLUP/singular adjusted phenotype or provided externally.
     - First column: `SNP` corresponding to the `SNP` column in the map and genotype file. It should be formatted as a character vector.
     - Second column: `Effect` the allele substitution (marker) effects corresponding to the SNP in column one.
 
@@ -59,12 +69,13 @@ Example datasets are bundled with the package along with function examples to co
 ```r
 #Two required, primary inputs:
 map <- HapSelect::map
-geno <- HapSelect::geno
+geno <- HapSelect::geno #localGEBV
+geno <- HapSelect::geno_phased #haplotype method
 
-#Optional inputs created in the R package:
+#Optional inputs that can also be created in the R package workflow:
 ld_pairs <- HapSelect::ld_pairs
 marker_effects <- HapSelect::marker_effects
-BLUE <- HapSelect::BLUE # example file to compute marker effects
+BLUE <- HapSelect::BLUE #example file to compute marker effects
 
 #Haploblock dataframe can be computed by running the def_blocks() and block_obj_to_df() functions on the example data
 
@@ -85,11 +96,11 @@ map <- order_map(map = map)
 ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 
 # Recommended: PLINK-backed implementation
-ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
+ld_pairs <- plink_pairwise_ld_geno(geno = geno)
 ```
 
 !!! tip
-    For large marker panels, use `plink_pairwise_ld()` with a PLINK v1.9 binary fileset. See [Pairwise LD](workflow/pairwise-ld.md) for details.
+    For large marker panels, use `plink_pairwise_ld_geno()`. See [Pairwise LD](workflow/pairwise-ld.md) for details.
 
 ## Step 3 — Define Haplotype Blocks
 
@@ -97,20 +108,21 @@ ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
 haploblocks <- def_blocks(
   ld        = ld_pairs,
   map       = map,
-  method    = "flanking",
-  threshold = 0.2,
-  tolerance = 4,
-  tol_reset = TRUE,
-  start     = "LD",
-  parallel  = FALSE
+  method    = "flanking", #compares new marker to adjacent marker only
+  threshold = 0.2,        #LD threshold to include a marker
+  tolerance = 4,          #how many markers can fail the check for inclusion
+  tol_reset = TRUE,       #if a marker is added, reset the tolerance counter
+  start     = "LD",       #blocking starts at the highest LD pair
+  parallel  = FALSE       #parallelise for large datasets (~25k+ markers)
 )
 
 haploblocks <- block_obj_to_df(haploblocks, map)
 ```
 
-## Step 4 — Compute Local GEBV
+## Step 4 — Compute localGEBV/haplotype effects
 
 ```r
+#localGEBV
 haploblock_obj <- compute_local_GEBV(
   geno           = geno,
   marker_effects = marker_effects,
@@ -118,10 +130,20 @@ haploblock_obj <- compute_local_GEBV(
   set_missing_NA = TRUE,
   mean_adjust    = TRUE
 )
+
+#haplotypes
+haploblock_obj <- compute_haplotype_effects(
+  geno           = geno,
+  marker_effects = marker_effects,
+  haploblocks_df = haploblocks,
+  set_missing_NA = TRUE,
+  mean_adjust    = TRUE
+)
+
 ```
 
 !!! tip
-    Check out the full workflow if you need a basic model to compute marker effects.
+    Check out the full workflow if you need a basic model to compute marker effects (localGEBV genotype matrix only!).
 
 ## Step 5 — Visualise
 
@@ -129,11 +151,15 @@ haploblock_obj <- compute_local_GEBV(
 marker_effects_plot(marker_effects = marker_effects$Effect,
                     chr = map$Chromosome, pos = map$Position)
 
-unique_haplo_effects_plot(haplo_obj = haploblock_obj)
+unique_haplo_effects_plot(haplo_obj = haploblock_obj)     #haplotypes
+unique_localGEBV_effects_plot(haplo_obj = haploblock_obj) #localGEBV
 
 plot_haploblocks(haploblock_df = haploblock_obj$Haploblocks)
 
-plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500)
+haplo_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE) #haplotypes
+local_gebv_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE)
+
+plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for large dataset! Use method ="exp" for faster computation and monotonic decay.
 ```
 
 ## Step 6 — Select Parents
