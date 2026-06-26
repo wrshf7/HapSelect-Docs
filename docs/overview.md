@@ -95,6 +95,7 @@ haploblock_obj <- compute_local_GEBV(
 ```
 
 Haplotype effects are similarly generated:
+
 $$
 \text{haplotype}_{ijk} \sum_{m \in \text{block}_j} \overline{z_{ikm} \cdot \hat{u}_m
 $$
