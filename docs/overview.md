@@ -1,6 +1,6 @@
 # Process Overview
 
-HapSelect implements a six-stage pipeline that moves from raw genotype data to an optimised set of founder parents for a genomic selection program.
+HapSelect implements a six-stage pipeline that moves from raw genotype/allelic data to an optimised set of founder parents for a genomic selection program.
 
 ![HapSelect process overview](assets/overview-diagram.png){ .overview-diagram }
 
@@ -10,12 +10,12 @@ HapSelect implements a six-stage pipeline that moves from raw genotype data to a
 
 The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers. We highly recommend using [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is installed and available in the `PATH` variable, we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
-Starting from a pared-down VCF structured genotype matrix of **N individuals × M markers** (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
+Starting from a pared-down VCF structured genotype/allelic matrix of **N individuals × M markers (localGEBV) or M Chromosomes (Haplotypes)** (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
 
 1. Computes pairwise r² between all marker pairs within each chromosome
 2. Uses the r² matrix to define contiguous regions of high internal LD — **haploblocks**
 
-The result is a set of **J haploblocks** that tile the genome, each capturing a segment of co-inherited variation. 
+The result is a set of **J haploblocks** that tile the genome, each capturing a segment of genetic co-variation. 
 Haploblock IDs follow the convention of **Chromosome:Block**, identifying blocks nested within chromosome.
 
 A custom haploblock dataframe can be provided, but it must follow the output structure produced from `block_obj_to_df()`.
@@ -27,7 +27,8 @@ ld_pairs   <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 
 #make a haploblock list object
 haploblocks <- def_blocks(ld = ld_pairs, map = map, method = "flanking",
-                          threshold = 0.2, tolerance = 4)
+                          threshold = 0.2, tolerance = 4, tol_reset = TRUE,
+                          start = "LD", parallel = FALSE)
 
 #turn the list object into a singular data frame
 haploblocks <- block_obj_to_df(haploblocks, map)
@@ -41,7 +42,7 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 
 Marker effects are estimated independently using a genomic prediction model — GBLUP with backsolve, BayesR, rrBLUP, other Bayesian methods, or any equivalent method that produces per-SNP effect estimates (\(\hat{u}_m\)).
 
-HapSelect offers a basic genomic prediction model by integrating the [rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html). However, the implementation is limited to utilising singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modelling, please consult the packages below. 
+HapSelect offers a basic genomic prediction model (dosage genotype matrix only in localGEBV) by integrating the [rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html). However, the implementation is limited to utilising singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modelling, please consult the packages below. 
 
 Any model that returns a vector of marker effect estimates aligned to the same map can be used and it is up to the user to ensure marker effect estimates are correctly generated. Please see [localGEBV](workflow/local-gebv.md) for file structure details.
 
@@ -64,7 +65,7 @@ marker_effects <- create_marker_effects_file(geno = geno, BLUE = BLUE, h2_method
 
 ---
 
-## C — Local GEBV
+## C — LocalGEBV / Haplotype Effects
 
 With haploblocks defined and marker effects estimated, HapSelect calculates a **local genomic estimated breeding value (localGEBV)** for each individual in each haploblock:
 
@@ -85,27 +86,32 @@ haploblock_obj <- compute_local_GEBV(
 )
 ```
 
+Haplotype effects are similarly generated:
+\text{haplotype}_{ijk} \sum_{m \in \text{block}_j} \overline{z_{ikm} \cdot \hat{u}_m
+
+where all terms are the same, except \(\overline{z_{ikm}}\) is the **centered** allele of individual \(i\) on chromosome \(k\) at marker \(m\) in haploblock \(j\) and the result is the haplotype effect of individual \(i\) for chromosome \(k\) and haploblock \(j\)
+
 ---
 
 ## D — Haploblock Variance
 
-Not all haploblocks are equally informative. HapSelect ranks blocks by the **variance of localGEBV across individuals**:
+Not all haploblocks are equally informative. HapSelect ranks blocks by the **variance of localGEBV/haplotype effects across individuals**:
 
 $$
 \text{var}(\mathbf{\text{localGEBV}_j}) = \frac{\sum_i \left( \text{localGEBV}_{ij} - \overline{\text{localGEBV}_j} \right)^2}{N}
 $$
 
-where \(\text{var}(\mathbf{\text{localGEBV}_j})\) is the haploblock variance.
+where \(\text{var}(\mathbf{\text{localGEBV}_j})\) is the haploblock variance. Similarly for haplotypes, variance is computed with haplotype effects instead of localGEBV
 
-High-variance blocks are those where individuals differ substantially in their haplotype (localGEBV) effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
+High-variance blocks are those where individuals differ substantially in their localGEBV/haplotype effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
 
-The funnel plot (`block_var_funnel_plot`) visualises this across all blocks, with localGEBV effects on the x-axis and block variance on the y-axis scaled using a 0 to 1 min-max scaling procedure. Similarly, localGEBV effects can be visualised in a Manhattan-style plot using the `unique_haplo_effects_plot()` function (for more details and information, see [Visualisations](workflow/visualisations.md)).
+The funnel plots visualise this across all blocks, with localGEBV/haplotype effects on the x-axis and block variance on the y-axis scaled using a 0 to 1 min-max scaling procedure. Similarly, localGEBV/haplotype effects can be visualised in a Manhattan-style plot (for more details and information, see [Visualisations](workflow/visualisations.md)).
 
 ---
 
 ## E — Parent Selection
 
-The top-ranked haploblocks (by variance) are used as targets for the genetic algorithm. `genetic_algorithm()` searches for a set of **n_founders** parents that collectively carry the highest-value haplotype alleles across the selected blocks, subject to constraints on crossing scheme and population size.
+The top-ranked haploblocks (by variance) are used as targets for the genetic algorithm. `local_gebv_parent_selection()`/`ohs_parent_selection()` searches for a set of **n_founders** parents that collectively carry the highest-value localGEBV/haplotype alleles across the selected blocks, subject to constraints on crossing scheme and population size.
 
 ```r
 
@@ -118,16 +124,25 @@ haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_total 
 #3 select the top blocks explaining at least 90% of the total block variance (arbitrary)
 haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_of_total_var = 0.9)
 
-GA_output <- genetic_algorithm(
-  localGEBV  = localGEBV,
-  n_founders = 20,
-  maxiter    = 300
+#Parent Selection (localGEBV)
+GA_output = local_gebv_parent_selection(
+    haploblock_obj = haploblock_obj, 
+    n_founders = 20,                    
+    popSize = 10,                       
+    strategy = "no_selfing"             
 )
-GA_output$One_Solution
+
+#Parent Selection (haplotypes - diploid only!)
+GA_output = ohs_parent_selection(
+    haploblock_obj = haploblock_obj,
+    n_founders = 20,                    
+    popSize = 10,                       
+    strategy = "OHS"                    
+)
 ```
 
 !!! tip
-    There are many parameters that affect the behaviour of `genetic_algorithm()` and convergence to an optimal solution with various defaults. Be sure to check out all options and how they can influence the result. See [Parent Selection](workflow/parent-selection.md) for full parameter details!
+    There are many parameters that affect the behaviour of the genetic algorithm parent selection functions and convergence to an optimal solution with various defaults. Be sure to check out all options and how they can influence the result. See [Parent Selection](workflow/parent-selection.md) for full parameter details!
 
 ---
 
@@ -138,10 +153,22 @@ The parents selected by the genetic algorithm (GA) and the parents selected by t
 For more information on parameters, see [Basic Simulation](workflow/basic-simulation.md).
 
 ```r
-parent_sln_obj = GA_vs_TS_simulation(GA_output = GA_output, geno = geno, marker_effects = marker_effects, map = map,
-                                      genetic_map_position = NULL, num_gen = 50, num_sim_reps = 30,
-                                      num_cross_per_gen = 1000, colors = c("green", "#d95f02", "#A01FF0", "gray80"),
-                                      alpha = c(1,1,1,0.5))
+#Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
+parent_sln_obj = OHS_vs_TS_simulation(
+    GA_output = GA_output,
+    geno_phased = geno,                                    
+    marker_effects = marker_effects,                       
+    map = map
+)
+
+#Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
+parent_sln_obj = localGEBV_vs_TS_simulation(
+    GA_output = GA_output,
+    geno = geno,                                           
+    marker_effects = marker_effects,                       
+    map = map
+)
+
 ```
 
 !!! tip
