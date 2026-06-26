@@ -68,14 +68,14 @@ Example datasets are bundled with the package along with function examples to co
 
 ```r
 #Two required, primary inputs:
-map <- HapSelect::map
+map  <- HapSelect::map
 geno <- HapSelect::geno #localGEBV
 geno <- HapSelect::geno_phased #haplotype method
 
 #Optional inputs that can also be created in the R package workflow:
-ld_pairs <- HapSelect::ld_pairs
+ld_pairs       <- HapSelect::ld_pairs
 marker_effects <- HapSelect::marker_effects
-BLUE <- HapSelect::BLUE #example file to compute marker effects
+BLUE           <- HapSelect::BLUE #example file to compute marker effects
 
 #Haploblock dataframe can be computed by running the def_blocks() and block_obj_to_df() functions on the example data
 
@@ -95,7 +95,7 @@ map <- order_map(map = map)
 # Internal R implementation (slow for large datasets)
 ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
 
-# Recommended: PLINK-backed implementation
+# Recommended: PLINK-backed implementation (recommended)
 ld_pairs <- plink_pairwise_ld_geno(geno = geno)
 ```
 
@@ -127,8 +127,8 @@ haploblock_obj <- compute_local_GEBV(
   geno           = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
-  set_missing_NA = TRUE,
-  mean_adjust    = TRUE
+  set_missing_NA = TRUE,            #if TRUE, any missing genotypes in a block will return NA for the localGEBV
+  mean_adjust    = TRUE             #centeres the genotype matrix - this should be TRUE in almost every case! Setting to FALSE will lead to biased localGEBV!
 )
 
 #haplotypes
@@ -136,8 +136,8 @@ haploblock_obj <- compute_haplotype_effects(
   geno           = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
-  set_missing_NA = TRUE,
-  mean_adjust    = TRUE
+  set_missing_NA = TRUE,            #if TRUE, any missing alleles in a block will return NA for the haplotype effect
+  mean_adjust    = TRUE             #centeres the allele matrix - this should be TRUE in almost every case! Setting to FALSE will lead to biased localGEBV!
 )
 
 ```
@@ -148,33 +148,121 @@ haploblock_obj <- compute_haplotype_effects(
 ## Step 5 — Visualise
 
 ```r
+#Manhattan-style plot of allele subsitution effects
 marker_effects_plot(marker_effects = marker_effects$Effect,
                     chr = map$Chromosome, pos = map$Position)
 
+#Manhattan-style plots of localGEBV and haplotype effects
 unique_haplo_effects_plot(haplo_obj = haploblock_obj)     #haplotypes
 unique_localGEBV_effects_plot(haplo_obj = haploblock_obj) #localGEBV
 
+#Visualization of block sizes and block positions
 plot_haploblocks(haploblock_df = haploblock_obj$Haploblocks)
 
+#Tornado plots demonstrating the spread of localGEBV and haplotype effects with blocks ordered by variance
 haplo_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE) #haplotypes
 local_gebv_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE)
 
-plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for large dataset! Use method ="exp" for faster computation and monotonic decay.
+#Plot to visualize LD decay
+plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for large dataset! Use method = "exp" for faster computation and monotonic decay.
 ```
 
-## Step 6 — Select Parents
+## Step 6 — Select Top Blocks and Parents
 
 ```r
-GA_output <- genetic_algorithm(
-  localGEBV  = localGEBV,
-  n_founders = 20,
-  popSize    = 10,
-  maxiter    = 300,
-  run        = 150,
-  selfing    = FALSE
+There are three methods we have implemented to select haploblocks:
+#1: select the top n blocks based on Block_Var
+#2: select the top x% of blocks (round up)
+#3: select the top blocks explaining x% of the total sum of block variance (round up)
+
+
+#1: select top 15 haploblocks (arbitrary)
+
+haploblock_obj = select_top_blocks(haploblock_obj = haploblock_obj, n = 15) #n denotes the number of blocks
+#Objects are added to the haploblock_obj for the GA
+
+
+#2 select top 50% of haploblocks
+haploblock_obj = select_top_blocks(haploblock_obj = haploblock_obj, perc_total = 0.5) #perc_total is the percentage of blocks to select (rounded up)
+
+#3 select the top blocks explaining at least 90% of the total block variance
+haploblock_obj = select_top_blocks(haploblock_obj = haploblock_obj, perc_of_total_var = 0.9) #perc_of_total_var is the proportion of blocks exlaining at lest a given threshold of the total block variation (rounded up)
+
+#Parent Selection (localGEBV)
+GA_output = local_gebv_parent_selection(
+    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks()
+    n_founders = 20,                    #number of parents to select
+    popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
+    maxiter = 300,                      #max number of iterations
+    run = 150,                          #max number of iterations of no change before termination
+    pmutation = 0.2,                    #probability of swapping one idividual randomly in a population each iteration - aids in parameter space exploration
+    pcrossover = 0.8,                   #probability of exchanging members between two populations in each iteration - aids in parameter space exploration
+    maximize = TRUE,                    #if TRUE, maximize potential GEBV, if FALSE, minimize
+    monitor = TRUE,                     #if TRUE, print out optimisation statisitcs each iteration
+    strategy = "no_selfing"             #"no_selfing" does not allow selfing in optimisation (i.e., two distinct parents per block) whereas "selfing" does allow the same parent to be utilized twice per block
 )
 
-GA_output$One_Solution
+#Parent Selection (haplotypes - diploid only!)
+GA_output = ohs_parent_selection(
+    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks()
+    n_founders = 20,                    #number of parents to select
+    popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
+    maxiter = 300,                      #max number of iterations
+    run = 150,                          #max number of iterations of no change before termination
+    pmutation = 0.2,                    #probability of swapping one idividual randomly in a population each iteration - aids in parameter space exploration
+    pcrossover = 0.8,                   #probability of exchanging members between two populations in each iteration - aids in parameter space exploration
+    maximize = TRUE,                    #if TRUE, maximize potential GEBV, if FALSE, minimize
+    monitor = TRUE,                     #if TRUE, print out optimisation statisitcs each iteration
+    strategy = "OHS"                    #"OHS" enforces haplotypes must come from two different parents, "OPV" allows the same haplotype to be utilised twice, "Haploid_OHS" allows the same parent to contribute two haplotypes, but not from the same chromosome
+)
+
+#one unique set of parents - other solutions may exist, see the GA_output$GA@solution object for other potential sets of parents with the same fitness
+GA_output$selected_founders
+
+```
+
+## Step 7 - Basic Simulation and Diversity Analysis
+
+```r
+
+#Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
+parent_sln_obj = OHS_vs_TS_simulation(
+    GA_output = GA_output,
+    geno_phased = geno,                                    #phased genotype matrix from previous steps
+    marker_effects = marker_effects,                       #marker effects dataframe previously used
+    map = map,                                             #map dataframe previously used
+    genetic_map_position = NULL,                           #vector of genetic map positions for each markers (in cM) - if NULL, map positions are assumed to be proportionally distributed to chromosomal physical position (0 to max_cM_chr)
+    num_gen = 50,                                          #number of generations to simulate forward
+    num_sim_reps = 10,                                     #number of simulation replicates to compute rate of genetic gain mean and standard deviation
+    num_cross_per_gen = 100,                               #for each generation, the number of progreny should be produced from random mating
+    num_TS_parents = NULL,                                 #number of truncation selected parents to use for comparison - if NULL, it is the same as the number of genetic algorithim selected parents
+    mean_adjust = TRUE,                                    #should GEBV be centered? This is important in most cases to prevent a mean shift (bias) in simulation
+    max_cM_chr = 100,                                      #if genetic_map_position = NULL, the max cM per chromosome used to assign marker map positions in cM proportional to physical distance
+    PCA = TRUE,                                            #if TRUE, perform PCA and highlight GA vs TS selected parents
+    maximize = TRUE,                                       #if TRUE, recurrent selection selects greater GEBV individuals each generation. If FALSE, it selects lower GEBV individuals
+    colors = c("green", "#d95f02", "#A01FF0", "gray80"),   #the four colors assigned to GA-selected parents, TS-selected parents, overlapping parents (PCA only), and individuals not selected (PCA only)
+    alpha = c(1,1,1,0.5)                                   #transparency values assigned to the same four groups on the PCA plot
+)
+
+#Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
+parent_sln_obj = localGEBV_vs_TS_simulation(
+    GA_output = GA_output,
+    geno = geno,                                           #phased genotype matrix from previous steps
+    marker_effects = marker_effects,                       #marker effects dataframe previously used
+    map = map,                                             #map dataframe previously used
+    genetic_map_position = NULL,                           #vector of genetic map positions for each markers (in cM) - if NULL, map positions are assumed to be proportionally distributed to chromosomal physical position (0 to max_cM_chr)
+    num_gen = 50,                                          #number of generations to simulate forward
+    num_sim_reps = 10,                                     #number of simulation replicates to compute rate of genetic gain mean and standard deviation
+    num_cross_per_gen = 100,                               #for each generation, the number of progreny should be produced from random mating
+    num_TS_parents = NULL,                                 #number of truncation selected parents to use for comparison - if NULL, it is the same as the number of genetic algorithim selected parents
+    mean_adjust = TRUE,                                    #should GEBV be centered? This is important in most cases to prevent a mean shift (bias) in simulation
+    max_cM_chr = 100,                                      #if genetic_map_position = NULL, the max cM per chromosome used to assign marker map positions in cM proportional to physical distance
+    PCA = TRUE,                                            #if TRUE, perform PCA and highlight GA vs TS selected parents
+    maximize = TRUE,                                       #if TRUE, recurrent selection selects greater GEBV individuals each generation. If FALSE, it selects lower GEBV individuals
+    colors = c("green", "#d95f02", "#A01FF0", "gray80"),   #the four colors assigned to GA-selected parents, TS-selected parents, overlapping parents (PCA only), and individuals not selected (PCA only)
+    alpha = c(1,1,1,0.5)                                   #transparency values assigned to the same four groups on the PCA plot
+)
+
 ```
 
 See the individual workflow pages for full parameter documentation.
