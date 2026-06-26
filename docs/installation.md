@@ -39,7 +39,6 @@ HapSelect imports the following packages, which will be installed automatically.
 | `furrr` / `future` | Parallel computation |
 | `Rcpp` | C++ extensions for LD calculation |
 | `progressr` | Progress reporting |
-| `dplyr` | Tidy Management |
 
 ## R Dependencies - GitHub
 
