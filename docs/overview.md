@@ -95,7 +95,9 @@ haploblock_obj <- compute_local_GEBV(
 ```
 
 Haplotype effects are similarly generated:
+$$
 \text{haplotype}_{ijk} \sum_{m \in \text{block}_j} \overline{z_{ikm} \cdot \hat{u}_m
+$$
 
 where all terms are the same, except \(\overline{z_{ikm}}\) is the **centered** allele of individual \(i\) on chromosome \(k\) at marker \(m\) in haploblock \(j\) and the result is the haplotype effect of individual \(i\) for chromosome \(k\) and haploblock \(j\)
 
