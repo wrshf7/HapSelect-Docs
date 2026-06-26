@@ -102,6 +102,8 @@ $$
 
 where all terms are the same, except \(\overline{z_{ikm}}\) is the **centered** allele of individual \(i\) on chromosome \(k\) at marker \(m\) in haploblock \(j\) and the result is the haplotype effect of individual \(i\) for chromosome \(k\) and haploblock \(j\)
 
+This produces an **\(\text{N × JK}\) matrix** of haplotype effects — one value per individual per chromosome for \(K\) chromosome sets per haploblock for \(J\) haploblocks.
+
 ---
 
 ## D — Haploblock Variance
