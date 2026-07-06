@@ -46,6 +46,73 @@ haploblocks <- def_blocks(
 - `LD` -> starts from the highest LD pair and the block will be extended both to the left and to the right according to the distance coordinate. The tolerance counter is reset between left extension and right extension.
 - `"beginning"` -> starts at the beginning of the chromosome, so blocks are only extended to the right.
 
+## How blocks are built
+
+`def_blocks()` walks along a chromosome and extends a block one marker at a time,
+absorbing markers while LD stays high and closing the block off to start a new
+one where it drops away. The diagrams below illustrate how the parameters above
+shape that process.
+
+In each diagram, circles are markers laid out in physical order along the
+chromosome. A grey line is a strong link (LD ≥ `threshold`) and a dashed red line
+is a weak link (LD below `threshold`). A bracket underneath groups the markers
+that end up in one block, and an upright dashed red line marks a block boundary.
+
+> LD values in these diagrams are illustrative, chosen to make each behaviour
+> visible.
+
+### Growing a block
+
+A block grows outward from a seed. Each new marker (the *candidate*) is compared
+against the block; if the LD clears `threshold` the candidate joins. A marker
+that falls short isn't dropped straight away. It can be **tolerated** and
+absorbed if a later marker reaches back across it. Where LD stays too low, the
+block is closed off and the next block begins.
+
+![Growing a block](../assets/mechanic.png)
+
+Here `S2` is a weak link (`0.61`), but the block reaches across it to `S3`
+(`0.74 ≥ 0.70`), so `S2` is pulled in. Extension later runs out of road, so the
+block ends and `S4` and `S5` are left as their own single-marker blocks.
+
+### `method`: what a candidate is compared against
+
+`flanking` compares the candidate to the block **edge** only; `average` compares
+it to the **mean** LD across the whole block. Same markers, opposite result:
+under `flanking` the weak `LD(S3, S4) = 0.55` ends the block, while under
+`average` the strong ties to `S1` and `S2` lift the mean to `0.71` and `S4`
+joins.
+
+![flanking vs average](../assets/method.png)
+
+### `tolerance`: how many weak links a block bridges
+
+`tolerance` is the number of consecutive weak links the block may span before it
+gives up. On the same LD landscape, raising it bridges wider gaps, producing
+fewer, longer blocks and fewer singletons.
+
+![tolerance 0, 1, 2](../assets/tolerance.png)
+
+### `tol_reset`: whether an accepted marker forgives past misses
+
+Each weak link the block spans adds to a miss counter, and the block is closed
+off once that counter passes `tolerance`. `tol_reset` decides whether accepting a
+marker resets the counter. With `tolerance = 2` in both rows below: under `TRUE`,
+absorbing `S4` resets the counter, so the later weak link is affordable and the
+block runs to the end; under `FALSE`, the two early misses have already spent the
+budget, so the next weak link closes the block.
+
+![tol_reset true vs false](../assets/reset.png)
+
+### `start`: where a block is seeded and which way it grows
+
+`start` sets the seed and the growth direction. `"LD"` seeds from the highest-LD
+adjacent pair and extends in **both** directions, resetting the tolerance counter
+between the left and right passes. `"beginning"` seeds at the first marker on the
+chromosome and extends **rightward** only.
+
+![start = LD vs beginning](../assets/direction.png)
+
 ## `block_obj_to_df()`
 
 Converts the block list object to a tidy data frame for downstream use.

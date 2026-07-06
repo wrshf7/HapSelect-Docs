@@ -49,6 +49,18 @@ where:
 
 For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.
 
+### Selfing vs no-selfing at a block
+
+At a single block the GA keeps the best cross among the selected founders, where a cross's progeny value is the **mid-parent average** of the two parents' localGEBV. With `selfing = FALSE` the two parents must be distinct; with `selfing = TRUE` a founder may be crossed with itself, which lets a block lock in its single best founder rather than averaging two down. Selfing therefore never lowers a block's value.
+
+![Selfing vs no-selfing at a block](../assets/localgebv-cross.png)
+
+### The genome-wide total
+
+The per-block winners are summed into the ultimate predicted-progeny GEBV. Because each block is optimised independently, different founder pairs can win different blocks. This is the complementarity the GA is built to exploit.
+
+![Ultimate GEBV as the sum of block winners](../assets/localgebv-total.png)
+
 ---
 
 ## Why This Differs From Truncation Selection
@@ -94,6 +106,22 @@ selfing = TRUE
 ```
 
 then self-crosses are also evaluated.
+
+---
+
+## Haplotype Selection Strategies
+
+The localGEBV fitness above scores each founder by its diploid value at a block. HapSelect can instead work at the **haplotype** level: each founder contributes its two phased chromosomes, and a genotype's value at a block is the **sum** of the two chosen haplotype effects. Three strategies control which haplotype pairings are allowed at each block:
+
+- **OPV** (Optimal Population Value) — any haplotype may be paired with itself, so a block's ceiling is its single best haplotype doubled. This represents a fully homozygous ideal line.
+- **Haploid_OHS** — the two haplotypes must be distinct, but may come from the same founder (for example an individual's two homologs), as achievable through doubled haploids.
+- **OHS** (Optimal Haplotype Selection) — the two haplotypes must come from different founders, representing a realistic biparental cross.
+
+![OPV vs Haploid_OHS vs OHS at a block](../assets/haplotype-strategies.png)
+
+As with localGEBV, the per-block winners are summed into the genome-wide total. Because each strategy restricts the allowed pairings further, the ultimate GEBV always ranks **OPV ≥ Haploid_OHS ≥ OHS**.
+
+![Ultimate GEBV under each haplotype strategy](../assets/haplotype-total.png)
 
 ---
 
