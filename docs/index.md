@@ -4,6 +4,9 @@ HapSelect is an R package for haploblock-based genomic selection. It partitions 
 
 The package is designed for breeding programs running genomic selection, where identifying and targeting the genomic regions with the most exploitable diversity can improve the efficiency of parent choice.
 
+## Citation
+[Comparison of localGEBV and Optimal Haplotype Stacking Fitness Functions using a Novel R Package: HapSelect](https://doi.org/10.64898/2026.07.08.737160)
+
 ## Workflow at a glance
 
 | Stage | What it does | Key function |
