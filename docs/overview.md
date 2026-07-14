@@ -97,10 +97,10 @@ haploblock_obj <- compute_local_GEBV(
 Haplotype effects are similarly generated:
 
 $$
-\text{Haplotype}_{jkl} = \sum_{i \in \text{block}_j} ({x_{ikl}} - \frac{\overline{x_{i}}}{/2}) \cdot \hat{\alpha}_i
+\text{Haplotype}_{jkl} = \sum_{i \in \text{block}_j} ({x_{ikl}} - \frac{\overline{x_{i}}}{2}) \cdot \hat{\alpha}_i
 $$
 
-where all terms are the same, except \(({x_{ikl}} - \frac{\overline{x_{i}}}{/2})\) is the **centered** allele of individual \(k\) on chromosome \(l\) at marker \(i\) in haploblock \(j\) and the result is the haplotype effect of individual \(k\) for chromosome \(l\) and haploblock \(j\). The centered allele is equivalent to subtracting the allele frequency, p, from the allele in 0/1 format.
+where all terms are the same, except \(({x_{ikl}} - \frac{\overline{x_{i}}}{2})\) is the **centered** allele of individual \(k\) on chromosome \(l\) at marker \(i\) in haploblock \(j\) and the result is the haplotype effect of individual \(k\) for chromosome \(l\) and haploblock \(j\). The centered allele is equivalent to subtracting the allele frequency, p, from the allele in 0/1 format.
 
 This produces an **\(\text{J × NL}\) matrix** of haplotype effects — one value per individual per chromosome for \(L\) chromosome sets per haploblock for \(J\) haploblocks.
 
