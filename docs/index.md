@@ -15,8 +15,8 @@ The package is designed for breeding programs running genomic selection, where i
 
 | Stage | What it does | Key function |
 |-------|-------------|--------------|
-| Pairwise LD | Compute r² between all marker pairs | `pairwise_ld()` / `plink_pairwise_ld()` |
-| Haploblocking | Partition genome into LD-based haploblocks | `def_blocks()` |
+| Pairwise LD | Compute r² between all marker pairs | `pairwise_ld()` / `plink_pairwise_ld_geno()` |
+| Haploblocking | Partition genome into LD-based haploblocks | `def_blocks()` / `block_obj_to_df()`|
 | Genomic Prediction | Compute marker effects and prediction accuracy | `create_marker_effects_file()`, `n_fold_cross_validation()`, `cross_validation()` |
 | LocalGEBV/Haplotype Effect | Estimate per-block GEBV or haplotype effects per individual | `compute_local_GEBV()` / `compute_haplotype_effects()` |
 | Visualisation | Explore haploblock structure, localGEBV/haplotype patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
