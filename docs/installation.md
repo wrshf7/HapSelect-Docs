@@ -46,7 +46,7 @@ HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimula
 
 ## R Package - HapSelect
 
-1. Download the `.zip` file [HapSelect](https://github.com/wrshf7/HapSelect).
+1. Download the `.zip` file [HapSelect](https://github.com/wrshf7/HapSelect/releases/).
 2. Extract the `.zip` file.
 3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/Will/Downloads/HapSelect-1.0.0/HapSelect-1.0.0/")`).
 4. Use one of the methods below to install from the root of the directory:
