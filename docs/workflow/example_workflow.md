@@ -151,7 +151,7 @@ ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 ---
 
 !!! tip
-    Another function, `plink_pairwise_ld()`, can also be used if the .bed, .bim, and .fam files are already created. The `prefix =` arguemnt can be utilized to provide the prefix to each of the files (e.g., files must be: prefix.bed, prefix.bim, prefix.fam).
+    Another function, `plink_pairwise_ld()`, can also be used if the .bed, .bim, and .fam files are already created. The `prefix =` argument can be utilized to provide the prefix to each of the files (e.g., files must be: prefix.bed, prefix.bim, prefix.fam).
 
 ## Loading Example LD Data
 
@@ -217,7 +217,7 @@ LD cutoff (`r²`) used to terminate blocks.
 Typical values:
 
 ```r
-0.3 - 0.7
+0.3 to 0.7
 ```
 
 - Higher values create smaller haploblocks (great for greater resolution in QTL discovery applications)
@@ -464,14 +464,15 @@ In the case of positions, the following can be used to convert the positions to 
 
 ```r
 haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+```
 
-#start and end represent the values (in base pairs/base units) to graph
-#by represents what to increment the axis labels by
-#Example: seq(0,1e9, 1e8) would create a vector with values every 100 Mb up to 1 Gb
-#breaks are where to create labels
-#labels specifies the labeling of the labels: seq(x,yz,) / 1e6 scales it to Mb and are then converted into characters
-#limits specifyins the min and max values
-#labs(x = "Name") renames the x-axis
+- start and end represent the values (in base pairs/base units) to graph
+- by represents what to increment the axis labels by
+- Example: seq(0,1e9, 1e8) would create a vector with values every 100 Mb up to 1 Gb
+- breaks are where to create labels
+- labels specifies the labeling of the labels: seq(x,yz,) / 1e6 scales it to Mb and are then converted into characters
+- limits specifying the min and max values
+- labs(x = "Name") renames the x-axis
 
 ### Marker Effects Plot
 
