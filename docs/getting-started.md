@@ -26,16 +26,16 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
 
 - **Phased genotype matrix (haplotypes)** — markers × chromosomes coded as the allele (0 for reference, 1 for alternative) at a biallelic marker.
     - First three columns should be identical to the map file.
-    - Columns `4:ncol(genotype_file)` should be individuals and their genotype for each marker (rows are markers, columns are individuals).
     - Names of columns 4 onwards should be the individuals' chromosomal identifiers. The nomencalture adopted in `HapSelect` is `individualID_chromosomeNum` as the identifier, where the last `_` in the string is used to identify the chromosome.
     - Alleles should be dosage format: i.e., 0 for the reference allele and 1 for the alternative allele.
     - `NA` values are allowed and are handled differently at each stage via options in the relevant functions.
 
 !!! warning
-    Computing LD, haploblocks, and haplotype effects are supported for polyploids in localGEBV and haplotype methods, but parent selection algorithms and simulation currently support polyploids for localGEBV ONLY! The haplotype method is constrained to diploid past computing haplotype effects!
+    Computing LD, haploblocks, and haplotype effects are supported for polyploids in localGEBV and haplotype methods, but parent selection algorithms and simulation currently only support diploid! We plan to update the localGEBV method to support polyploidy in the near future and the haplotype method at an indeterminate date.
 
 - **LD file** - pairwise LD between each marker within a chromosome.
     - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
+    - Can be computed externally and read in (see file structure below)
     - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed, because R is not built for large, iterative computations required to compute LD pairs. Even small to moderate sized SNP panels will take too long in R.
     - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function call.
     - Columns:
@@ -49,7 +49,10 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
 - **Marker effects file** — estimated SNP effects from a genomic prediction model
     - Can be computed for basic cases in the package (localGEBV genotype dosage matrix only!) with BLUE/dergressed BLUP/singular adjusted phenotype or provided externally.
     - First column: `SNP` corresponding to the `SNP` column in the map and genotype file. It should be formatted as a character vector.
-    - Second column: `Effect` the allele substitution (marker) effects corresponding to the SNP in column one.
+    - Second column: `Effect` the allele substitution (marker) effects corresponding to the SNP in column one. This is the allele subsitution effect when subsituting one reference (0) allele with one alternative (1) allele.
+
+!!! warning
+    Ensure that the genotype coding in the genotype matrix is the same that was utilised to estimate marker effects. Marker effects computed within the package will be the same as long as the genotype matrix was not changed post-estimation.
 
 - **Haploblock file** - dataframe produced as a standard part of the workflow.
     - May be provided if custom haploblocking is desired (e.g., blocking based on physical/map distance, number of markers per block, etc.)
