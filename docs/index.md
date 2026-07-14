@@ -7,6 +7,11 @@ The package is designed for breeding programs running genomic selection, where i
 ## Citation
 [Comparison of localGEBV and Optimal Haplotype Stacking Fitness Functions using a Novel R Package: HapSelect](https://doi.org/10.64898/2026.07.08.737160)
 
+<div style="padding-left: 2em; text-indent: -2em;">
+Shaffer, Will, Victor Papin, Zane Carter, Stephanie M Brunner, Jingyang Tong, Kira Villiers, Hannah Robinson, Kai Voss-Fels, Ben J Hayes, Lee Hickey, and Eric Dinglasan. 2026. Comparison of localGEBV and Optimal Haplotype Stacking fitness functions using a novel R package: HapSelect. BioRxiv. doi:https://doi.org/10.64898/2026.07.08.737160
+</div>
+
+
 ## Workflow at a glance
 
 | Stage | What it does | Key function |
