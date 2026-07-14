@@ -801,6 +801,8 @@ Retains enough haploblocks to explain at least 90% of the total block variance.
 - Retains more blocks for highly polygenic traits.
 - Retains fewer blocks when major-effect haploblocks dominate.
 
+---
+
 ## Comparison of Selection Strategies
 
 | Method | Strengths | Weaknesses |
@@ -842,27 +844,42 @@ localGEBV_parent_obj <- local_gebv_parent_selection(
   popSize = 10,
   maxiter = 300,
   run = 150,
-  strategy = "no_selfing,
+  strategy = "no_selfing",
   pmutation = 0.6,
   pcrossover = 0.6,
-  maximize = TRUE
+  maximize = TRUE,
+  monitor = TRUE
+)
+
+haplotype_parent_obj <- haplotype_parent_selection(
+  haploblock_obj = haploblock_obj,
+  n_founders = 20,
+  popSize = 10,
+  maxiter = 300,
+  run = 150,
+  strategy = "OHS",
+  pmutation = 0.6,
+  pcrossover = 0.6,
+  maximize = TRUE,
+  monitor = TRUE
 )
 ```
-
----
 
 ### GA Parameters
 
 | Parameter | Description |
 |---|---|
-| `n_founders` | Integer number of parents to choose |
+| `haploblock_obj` | haploblock object from computing localGEBV/haplotype effects |
+| `n_founders` | Integer number of founder parents to choose |
 | `popSize` | Integer number of parental sets per simulation iteration |
 | `maxiter` | Maximum iterations before termination |
-| `run` | Iterations without improvement before stopping |
-| `strategy` | Specify `selfing` to allow selfing (i.e., for the fitness function allow the same parent at a given block). If `no_selfing` requires two different parents per chosen block |
+| `run` | Iterations without improvement before termination |
+| `strategy` (localGEBV) | Specify `selfing` to allow selfing (i.e., for the fitness function allow the same parent at a given block). If `no_selfing` requires two different parents per chosen block |
+| `strategy` (haplotype) | `OHS` constrains the function to choose haplotypes from two different parents (can be identical, but must come from two individuals, most restrictive), `OPV` allows the same haplotype from the same individual to be utilised (least restrictive), `Haploid_OHS` is a hybrid approach where two different haplotyeps must be chosen, but it can be from the same parent. |
 | `pmutation` | Mutation probability - swaps out one random individual for another from the total population |
 | `pcrossover` | Crossover probability - swaps half of each population; if there is overlap, non-overlapping parents are chosen randomly from the total population |
-| `pelite` | Elite proportion (between 0 and 1) - constrains choosing individuals from the total population to the highest `pelite` proportion based on GEBV when needed to find non-overlapping parents for `pcrossover` |
+| `maximize` | If `TRUE`, greater ultimate GEBV are better. If `FALSE`, lower ultimate GEBV are considered better |
+| `monitor` | If `TRUE`, report statistics about the populations each iteration. If `FALSE`, no reporting is output to the console. |
 
 The genetic algorithm (GA) balances:
 
@@ -901,7 +918,7 @@ Increasing `popSize` generally reduces the number of iterations needed for conve
 
 #### `maxiter`
 
-Maximum number of iterations allowed.
+Maximum number of iterations allowed. Generally speaking, the greater the total population size available, the more iterations that are needed.
 
 ##### Notes
 
@@ -911,13 +928,14 @@ Maximum number of iterations allowed.
 Generally:
 
 - small problems converge quickly
-- highly polygenic architectures with many parents may require many iterations
+- highly polygenic architectures with many parents/large populations may require many iterations
+- You will likely need to experiment
 
 ---
 
 #### `run`
 
-Number of iterations allowed without improvement before stopping.
+Number of iterations allowed without improvement before termination. Generally, I would not set this lover than 150 to 200, especially with low `pmutation` and `pcrossover` because exploring the parameter space may take awhile once close to being optimised.
 
 ##### Trade-offs
 
@@ -945,7 +963,7 @@ Mutation randomly substitutes one individual within populations from the total p
 
 ##### Important Notes
 
-Overly large mutation probabilities can prevent convergence entirely because high-performing parental sets are continuously disrupted.
+Overly large mutation probabilities can prevent convergence entirely because high-performing parental sets are continuously disrupted. However, in practice, values of around 0.5 to 0.7 seem to be okay.
 
 ---
 
@@ -961,45 +979,27 @@ Probability populations exchange parental subsets (half of each pair swapped). I
 | Slower exploration | Faster exploration |
 | More stable solutions | Greater instability |
 
-Very high crossover rates may cause the GA to overshoot promising solutions and continuously disrupt near-optimal parental combinations.
-
-
----
-
-#### `pelite`
-
-Restricts replacement individuals to the proportion of the population ranked by GEBV.
-
-##### Trade-offs
-
-| Smaller `pelite` | Larger `pelite` |
-|:---|:---|
-| Faster convergence | Greater diversity |
-| Stronger selection pressure | Better exploration |
-| Risk premature convergence | Slower convergence |
-
-Very aggressive elite selection may reduce genetic diversity within the GA search process and increase the likelihood of local optima.
+Very high crossover rates may cause the GA to overshoot promising solutions and continuously disrupt near-optimal parental combinations. In practice, values of 0.5 to 0.7 seem to be okay.
 
 ---
 
-### If convergence is unstable:
+### If convergence is unstable (i.e., asymptoptes and the mean goes down and up):
 
 - decrease `pmutation`
 - decrease `pcrossover`
-- increase `pelite`
 - increase `run`
 
 ### If convergence is too slow:
 
 - increase `popSize`
-- slightly increase `pmutation`
-- slightly increase `pcrossover`
+- increase `pmutation`
+- increase `pcrossover`
 
 ### If solutions appear trapped in local optima:
 
 - increase `popSize`
 - increase `pmutation`
-- increase `pelite`
+- increase `pcrossover`
 - increase `run`
 
 ---
@@ -1007,8 +1007,38 @@ Very aggressive elite selection may reduce genetic diversity within the GA searc
 ### Inspecting Solutions:
 
 ```r
-GA_output$One_Solution
+localGEBV_parent_obj$selected_founders #substitute haplotype_parent_obj for haplotypes
 ```
+
+---
+
+### Plotting GA Peformance
+
+Visualize GA performance over iterations - plots a mean and max line over iterations as well as the interquartile range (IQR) as a ribbon.
+
+```r
+optimisation_progress_plot <- GA_progress_plot(
+  parent_selection_object = localGEBV_parent_obj, #substitute haplotype_parent_obj for haplotypes
+max_color = "#A01FF0",
+mean_color = "#A01FF0",
+ribbon_color = "#A01FF0",
+ribbon_alpha = 0.35,
+max_linewidth = 1.2,
+mean_linewidth = 0.8
+)
+```
+
+#### Parameters
+
+| Parameter | Description |
+|:---|:---|
+| `parent_selection_object` | object generated from GA functions |
+| `max_color` | color to use for the maximum line |
+| `mean_color` | color to use for the mean line |
+| `ribbon_color` | color to use for the IQR ribbon |
+| `ribbon_alpha` | value between 0 and 1 to control the ribbon transparency for hte IQR |
+| `max_linewidth` | controls the thickness of the max line |
+| `mean_linewidth` | controls the thickness of the mean line |
 
 ---
 
