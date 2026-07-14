@@ -115,11 +115,16 @@ haploblocks <- def_blocks(
   threshold = 0.2,        #LD threshold to include a marker
   tolerance = 4,          #how many markers can fail the check for inclusion
   tol_reset = TRUE,       #if a marker is added, reset the tolerance counter
-  start     = "LD",       #blocking starts at the highest LD pair
+  start     = "beginning",       #blocking starts at the highest LD pair
   parallel  = FALSE       #parallelise for large datasets (~25k+ markers)
 )
 
 haploblocks <- block_obj_to_df(haploblocks, map)
+
+#Report basic block statistics:
+block_summary(block_df = haploblocks)
+
+#Note: Mean_Block_Size does not include singleton blocks (size 0) in the computation. It is the mean size of multi-SNP blocks.
 ```
 
 ## Step 4 — Compute localGEBV/haplotype effects
@@ -127,7 +132,7 @@ haploblocks <- block_obj_to_df(haploblocks, map)
 ```r
 #localGEBV
 haploblock_obj <- compute_local_GEBV(
-  geno           = geno,
+  geno           = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing genotypes in a block will return NA for the localGEBV
@@ -140,7 +145,7 @@ haploblock_obj <- compute_haplotype_effects(
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing alleles in a block will return NA for the haplotype effect
-  mean_adjust    = TRUE             #centeres the allele matrix - this should be TRUE in almost every case! Setting to FALSE will lead to biased localGEBV!
+  mean_adjust    = TRUE             #centeres the allele matrix - this should be TRUE in almost every case! Setting to FALSE will lead to biased haplotype effects!
 )
 
 ```
@@ -167,10 +172,16 @@ haplo_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE) #h
 local_gebv_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE)
 
 #Plot to visualize LD decay
-plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for large dataset! Use method = "exp" for faster computation and monotonic decay.
+plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for large dataset! Use method = "exp" for faster computation and monotonic decay. For a more flexible and still relatively quick approach, explore, method = "gam_tp".
 ```
 
+!!! tip
+    All plots return a ggplot object. Positions for localGEBV/haplotype effects, haploblocks, and marker densities are in absolute units to accomodate both physical and genetic maps. All ggplots can be modified to change axis scale, legend name, axis name, etc. See [Visualisations](workflow/visualizations.md) for examples.
+
 ## Step 6 — Select Top Blocks and Parents
+
+!!! tip
+    Generally, a small subset of blocks explains the vast majority of total variance in localGEBV. While the whole genome can be used for optimisation, results are often completley identical and it is much more computationally efficient to use a subset of blocks. In past examples, 9-13% of blocks have explaind at least 90% of genetic variance.
 
 ```r
 There are three methods we have implemented to select haploblocks:
@@ -198,9 +209,9 @@ GA_output = local_gebv_parent_selection(
     popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
     maxiter = 300,                      #max number of iterations
     run = 150,                          #max number of iterations of no change before termination
-    pmutation = 0.2,                    #probability of swapping one idividual randomly in a population each iteration - aids in parameter space exploration
-    pcrossover = 0.8,                   #probability of exchanging members between two populations in each iteration - aids in parameter space exploration
-    maximize = TRUE,                    #if TRUE, maximize potential GEBV, if FALSE, minimize
+    pmutation = 0.6,                    #probability of swapping one idividual randomly in a population each iteration - aids in parameter space exploration
+    pcrossover = 0.6,                   #probability of exchanging members between two populations in each iteration - aids in parameter space exploration
+    maximize = TRUE,                    #if TRUE, maximise potential GEBV, if FALSE, minimise
     monitor = TRUE,                     #if TRUE, print out optimisation statisitcs each iteration
     strategy = "no_selfing"             #"no_selfing" does not allow selfing in optimisation (i.e., two distinct parents per block) whereas "selfing" does allow the same parent to be utilized twice per block
 )
@@ -212,17 +223,21 @@ GA_output = ohs_parent_selection(
     popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
     maxiter = 300,                      #max number of iterations
     run = 150,                          #max number of iterations of no change before termination
-    pmutation = 0.2,                    #probability of swapping one idividual randomly in a population each iteration - aids in parameter space exploration
-    pcrossover = 0.8,                   #probability of exchanging members between two populations in each iteration - aids in parameter space exploration
+    pmutation = 0.6,                    #probability of swapping one idividual randomly in a population each iteration - aids in parameter space exploration
+    pcrossover = 0.6,                   #probability of exchanging members between two populations in each iteration - aids in parameter space exploration
     maximize = TRUE,                    #if TRUE, maximize potential GEBV, if FALSE, minimize
     monitor = TRUE,                     #if TRUE, print out optimisation statisitcs each iteration
     strategy = "OHS"                    #"OHS" enforces haplotypes must come from two different parents, "OPV" allows the same haplotype to be utilised twice, "Haploid_OHS" allows the same parent to contribute two haplotypes, but not from the same chromosome
 )
 
-#one unique set of parents - other solutions may exist, see the GA_output$GA@solution object for other potential sets of parents with the same fitness
+#one unique set of parents - other solutions may exist, see the GA_output$GA@solution object for other potential sets of parents with the same fitness (note: many are the same combination in different permutations)
 GA_output$selected_founders
 
 ```
+
+!!! warning
+    Be sure to use `select_top_blocks()` to regenerate `haploblock_obj`. If you would like to use the whole genome, specify `n = nrow(haploblock_obj$Haploblocks)`, `perc_total = 1`, or `perc_of_total_var = 1`
+
 
 ## Step 7 - Basic Simulation and Diversity Analysis
 
@@ -231,7 +246,7 @@ GA_output$selected_founders
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
 parent_sln_obj = OHS_vs_TS_simulation(
     GA_output = GA_output,
-    geno_phased = geno,                                    #phased genotype matrix from previous steps
+    geno_phased = geno_phased,                             #phased genotype matrix from previous steps
     marker_effects = marker_effects,                       #marker effects dataframe previously used
     map = map,                                             #map dataframe previously used
     genetic_map_position = NULL,                           #vector of genetic map positions for each markers (in cM) - if NULL, map positions are assumed to be proportionally distributed to chromosomal physical position (0 to max_cM_chr)
@@ -250,7 +265,7 @@ parent_sln_obj = OHS_vs_TS_simulation(
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
 parent_sln_obj = localGEBV_vs_TS_simulation(
     GA_output = GA_output,
-    geno = geno,                                           #phased genotype matrix from previous steps
+    geno = geno,                                           #genotype matrix from previous steps
     marker_effects = marker_effects,                       #marker effects dataframe previously used
     map = map,                                             #map dataframe previously used
     genetic_map_position = NULL,                           #vector of genetic map positions for each markers (in cM) - if NULL, map positions are assumed to be proportionally distributed to chromosomal physical position (0 to max_cM_chr)
