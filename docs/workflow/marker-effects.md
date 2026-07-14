@@ -21,7 +21,7 @@ Controls scaling of marker variance to approximate the additive genetic variance
 - `"VanRaden"` (recommended)
 - `"marker_num"` (only generally used if the genotype matrix was scaled; not applicable 99% of the time)
 
-The `"VanRaden"` method is most commonly utilised in animal and plant breeding. It follows method 1 of [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980). The marker variance is multiplied by $2*\sum{p(1-p)}$ such that each marker is scaled equivalently and is assumed to contribute equivalent variance (infinitesimal model like GBLUP or BayesC).
+The `"VanRaden"` method is most commonly utilised in animal and plant breeding. It follows method 1 of [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980). The marker variance is multiplied by $2*\sum{p_{i}(1-p_{i})}$ such that each marker is scaled equivalently and is assumed to contribute equivalent variance (infinitesimal model like GBLUP or BayesC).
 
 `"marker_num"` should only be utilised when the genotypes have been pre-scaled to unit variance (i.e., not dosage values).
 
