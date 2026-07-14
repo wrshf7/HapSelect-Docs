@@ -17,8 +17,9 @@ Minimal workflow demonstrating:
 ```r
 library(HapSelect)
 
-map  <- HapSelect::map
-geno <- HapSelect::geno
+map         <- HapSelect::map
+geno        <- HapSelect::geno
+geno_phased <- HapSelect::geno_phased
 ```
 
 ---
@@ -73,10 +74,10 @@ haploblocks <- def_blocks(
   ld = ld_pairs,
   map = map,
   method = "flanking",
-  threshold = 0.2,
-  tolerance = 4,
+  threshold = 0.4,
+  tolerance = 3,
   tol_reset = TRUE,
-  start = "LD",
+  start = "beginning",
   parallel = FALSE
 )
 ```
@@ -153,18 +154,40 @@ CV <- cross_validation(
 ```r
 marker_effects <- HapSelect::marker_effects
 
+#localGEBV
 haploblock_obj <- compute_local_GEBV(
   geno = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,
-  mean_adjust = TRUE
+  mean_adjust = TRUE,
+  parallel = TRUE
+)
+
+#haplotypes
+haploblock_obj <- compute_haplotype_effects(
+  geno = geno_phased,
+  marker_effects = marker_effects,
+  haploblocks_df = haploblocks,
+  set_missing_NA = TRUE,
+  mean_adjust = TRUE,
+  parallel = TRUE
 )
 ```
 
 ---
 
 ## Visualisations
+
+### Editing Plots Example
+
+```r
+haploblock_plot <- haploblock_plot + labs(x = "cM")
+
+haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+```
+
+
 ### Marker Effects Plot
 
 ```r
@@ -180,9 +203,17 @@ marker_plot
 
 ---
 
-### Unique Haplotype Effects Plot
+### Unique localGEBV/Haplotype Effects Plot
 
 ```r
+localGEBV_plot <- unique_localGEBV_effects_plot(
+  haplo_obj = haploblock_obj,
+  colors = c("#A01FF0", "#A7A8AA"),
+  pos_type = "midpoint"
+)
+
+localGEBV_plot
+
 haplo_eff_plot <- unique_haplo_effects_plot(
   haplo_obj = haploblock_obj,
   colors = c("#A01FF0", "#A7A8AA"),
@@ -197,7 +228,15 @@ haplo_eff_plot
 ### Funnel Plot
 
 ```r
-funnel_plot <- block_var_funnel_plot(
+#localGEBV
+funnel_plot <- local_gebv_block_var_funnel_plot(
+  haplo_obj = haploblock_obj,
+  mean_line = FALSE,
+  scale_colors = c("blue", "purple", "red")
+)
+
+#haplotype
+funnel_plot <- haplo_block_var_funnel_plot(
   haplo_obj = haploblock_obj,
   mean_line = FALSE,
   scale_colors = c("blue", "purple", "red")
@@ -212,7 +251,7 @@ funnel_plot
 
 ```r
 haploblock_plot <- plot_haploblocks(
-  haploblock_df = haploblock_obj$Haploblocks,
+  haploblock_df = haploblock_obj$Haploblocks, #or haploblocks (haplobock dataframe)
   block_fill = "#A01FF0",
   chrom_fill = NA,
   height = 0.30,
@@ -229,7 +268,7 @@ haploblock_plot
 ```r
 marker_density_plot <- plot_marker_density(
   map = map,
-  bin_size = 500e3,
+  bin_size = 500e3, #500 kb
   height = 0.3,
   chrom_fill = NA,
   col_low = "white",
@@ -258,6 +297,18 @@ ld_decay_plot <- plot_ld_decay(
 )
 
 ld_decay_plot
+```
+
+### Block Variance Manhattan Plot
+
+```r
+variance_plot = block_variance_manhattan_plot(
+  haplo_obj = haploblock_obj,
+  colors = c("#A01FF0", "#A7A8AA"),
+  pos_type = "midpoint"
+)
+variance_plot
+
 ```
 
 ---
@@ -302,16 +353,30 @@ nrow(haploblock_obj$Haploblocks_GA)
 ## Genetic Algorithm
 
 ```r
-GA_output <- genetic_algorithm(
-  localGEBV = haploblock_obj$Haplotype_Effect_Matrix_GA,
+localGEBV_parent_obj <- local_gebv_parent_selection(
+  haploblock_obj = haploblock_obj,
   n_founders = 20,
   popSize = 10,
   maxiter = 300,
   run = 150,
-  selfing = FALSE,
-  pmutation = 0.2,
-  pcrossover = 0.8,
-  pelite = 0.5
+  strategy = "no_selfing",
+  pmutation = 0.6,
+  pcrossover = 0.6,
+  maximize = TRUE,
+  monitor = TRUE
+)
+
+haplotype_parent_obj <- haplotype_parent_selection(
+  haploblock_obj = haploblock_obj,
+  n_founders = 20,
+  popSize = 10,
+  maxiter = 300,
+  run = 150,
+  strategy = "OHS",
+  pmutation = 0.6,
+  pcrossover = 0.6,
+  maximize = TRUE,
+  monitor = TRUE
 )
 ```
 
@@ -320,7 +385,23 @@ GA_output <- genetic_algorithm(
 ### Inspect One Solution
 
 ```r
-GA_output$One_Solution
+localGEBV_parent_obj$selected_founders #substitute haplotype_parent_obj for haplotypes
+```
+
+---
+
+### Optimisation Progress Plot
+
+```r
+optimisation_progress_plot <- GA_progress_plot(
+  parent_selection_object = localGEBV_parent_obj, #substitute haplotype_parent_obj for haplotypes
+  max_color = "#A01FF0",
+  mean_color = "#A01FF0",
+  ribbon_color = "#A01FF0",
+  ribbon_alpha = 0.35,
+  max_linewidth = 1.2,
+  mean_linewidth = 0.8
+)
 ```
 
 ---
@@ -328,17 +409,36 @@ GA_output$One_Solution
 ## Simulate Recurrent Selection
 
 ```r
-parent_sln_obj <- GA_vs_TS_simulation(
-  GA_output = GA_output,
+localGEBV_Sim <- localGEBV_vs_TS_simulation(
+  GA_output = localGEBV_parent_obj,
   geno = geno,
   marker_effects = marker_effects,
   map = map,
   genetic_map_position = NULL,
   num_gen = 50,
   num_sim_reps = 30,
-  num_cross_per_gen = 1000,
+  num_cross_per_gen = 100,
   num_TS_parents = NULL,
   mean_adjust = TRUE,
+  maximize = TRUE,
+  max_cM_chr = 100,
+  PCA = TRUE,
+  colors = c("green", "#d95f02", "#A01FF0", "gray80"),
+  alpha = c(1,1,1,0.5)
+)
+
+Haplotype_Sim <- Haplotype_vs_TS_simulation(
+  GA_output = localGEBV_parent_obj,
+  geno_phased = geno,
+  marker_effects = marker_effects,
+  map = map,
+  genetic_map_position = NULL,
+  num_gen = 50,
+  num_sim_reps = 30,
+  num_cross_per_gen = 100,
+  num_TS_parents = NULL,
+  mean_adjust = TRUE,
+  maximize = TRUE,
   max_cM_chr = 100,
   PCA = TRUE,
   colors = c("green", "#d95f02", "#A01FF0", "gray80"),
@@ -351,9 +451,11 @@ parent_sln_obj <- GA_vs_TS_simulation(
 ### Display Simulation Results
 
 ```r
-parent_sln_obj$Simulation_Plot
+localGEBV_Sim$Simulation_Plot
 
-parent_sln_obj$PCA_Plot
+localGEBV_Sim$PCA_Plot
+
+#substitute localGEBV_Sim with Haplotype_Sim for haplotypes
 ```
 
 ---
