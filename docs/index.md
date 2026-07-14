@@ -26,6 +26,9 @@ The package is designed for breeding programs running genomic selection, where i
 See the [Overview](overview.md) for a full explanation of the method, or jump to [Getting Started](getting-started.md) to run the example workflow.
 
 ## Installation
+
+[Download Page](https://github.com/wrshf7/HapSelect/releases/tag/1.0.0)
+
 1. Extract the `.zip` file
 
 2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed.
@@ -47,7 +50,7 @@ devtools::install("path/to/unzipped/file/HapSelect")
 
 ```r
 #setting the working directory
-setwd("/path/to/unzipped/file/HapSelect")
+setwd("/path/to/unzipped/file/HapSelect/HapSelect") #if the extracted main folder remains
 install.packages("HapSelect", type = "source", repos = NULL)
 ```
 
