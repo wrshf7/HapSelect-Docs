@@ -63,9 +63,9 @@ Genotypes are expected to be numeric dosage coded:
 - Diploid: usually `0/1/2`
 - Polyploid: supports up to any integer ploidy
 
-Or, when performing a true haplotype analysis, `0/1` only with `k` columns per individual representing a ploidy of `k`
+Or, when performing a true haplotype analysis, `0/1` only with `L` columns per individual representing a ploidy of `L`
 
-Missing values should ideally be:
+Missing values should be:
 
 ```r
 NA
@@ -75,6 +75,7 @@ Example:
 
 ```r
 head(HapSelect::geno[,1:10])
+head(HapSelect::geno_phased[,1:10])
 ```
 
 ---
@@ -148,6 +149,9 @@ ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 | `extra_args` | Additional PLINK arguments |
 
 ---
+
+!!! tip
+  Another function, `plink_pairwise_ld()`, can also be used if the .bed, .bim, and .fam files are already created. The `prefix =` arguemnt can be utilized to provide the prefix to each of the files (e.g., files must be: prefix.bed, prefix.bim, prefix.fam).
 
 ## Loading Example LD Data
 
