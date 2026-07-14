@@ -146,7 +146,7 @@ GA_output = local_gebv_parent_selection(
 )
 
 #Parent Selection (haplotypes - diploid only!)
-GA_output = ohs_parent_selection(
+GA_output = haplotype_parent_selection(
     haploblock_obj   = haploblock_obj,
     n_founders       = 20,                    
     popSize          = 10,                       
@@ -167,7 +167,7 @@ For more information on parameters, see [Basic Simulation](workflow/basic-simula
 
 ```r
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
-parent_sln_obj = OHS_vs_TS_simulation(
+parent_sln_obj = Hapotype_vs_TS_simulation(
     GA_output      = GA_output,
     geno_phased    = geno,                                    
     marker_effects = marker_effects,                       
