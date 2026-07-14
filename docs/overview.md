@@ -78,10 +78,10 @@ marker_effects <- create_marker_effects_file(geno = geno, BLUE = BLUE, h2_method
 With haploblocks defined and marker effects estimated, HapSelect calculates a **local genomic estimated breeding value (localGEBV)** for each individual in each haploblock:
 
 $$
-\text{localGEBV}_{ij} = \sum_{m \in \text{block}_j} \overline{z_{im}} \cdot \hat{u}_m
+\text{localGEBV}_{jk} = \sum_{i \in \text{block}_j} ({x_ik} - \overline{x_{i}}) \cdot \hat{\alpha}_i
 $$
 
-where \(\overline{z_{im}}\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(i\) at marker \(m\) in haploblock \(j\), and \(\hat{u}_m\) is the estimated marker effect.
+where \(({x_ik} - \overline{x_{i}})\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(k\) at marker \(i\) in haploblock \(j\), and \(\hat{\alpha}_i\) is the estimated marker effect.
 
 This produces an **\(\text{J × N}\) matrix** of localGEBV values — one value per individual for \(N\) individuals per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
 
@@ -97,7 +97,7 @@ haploblock_obj <- compute_local_GEBV(
 Haplotype effects are similarly generated:
 
 $$
-\text{Haplotype}_{ijk} = \sum_{m \in \text{block}_j} \overline{z_{ikm}} \cdot \hat{u}_m
+\text{Haplotype}_{jkl} = \sum_{i \in \text{block}_j} ({x_ikl} - \overline{x_{i}/2}) \cdot \hat{\alpha}_i
 $$
 
 where all terms are the same, except \(\overline{z_{ikm}}\) is the **centered** allele of individual \(i\) on chromosome \(k\) at marker \(m\) in haploblock \(j\) and the result is the haplotype effect of individual \(i\) for chromosome \(k\) and haploblock \(j\)
