@@ -33,7 +33,7 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
-3. Either set the working directory in R with: `setwd("path/to/unzipped/file/HapSelect")` or record the full path to the unzipped directory.
+3. Either set the working directory in R with: `setwd("path/to/unzipped/file/HapSelect/HapSelect")` (if nested inside the extracted folder) or record the full path to the unzipped directory.
 
 <strong>Install with DevTools:</strong><br>
 
@@ -41,7 +41,7 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 install.packages("devtools")
 
 #providing the full directory
-devtools::install("path/to/unzipped/file/HapSelect")
+devtools::install("path/to/unzipped/file/HapSelect/HapSelect")
 ```
 
 <strong>Install with base R command:</strong><br>
