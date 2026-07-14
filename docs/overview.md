@@ -78,10 +78,10 @@ marker_effects <- create_marker_effects_file(geno = geno, BLUE = BLUE, h2_method
 With haploblocks defined and marker effects estimated, HapSelect calculates a **local genomic estimated breeding value (localGEBV)** for each individual in each haploblock:
 
 $$
-\text{localGEBV}_{jk} = \sum_{i \in \text{block}_j} ({x_ik} - \overline{x_{i}}) \cdot \hat{\alpha}_i
+\text{localGEBV}_{jk} = \sum_{i \in \text{block}_j} ({x_{ik}} - \overline{x_{i}}) \cdot \hat{\alpha}_i
 $$
 
-where \(({x_ik} - \overline{x_{i}})\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(k\) at marker \(i\) in haploblock \(j\), and \(\hat{\alpha}_i\) is the estimated marker effect.
+where \(({x_{ik}} - \overline{x_{i}})\) is the **centered** (see [Van Raden, 2008](https://doi.org/10.3168/jds.2007-0980)) allele dosage of individual \(k\) at marker \(i\) in haploblock \(j\), and \(\hat{\alpha}_i\) is the estimated marker effect.
 
 This produces an **\(\text{J × N}\) matrix** of localGEBV values — one value per individual for \(N\) individuals per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
 
@@ -97,12 +97,12 @@ haploblock_obj <- compute_local_GEBV(
 Haplotype effects are similarly generated:
 
 $$
-\text{Haplotype}_{jkl} = \sum_{i \in \text{block}_j} ({x_ikl} - \overline{x_{i}/2}) \cdot \hat{\alpha}_i
+\text{Haplotype}_{jkl} = \sum_{i \in \text{block}_j} ({x_{ikl}} - \overline{x_{i}/2}) \cdot \hat{\alpha}_i
 $$
 
-where all terms are the same, except \(\overline{z_{ikm}}\) is the **centered** allele of individual \(i\) on chromosome \(k\) at marker \(m\) in haploblock \(j\) and the result is the haplotype effect of individual \(i\) for chromosome \(k\) and haploblock \(j\)
+where all terms are the same, except \(({x_{ikl}} - \overline{x_{i}/2})\) is the **centered** allele of individual \(k\) on chromosome \(l\) at marker \(i\) in haploblock \(j\) and the result is the haplotype effect of individual \(k\) for chromosome \(l\) and haploblock \(j\)
 
-This produces an **\(\text{J × NK}\) matrix** of haplotype effects — one value per individual per chromosome for \(K\) chromosome sets per haploblock for \(J\) haploblocks.
+This produces an **\(\text{J × NL}\) matrix** of haplotype effects — one value per individual per chromosome for \(L\) chromosome sets per haploblock for \(J\) haploblocks.
 
 ---
 
