@@ -1080,7 +1080,6 @@ Haplotype_Sim <- Haplotype_vs_TS_simulation(
   colors = c("green", "#d95f02", "#A01FF0", "gray80"),
   alpha = c(1,1,1,0.5)
 )
-
 ```
 
 ---
