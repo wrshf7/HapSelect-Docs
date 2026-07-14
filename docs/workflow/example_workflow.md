@@ -317,7 +317,7 @@ marker_effects <- create_marker_effects_file(
 
 ##### `h2_method`
 
-Controls scaling of marker variance to compute narrow-sense heritability.
+Controls scaling of marker variance to approximate narrow-sense heritability (for a true estimate, use GBLUP with some variation of REML to estimate).
 
 Options:
 
@@ -387,14 +387,25 @@ New Options:
 
 ---
 
-## Computing localGEBV
+## Computing localGEBV/haplotype effects
 
 ```r
 #load example data
 marker_effects <- HapSelect::marker_effects
 
+#localGEBV
 haploblock_obj <- compute_local_GEBV(
   geno = geno,
+  marker_effects = marker_effects,
+  haploblocks_df = haploblocks,
+  set_missing_NA = TRUE,
+  mean_adjust = TRUE,
+  parallel = TRUE
+)
+
+#haplotypes
+haploblock_obj <- compute_haplotype_effects(
+  geno = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,
@@ -405,7 +416,7 @@ haploblock_obj <- compute_local_GEBV(
 
 ---
 
-### localGEBV Parameters
+### localGEBV/Haplotype Parameters
 
 #### `set_missing_NA`
 
@@ -433,12 +444,9 @@ mean_adjust = TRUE
 ```
 
 ##### Important Information
-A good confirmation things are working properly is to reconstruct GEBV from Zu, where Z is the centered marker matrix and u are the marker effects.
-The mean should be 0 (or very close to it) and reflect GBLUP GEBV if using rrBLUP, BayesC, or GBLUP back solve methods.
-If the reconstructed GEBV mean is meaningfully away from 0, it indicates the wrong marker matrix (i.e., needs to be centered) is being used or the marker matrix was not centered when estimating marker effects.
+A good confirmation things are working properly is to reconstruct GEBV from Zu, where Z is the centered dosage marker matrix and u are the marker effects. The mean should be 0 (or very close to it) and reflect GBLUP GEBV if using rrBLUP, BayesC, or GBLUP back solve methods. If the reconstructed GEBV mean is meaningfully away from 0, it indicates the wrong marker matrix (i.e., needs to be centered) is being used or the marker matrix was not centered when estimating marker effects.
 
-The package will internally center markers if `mean_adjust = TRUE`. If the matrix is already centered, centering won't change the values
-or centering can be set to `FALSE`.
+The package will internally center markers if `mean_adjust = TRUE`. If the matrix is already centered, centering won't change the values or centering can be set to `FALSE`.
 
 If you want genotype/haplotype configurations to match the 0/1/2/# dosage format, provide the uncentered genotype matrix and set `mean_adjust = TRUE`. Otherwise, the reported genotype/haplotype configurations will reflect centered values. For clarity, you must provide dosage format (usually 0/1/2 for diploid, any integer for polypoid).
 
@@ -451,6 +459,19 @@ All visualisations are `ggplot` objects and can be modified accordingly like any
 ```r
 haploblock_plot <- haploblock_plot + labs(x = "cM")
 ```
+
+In the case of positions, the following can be used to convert the positions to Mb:
+
+```r
+haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+
+#start and end represent the values (in base pairs/base units) to graph
+#by represents what to increment the axis labels by
+#Example: seq(0,1e9, 1e8) would create a vector with values every 100 Mb up to 1 Gb
+#breaks are where to create labels
+#labels specifies the labeling of the labels: seq(x,yz,) / 1e6 scales it to Mb and are then converted into characters
+#limits specifyins the min and max values
+#labs(x = "Name") renames the x-axis
 
 ### Marker Effects Plot
 
@@ -480,9 +501,17 @@ marker_plot
 
 ---
 
-### Unique Haplotype Effects Plot
+### Unique localGEBV/Haplotype Effects Plot
 
 ```r
+localGEBV_plot <- unique_localGEBV_effects_plot(
+  haplo_obj = haploblock_obj,
+  colors = c("#A01FF0", "#A7A8AA"),
+  pos_type = "midpoint"
+)
+
+localGEBV_plot
+
 haplo_eff_plot <- unique_haplo_effects_plot(
   haplo_obj = haploblock_obj,
   colors = c("#A01FF0", "#A7A8AA"),
@@ -494,7 +523,7 @@ haplo_eff_plot
 
 | Parameter | Description |
 |:---|:---|
-| `haplo_obj` | Object returned from `compute_local_GEBV()` |
+| `haplo_obj` | Object returned from `compute_local_GEBV()` or `compute_haplotype_effects()` |
 | `colors` | Alternating chromosome colors |
 | `pos_type` | `"midpoint"` or `"start"` positioning of haploblocks |
 
@@ -510,7 +539,13 @@ haplo_eff_plot
 ### Funnel Plot
 
 ```r
-funnel_plot <- block_var_funnel_plot(
+funnel_plot <- local_gebv_block_var_funnel_plot(
+  haplo_obj = haploblock_obj,
+  mean_line = FALSE,
+  scale_colors = c("blue", "purple", "red")
+)
+
+funnel_plot <- haplo_block_var_funnel_plot(
   haplo_obj = haploblock_obj,
   mean_line = FALSE,
   scale_colors = c("blue", "purple", "red")
@@ -537,7 +572,7 @@ funnel_plot
 
 ```r
 haploblock_plot <- plot_haploblocks(
-  haploblock_df = haploblock_obj$Haploblocks,
+  haploblock_df = haploblock_obj$Haploblocks, #the original df can also be used here, `haploblock_df = haploblocks`
   block_fill = "#A01FF0",
   chrom_fill = NA,
   height = 0.30,
@@ -569,7 +604,7 @@ haploblock_plot
 ```r
 marker_density_plot <- plot_marker_density(
   map = map,
-  bin_size = 500e3,
+  bin_size = 500e3, #500 kb
   height = 0.3,
   chrom_fill = NA,
   col_low = "white",
@@ -592,8 +627,9 @@ marker_density_plot
 
 #### Notes
 
-- Smaller `bin_size` values increase resolution but also increase noise
-- Larger bins produce smoother chromosome-wide density patterns
+- Smaller `bin_size` values increase resolution but also increases noise
+- Larger bins produce smoother chromosome-wide density patterns. Really large values create awkward striping.
+- "Goldilocks principle" to select bin size - experiment a bit
 - Final bins are automatically capped at chromosome ends
 
 ---
@@ -645,12 +681,30 @@ ld_decay_plot
 - Larger `span` values produce smoother curves, but may over smooth
 - `k` is only utilised by the `gam_cr` and `gam_tp` methods
 - Lower `k` values smooth GAM curves more aggressively whereas higher values may overfit
-
+- "exp" will be quickest, but may miss local patterns and "gam_tp" is a good intermediate between speed and fitting local patterns
 ---
+
+### Block Variance Manhattan Plot
+
+```r
+variance_plot = block_variance_manhattan_plot(
+  haplo_obj = haploblock_obj,
+  colors = c("#A01FF0", "#A7A8AA"),
+  pos_type = "midpoint"
+)
+variance_plot
+
+```
+
+| Parameter | Description |
+|:---|:---|
+| `haplo_obj` | haploblock object from `compute_local_GEBV()` or `compute_haplotype_effects()` |
+| `colors` | defaults are `c("#A01FF0", "#A7A8AA")` and control the alternating chromosome colors |
+| `pos_type` | either `"midpoint"` or `"start"` - controls where the block is plotted. The midpoint is the center of the block whereas the start is the first SNP in the block. For singleton blocks, it is the same. |
 
 ## Selecting Haploblocks for the GA
 
-Before running the genetic algorithm (GA), haploblocks can be filtered to reduce dimensionality and focus on the most important genomic regions.
+Before running the genetic algorithm (GA), haploblocks can be filtered to reduce dimensionality and focus on the most important genomic regions. This will aid in convergence and computational efficiency. Generally speaking, as little as 10% of blocks may explain 90% of the genetic variance.
 
 The `select_top_blocks()` function supports three different selection strategies.
 
@@ -754,6 +808,8 @@ Retains enough haploblocks to explain at least 90% of the total block variance.
 | Top percentage | Scales with dataset size | May retain weak blocks |
 | Variance explained | Biologically adaptive | Number of retained blocks varies between traits |
 
+To select all haploblocks, set `n = nrow(haploblock_obj$Haploblocks)`, `perc_total = 1`, or `perc_of_total_var = 1`. This may seem redundant but is still needed for the GA.
+
 ---
 
 ### Computational Considerations
@@ -779,16 +835,16 @@ Users are encouraged to experiment with multiple selection thresholds depending 
 ## Genetic Algorithm Parent Selection
 
 ```r
-GA_output <- genetic_algorithm(
-  localGEBV = haploblock_obj$Haplotype_Effect_Matrix_GA,
+localGEBV_parent_obj <- local_gebv_parent_selection(
+  haploblock_obj = haploblock_obj,
   n_founders = 20,
   popSize = 10,
   maxiter = 300,
   run = 150,
-  selfing = FALSE,
-  pmutation = 0.2,
-  pcrossover = 0.8,
-  pelite = 0.5
+  strategy = "no_selfing,
+  pmutation = 0.6,
+  pcrossover = 0.6,
+  maximize = TRUE
 )
 ```
 
@@ -802,7 +858,7 @@ GA_output <- genetic_algorithm(
 | `popSize` | Integer number of parental sets per simulation iteration |
 | `maxiter` | Maximum iterations before termination |
 | `run` | Iterations without improvement before stopping |
-| `selfing` | Allow selfing (i.e., for the fitness function allow the same parent at a block). If `FALSE` requires two different parents per chosen block |
+| `strategy` | Specify `selfing` to allow selfing (i.e., for the fitness function allow the same parent at a given block). If `no_selfing` requires two different parents per chosen block |
 | `pmutation` | Mutation probability - swaps out one random individual for another from the total population |
 | `pcrossover` | Crossover probability - swaps half of each population; if there is overlap, non-overlapping parents are chosen randomly from the total population |
 | `pelite` | Elite proportion (between 0 and 1) - constrains choosing individuals from the total population to the highest `pelite` proportion based on GEBV when needed to find non-overlapping parents for `pcrossover` |
