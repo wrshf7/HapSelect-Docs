@@ -151,7 +151,7 @@ ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 ---
 
 !!! tip
-  Another function, `plink_pairwise_ld()`, can also be used if the .bed, .bim, and .fam files are already created. The `prefix =` arguemnt can be utilized to provide the prefix to each of the files (e.g., files must be: prefix.bed, prefix.bim, prefix.fam).
+    Another function, `plink_pairwise_ld()`, can also be used if the .bed, .bim, and .fam files are already created. The `prefix =` arguemnt can be utilized to provide the prefix to each of the files (e.g., files must be: prefix.bed, prefix.bim, prefix.fam).
 
 ## Loading Example LD Data
 
@@ -169,6 +169,7 @@ c("Chrom", "Locus1", "Locus2", "Name1", "Name2", "LD")
 Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function.
 
 Columns:
+
 - `Chrom`: the chromosome each SNP pair belongs to (numeric).
 - `Locus1`: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the **ordered map file** above.
 - `Locus2`: similar to `Locus1`, this is the numerical integer of the second marker in the marker pair.
@@ -186,10 +187,10 @@ haploblocks <- def_blocks(
   ld = ld_pairs,
   map = map,
   method = "flanking",
-  threshold = 0.2,
-  tolerance = 4,
+  threshold = 0.3,
+  tolerance = 3,
   tol_reset = TRUE,
-  start = "LD",
+  start = "beginning",
   parallel = FALSE
 )
 ```
