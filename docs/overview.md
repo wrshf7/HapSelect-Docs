@@ -122,7 +122,7 @@ The funnel plots visualise this across all blocks, with localGEBV/haplotype effe
 
 ---
 
-## E — Parent Selection
+## E and F — Haploblock and Parent Selection
 
 The top-ranked haploblocks (by variance) are used as targets for the genetic algorithm. `local_gebv_parent_selection()`/`ohs_parent_selection()` searches for a set of **n_founders** parents that collectively carry the highest-value localGEBV/haplotype alleles across the selected blocks, subject to constraints on crossing scheme and population size.
 
@@ -159,7 +159,7 @@ GA_output = ohs_parent_selection(
 
 ---
 
-## F — Basic Simulation and Parental Diversity
+## G — Basic Simulation and Parental Diversity
 
 The parents selected by the genetic algorithm (GA) and the parents selected by truncation selection (TS; i.e., best whole-genome GEBV) can be utilised in a basic simulation using recurrent TS for each set of parents to compare genetic gain over time. We have provided a wrapper for the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package [(Villiers et al., 2022)](https://doi.org/10.1093/g3journal/jkac216) to conduct the simulation and plot the rate of genetic gain based on each set of parents. Furthermore, we also offer an option to conduct principle component analysis (PCA) and return a PCA dataframe as well as a PCA plot for the first two PC that maps where each set of parents and their overlap sit in the overall population diversity. The whole-genome GEBV of the GA parents and TS parents (calculated internally) are then utilised to perform the simulation.
 
