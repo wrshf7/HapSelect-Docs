@@ -27,9 +27,7 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 ## Installation
 
-[Download Page](https://github.com/wrshf7/HapSelect/releases/tag/1.0.0)
-
-1. Extract the `.zip` file
+1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/)
 
 2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed.
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
