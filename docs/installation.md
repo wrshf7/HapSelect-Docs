@@ -48,7 +48,7 @@ HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimula
 
 1. Download the `.zip` file [HapSelect](https://github.com/wrshf7/HapSelect).
 2. Extract the `.zip` file.
-3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/Will/Downloads/HapSelect-1.0.0/")`).
+3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/Will/Downloads/HapSelect-1.0.0/HapSelect-1.0.0/")`).
 4. Use one of the methods below to install from the root of the directory:
 
 
@@ -58,8 +58,8 @@ HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimula
 install.packages("devtools")
 library(devtools)
 
-#if setwd("path/to/HapSelect") was not run:
-devtools::install("path/to/HapSelect")
+#if setwd("path/to/HapSelect_Root_Directory") was not run:
+devtools::install("path/to/HapSelect_Root_Directory")
 
 #if the working directory is in the extracted directory:
 devtools::install("./")
@@ -69,8 +69,8 @@ devtools::install("./")
 **Or with the base R command:**
 
 ```r
-#if setwd("path/to/HapSelect") was not run:
-install.packages("/path/to/HapSelect", repos = NULL, type = "source")
+#if setwd("path/to/HapSelect_Root_Directory") was not run:
+install.packages("/path/to/HapSelect_Root_Directory", repos = NULL, type = "source")
 
 #if the working directory is in the extracted directory:
 install.packages("./", repos = NULL, type = "source")
