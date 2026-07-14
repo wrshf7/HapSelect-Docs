@@ -11,8 +11,11 @@ This function was created to create the marker effects file using the `geno` inp
 
 #### `h2_method`
 
-Controls scaling of marker variance to compute the additive genetic variance and thus narrow-sense heritability.
+Controls scaling of marker variance to approximate the additive genetic variance and thus narrow-sense heritability.
 
+!!! warning
+    This is not a true additive genetic variance estimate. For a true value, it is better to use GBLUP with a REML variant to estimate the genetic variance.
+    
 ##### Options:
 
 - `"VanRaden"` (recommended)
