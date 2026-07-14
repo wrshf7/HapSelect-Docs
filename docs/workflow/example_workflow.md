@@ -1019,12 +1019,12 @@ Visualize GA performance over iterations - plots a mean and max line over iterat
 ```r
 optimisation_progress_plot <- GA_progress_plot(
   parent_selection_object = localGEBV_parent_obj, #substitute haplotype_parent_obj for haplotypes
-max_color = "#A01FF0",
-mean_color = "#A01FF0",
-ribbon_color = "#A01FF0",
-ribbon_alpha = 0.35,
-max_linewidth = 1.2,
-mean_linewidth = 0.8
+  max_color = "#A01FF0",
+  mean_color = "#A01FF0",
+  ribbon_color = "#A01FF0",
+  ribbon_alpha = 0.35,
+  max_linewidth = 1.2,
+  mean_linewidth = 0.8
 )
 ```
 
@@ -1045,22 +1045,42 @@ mean_linewidth = 0.8
 ## Simulating Recurrent Selection
 
 ```r
-parent_sln_obj <- GA_vs_TS_simulation(
-  GA_output = GA_output,
+localGEBV_Sim <- localGEBV_vs_TS_simulation(
+  GA_output = localGEBV_parent_obj,
   geno = geno,
   marker_effects = marker_effects,
   map = map,
   genetic_map_position = NULL,
   num_gen = 50,
   num_sim_reps = 30,
-  num_cross_per_gen = 1000,
+  num_cross_per_gen = 100,
   num_TS_parents = NULL,
   mean_adjust = TRUE,
+  maximize = TRUE,
   max_cM_chr = 100,
   PCA = TRUE,
   colors = c("green", "#d95f02", "#A01FF0", "gray80"),
   alpha = c(1,1,1,0.5)
 )
+
+Haplotype_Sim <- Haplotype_vs_TS_simulation(
+  GA_output = localGEBV_parent_obj,
+  geno_phased = geno,
+  marker_effects = marker_effects,
+  map = map,
+  genetic_map_position = NULL,
+  num_gen = 50,
+  num_sim_reps = 30,
+  num_cross_per_gen = 100,
+  num_TS_parents = NULL,
+  mean_adjust = TRUE,
+  maximize = TRUE,
+  max_cM_chr = 100,
+  PCA = TRUE,
+  colors = c("green", "#d95f02", "#A01FF0", "gray80"),
+  alpha = c(1,1,1,0.5)
+)
+
 ```
 
 ---
@@ -1068,9 +1088,9 @@ parent_sln_obj <- GA_vs_TS_simulation(
 ### Display Simulation Results
 
 ```r
-parent_sln_obj$Simulation_Plot
+localGEBV_Sim$Simulation_Plot
 
-parent_sln_obj$PCA_Plot
+localGEBV_Sim$PCA_Plot
 ```
 
 ### Simulation Parameters
@@ -1078,9 +1098,9 @@ parent_sln_obj$PCA_Plot
 | Parameter | Description |
 | :--- | :--- |
 | `GA_output` | Output object from the GA |
-| `geno` | Genotype dataframe from before |
-| `marker_effects` | Marker effects dataframe |
-| `map` | Ordered map dataframe |
+| `geno` and `geno_phased` | Dosage (localGEBV) or phased (haplotype) genotype dataframe from before |
+| `marker_effects` | Marker effects dataframe used previously |
+| `map` | Ordered map dataframe used previously |
 | `genetic_map_position` | Optional genetic map positions vector in centiMorgans in the same order as the map |
 | `num_gen` | Integer number of recurrent truncation selection generations |
 | `num_sim_reps` | Integer number of independent simulation replicates |
@@ -1120,8 +1140,7 @@ Controls the number of replicate simulations.
 Replicates differ because of:
 
 - recombination randomness
-- parental chromosome sampling
-- stochastic inheritance
+- parental chromosome sampling (Mendelian Sampling)
 
 ##### Larger Values
 
@@ -1129,7 +1148,6 @@ Advantages:
 
 - smoother estimates
 - more reliable confidence intervals
-- reduced stochastic noise
 
 Disadvantages:
 
@@ -1148,6 +1166,7 @@ Advantages:
 - stronger selection intensity
 - improved ability to identify elite progeny
 - smoother trajectories
+- fewer instabilities from sampling effects
 
 Disadvantages:
 
@@ -1164,6 +1183,7 @@ If omitted:
 
 - chromosomes are assumed to span `max_cM_chr`
 - genetic map positions are inferred proportionally from physical distance
+- The first marker on a chromosome would be 0 cM and the last would be 100 cM. A marker halfway in between (base pair position) would be 50 cM.
 
 Providing a true genetic map is recommended whenever available.
 
@@ -1183,24 +1203,5 @@ This helps visualise:
 - diversity retention
 - population structure
 - overlap between strategies
-
----
-
-### Displaying Simulation Results
-
-```r
-parent_sln_obj$Simulation_Plot
-```
-
-Displays simulated long-term genetic gain trajectories.
-
----
-
-```r
-parent_sln_obj$PCA_Plot
-```
-
-Displays PCA visualisation of selected parents.
-
 
 ---
