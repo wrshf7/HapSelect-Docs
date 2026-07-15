@@ -36,13 +36,16 @@ ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
 ```
 
+!!! warning
+    PLINK 1.9 MUST be installed in order to use these functions (executable available in /user/bin). If it is not properly installed you will get an error message. See [Installation](docs/installation.md) for more details.
+
 #### Parameters
 
 | Parameter | Description |
 |:---|:---|
-| `prefix` | PLINK binary prefix |
+| `prefix` | PLINK binary prefix for .bed .bim and .fam files (e.g., prefix.bed) |
 | `ld_window` | Maximum number of SNP pairs ahead to compute LD |
-| `ld_window_kb` | LD window size in kb |
+| `ld_window_kb` | Maximum window size in kb to compute LD |
 | `ld_window_r2` | Minimum LD threshold before termination of LD calculation |
 | `extra_args` | Additional PLINK arguments |
 
@@ -67,25 +70,10 @@ Columns:
 - `Chrom`: the chromosome each SNP pair belongs to (numeric).
 - `Locus1`: numerical integer for the first marker in the marker pair. This should correspond to the order of the marker in the **ordered map file** above.
 - `Locus2`: similar to `Locus1`, this is the numerical integer of the second marker in the marker pair.
-- `Name1`: Character name of the first marker in the pair as seen in the genotype, map, and marker effects file.
+- `Name1`: Character name of the first marker in the pair as seen in the genotype, map, and marker effects file. Names must match exactly
 - `Name2`: Similar to `Name1`, this corresponds to the name of the second marker in the pair as seen in the genotype, map, and marker effects file.
 - `LD`: The numerical LD value computed. This is typically an $\text{r}^{2}$ value.
 
 ```r
 head(HapSelect::ld_pairs)
 ```
-
-## Benchmarking
-
-HapSelect includes a benchmarking script to compare both implementations on a synthetic dataset:
-
-```bash
-Rscript inst/scripts/benchmarks/benchmark_ld.R \
-  --n_markers=500 \
-  --n_individuals=200 \
-  --n_chr=5 \
-  --missing_rate=0.02 \
-  --seed=1
-```
-
-The output reports wall-clock runtimes for both methods on identical data.
