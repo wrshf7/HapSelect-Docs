@@ -52,20 +52,6 @@ HapSelect imports the [genomicSimulation](https://github.com/vllrs/genomicSimula
 4. Use one of the methods below to install from the root of the directory:
 
 
-**Install directly from the package source using `devtools`:**
-
-```r
-install.packages("devtools")
-library(devtools)
-
-#if setwd("path/to/HapSelect_Root_Directory") was not run:
-devtools::install("path/to/HapSelect_Root_Directory")
-
-#if the working directory is in the extracted directory:
-devtools::install("./")
-
-```
-
 **Or with the base R command:**
 
 ```r
