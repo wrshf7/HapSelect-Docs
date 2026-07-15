@@ -29,7 +29,7 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/)
 
-2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed. If you wish to use PLINK, it MUST be installed and recognized in the PATH!
+2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed. If you wish to use PLINK, it **MUST be installed** as an actual program with an executable in the user/bin folder!
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
