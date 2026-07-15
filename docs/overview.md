@@ -86,12 +86,24 @@ where \(({x_{ik}} - \overline{x_{i}})\) is the **centered** (see [Van Raden, 200
 This produces an **\(\text{J × N}\) matrix** of localGEBV values — one value per individual for \(N\) individuals per haploblock for \(J\) haploblocks — which captures the breeding value contribution of each genomic region separately.
 
 ```r
+#localGEBV
 haploblock_obj <- compute_local_GEBV(
+  geno           = geno_phased,
+  marker_effects = marker_effects,
+  haploblocks_df = haploblocks,
+  set_missing_NA = TRUE,            #if TRUE, any missing genotypes in a block will return NA for the localGEBV
+  mean_adjust    = TRUE             #centeres the genotype matrix - this should be TRUE in almost every case! Setting to FALSE will lead to biased localGEBV!
+)
+
+#haplotypes
+haploblock_obj <- compute_haplotype_effects(
   geno           = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
-  mean_adjust    = TRUE
+  set_missing_NA = TRUE,            #if TRUE, any missing alleles in a block will return NA for the haplotype effect
+  mean_adjust    = TRUE             #centeres the allele matrix - this should be TRUE in almost every case! Setting to FALSE will lead to biased haplotype effects!
 )
+
 ```
 
 Haplotype effects are similarly generated:
