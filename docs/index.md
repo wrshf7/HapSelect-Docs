@@ -29,26 +29,17 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/)
 
-2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed.
+2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed. If you wish to use PLINK, it MUST be installed and recognized in the PATH!
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
 3. Either set the working directory in R with: `setwd("path/to/unzipped/file/HapSelect/HapSelect")` (if nested inside the extracted folder) or record the full path to the unzipped directory.
 
-<strong>Install with DevTools:</strong><br>
-
-```r
-install.packages("devtools")
-
-#providing the full directory
-devtools::install("path/to/unzipped/file/HapSelect/HapSelect")
-```
-
 <strong>Install with base R command:</strong><br>
 
 ```r
 #setting the working directory
-setwd("/path/to/unzipped/file/HapSelect/HapSelect") #if the extracted main folder remains
+setwd("/path/to/unzipped/file/HapSelect/") #if the extracted main folder remains
 install.packages("HapSelect", type = "source", repos = NULL)
 ```
 
