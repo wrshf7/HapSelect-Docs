@@ -37,13 +37,13 @@ ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
 ```
 
 !!! warning
-    PLINK 1.9 MUST be installed in order to use these functions (executable available in /user/bin). If it is not properly installed you will get an error message. See [Installation](installation.md) for more details.
+    PLINK 1.9 MUST be installed in order to use these functions (executable available in /user/bin). If it is not properly installed you will get an error message. See [Installation](/main/docs/installation.md) for more details.
 
 #### Parameters
 
 | Parameter | Description |
 |:---|:---|
-| `geno` | genotype matrix used throughout HapSelect. See `HapSelect::geno` for formatting examples or [Getting Started](getting-started.md) |
+| `geno` | genotype matrix used throughout HapSelect. See `HapSelect::geno` for formatting examples or [Getting Started](/main/docs/getting-started.md) |
 | `prefix` | PLINK binary prefix for .bed .bim and .fam files (e.g., prefix.bed) |
 | `ld_window` | Maximum number of SNP pairs ahead to compute LD |
 | `ld_window_kb` | Maximum window size in kb to compute LD |
