@@ -168,8 +168,8 @@ unique_localGEBV_effects_plot(haplo_obj = haploblock_obj) #localGEBV
 plot_haploblocks(haploblock_df = haploblock_obj$Haploblocks)
 
 #Tornado plots demonstrating the spread of localGEBV and haplotype effects with blocks ordered by variance
-haplo_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE) #haplotypes
-local_gebv_block_var_funnel_plot(haplo_obj = haploblock_object, mean_line = FALSE)
+haplo_block_var_funnel_plot(haplo_obj = haploblock_obj, mean_line = FALSE) #haplotypes
+local_gebv_block_var_funnel_plot(haplo_obj = haploblock_obj, mean_line = FALSE)
 
 #Plot to visualize LD decay
 plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for large dataset! Use method = "exp" for faster computation and monotonic decay. For a more flexible and still relatively quick approach, explore, method = "gam_tp".
