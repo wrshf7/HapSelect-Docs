@@ -161,7 +161,7 @@ haploblock_obj <- compute_local_GEBV(
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,
   mean_adjust = TRUE,
-  parallel = TRUE
+  parallel = FALSE
 )
 
 #haplotypes
@@ -171,7 +171,7 @@ haploblock_obj <- compute_haplotype_effects(
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,
   mean_adjust = TRUE,
-  parallel = TRUE
+  parallel = FALSE
 )
 ```
 
