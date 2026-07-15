@@ -4,7 +4,7 @@
 
 The HapSelect genetic algorithm (GA) attempts to identify a founder set that maximises the potential to recover favourable haplotypes across the selected haploblocks.
 
-Rather than optimising overall GEBV directly, the GA optimises the ability of the selected founder pool to produce highly favourable offspring combinations across genomic regions.
+Rather than optimising overall GEBV directly, the GA optimises the ability of the selected founder pool to produce highly favourable offspring combinations across genomic regions. This is the core idea behind "The Ultimate Genotype" presented in [Hayes et al., 2024](https://doi.org/10.1038/s41588-024-01942-0). While it is currently impossible to construct an ultimate genotype in practice, these tools still serve to maintain diversity while providing potential for long-term genetic gain in breeding programs. The package implements fitness functions for GA optimization for both localGEBV and haplotypes with different strategies (see package citation).
 
 The GA core algorithm relies on the following R package while the fitness, mutation, and crossover functions are custom designed in HapSelect:
 
@@ -16,19 +16,20 @@ The GA core algorithm relies on the following R package while the fitness, mutat
 
 For each haploblock:
 
-1. All possible pairwise crosses among the selected founders are evaluated
-2. The expected offspring localGEBV for each cross is calculated
-3. The highest-scoring cross for that haploblock is retained
-4. The process repeats across all haploblocks
-5. The fitness values are summed across haploblocks
+1. All possible pairwise crosses among the selected founders (localGEBV) or chromosomes (haplotypes) are evaluated
+2. Combinations that violate optimisation conditions (for example, selfing in localGEBV or haplotypes derived from the same parent with optimal haplotype stacking) are removed.
+3. The expected offspring localGEBV for each cross is calculated (average of parental localGEBV or sum of chosen haplotypes)
+4. The highest-scoring cross for that haploblock is retained
+5. The process repeats across all haploblocks
+6. The fitness values are summed across haploblocks to determine "The Ultimate GEBV" for each set of founders.
 
 The GA therefore attempts to maximise:
 
 - favourable haplotype complementarity
 - genomic coverage of elite haplotypes
-- the best achievable offspring configuration across blocks
+- the best achievable offspring configuration across blocks that meet optimisation constraints
 
-rather than simply selecting the individuals with the highest total GEBV.
+rather than simply selecting the individuals with the highest total GEBV (truncation selection, TS).
 
 ---
 
