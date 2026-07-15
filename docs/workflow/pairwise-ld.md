@@ -43,6 +43,7 @@ ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
 
 | Parameter | Description |
 |:---|:---|
+| `geno` | genotype matrix used throughout HapSelect. See `HapSelect::geno` for formatting examples or [Getting Started](docs/getting-started.md) |
 | `prefix` | PLINK binary prefix for .bed .bim and .fam files (e.g., prefix.bed) |
 | `ld_window` | Maximum number of SNP pairs ahead to compute LD |
 | `ld_window_kb` | Maximum window size in kb to compute LD |
