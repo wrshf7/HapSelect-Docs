@@ -4,6 +4,8 @@
 
 Some HapSelect functions (PLINK-backed LD) require external tools. Install them with the provided scripts before using the package.
 
+PLINK **MUST** be installed as an actual program and the executable in the user/bin folder if you wish to use it! If you create the folder and place PLINK in the user/bin folder yourself it will also work.
+
 === "Linux (Ubuntu/Debian)"
     ```bash
     ./inst/scripts/install/install_linux.sh
