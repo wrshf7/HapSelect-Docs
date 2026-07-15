@@ -11,10 +11,10 @@ haploblocks <- def_blocks(
   ld        = ld_pairs,
   map       = map,
   method    = "flanking",
-  threshold = 0.2,
-  tolerance = 4,
+  threshold = 0.4,
+  tolerance = 3,
   tol_reset = TRUE,
-  start     = "LD",
+  start     = "beginning",
   parallel  = FALSE
 )
 ```
