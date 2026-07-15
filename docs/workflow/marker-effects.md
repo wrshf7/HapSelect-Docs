@@ -76,7 +76,7 @@ CV <- n_fold_cross_validation(
 )
 ```
 
-The data is split into `nfold` groups, where each group is utilised once for validation while training occurs on the other groups. That is, `nfold` - 1 groups are utilised for training and 1 group is utilised for validation. This is repeated until each group is utilised for validation.
+The data is split into `nfold` groups, where each group is utilised once for validation while training occurs on the other groups. That is, `nfold` - 1 groups are utilised for training and the remaining 1 group is utilised for validation. This is repeated until each group is utilised once for validation.
 
 `nfold` **MUST** be an integer (i.e., `5L` and not `5`)
 
@@ -95,7 +95,7 @@ CV <- cross_validation(
 )
 ```
 
-A more generalised version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration with replacement.
+A more generalised version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration. Across iteration, the sampling is conducted indepenently with replacement. That is, similar groups could be utilised for training and validation in different iterations. Thus, more folds are likely needed compared to `n_fold_cross_validation()` to adequately assess uncertainty.
 
 `train_prop` must be a value between 0 and 1 (i.e., the proportion). This is taken as `train_prop` * number of rows rounded down. The rest of the data is utilised for validation.
 
