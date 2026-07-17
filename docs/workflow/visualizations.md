@@ -1,253 +1,356 @@
 # Visualisations
 
-HapSelect provides several `ggplot2`-based visualisation functions for exploring:
+HapSelect provides a collection of publication-quality `ggplot2` visualisation functions for exploring marker effects, haplotype architecture, haploblock structure, linkage disequilibrium, and optimization progress.
 
-- marker effects
-- haploblock structure
-- localGEBV architecture
-- haploblock variance
-- marker density
-- LD decay
-
-All visualisation functions return `ggplot2` objects and can be modified using standard `ggplot2` syntax.
-
-Example:
+All plotting functions return standard `ggplot2` objects, allowing further customization using normal `ggplot2` syntax.
 
 ```r
 p <- marker_effects_plot(...)
 
-p + labs(x = "Position (cM)")
+p +
+  labs(title = "Marker Effects") +
+  theme_minimal()
 ```
+
+As a special case:
+
+We use default posotion values because of the ability to choose between genetic map position (cM) and physical map position (bp), the following is an example convert the positions on some graphs to Mb:
+
+```r
+haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+```
+
+where `breaks = seq(start, end, by / 1e6)` controls where labels should go and `seq` is a function in R that takes a start position (where the x axis starts), an end position (where the x axis ends), and a by argument (where should labels be put on the x axis). The `labels = as.character(seq(start, end, by) / 1e6)` controls the names of the labels set by `breaks` and you will notice the entire sequence vector is divided by `1e6`, or 1 million. This converts the labels into Mb. Similarly, 100 Kb increments can be defined by replacing `1e6` with `1e5` and Gb can be defined by replacing `1e6` with `1e9`.
+
 
 ---
 
+# Genome-wide Marker Visualisations
+
 ## Marker Effects Plot
 
-Manhattan-style plot of estimated marker effects across the genome.
+Creates a Manhattan-style scatter plot displaying estimated marker effects across the genome.
 
 ```r
 marker_effects_plot(
   marker_effects = marker_effects$Effect,
   chr            = map$Chromosome,
-  pos            = map$Position,
-  colors         = c("#A01FF0", "#A7A8AA")
+  pos            = map$Position
 )
 ```
 
 ### Required Inputs
 
 | Parameter | Description |
-|:---|:---|
-| `marker_effects` | Numeric vector of marker effects |
-| `chr` | Chromosome vector corresponding to each marker |
-| `pos` | Marker position vector |
+|:--|:--|
+| `marker_effects` | Numeric vector containing estimated marker effects |
+| `chr` | Numeric chromosome identifier for every marker |
+| `pos` | Genomic position corresponding to every marker |
 
 ### Optional Parameters
 
 | Parameter | Default | Description |
-|:---|:---|:---|
-| `colors` | `c("#A01FF0", "#A7A8AA")` | Vector of length 2 defining alternating chromosome colors |
+|:--|:--|:--|
+| `colors` | `c("#A01FF0","#A7A8AA")` | Two alternating chromosome colors |
 
-### Notes
+### Details
 
-- Missing values (`NA`) are automatically removed
-- Chromosomes should generally be numeric for proper ordering
+* Missing values are automatically removed.
+* Marker effects, chromosome vector, and position vector must all have identical lengths.
+* Chromosomes are ordered numerically.
+* Returns a `ggplot` object.
+
+!!! tip
+    If you have non-numeric chromosomes you must convert them into numerics. You can then re-map the numbered chromosomes into their non-numeric values using ggplot syntax. AI tools are incredibly helpful to help with this - either provide the source code or mention it is a Manhattan-plot style ggplot and you are trying to replace the chromosome labels with another set of labels.
 
 ---
 
-## Unique Haplotype Effects Plot
+# Haplotype Effect Visualisations
 
-Displays the distribution of unique haplotype effects within each haploblock.
+These functions visualize estimated effects assigned to individual haplotypes or local genomic breeding values in a Manhattan-style plot.
+
+## Unique Haplotype Effects
+
+Plots the estimated effect for every unique haplotype.
 
 ```r
 unique_haplo_effects_plot(
-  haplo_obj = haploblock_obj,
-  colors    = c("#A01FF0", "#A7A8AA"),
-  pos_type  = "midpoint"
+    haplo_obj = haploblock_obj
+)
+```
+
+---
+
+## Unique localGEBV Effects
+
+Plots estimated local genomic breeding values for every unique haplotype.
+
+```r
+unique_localGEBV_effects_plot(
+    haplo_obj = haploblock_obj
+)
+```
+
+---
+
+## Block Variance Manhattan Plot
+
+Displays estimated haploblock variance along the genome in a Manhattan-style plot.
+
+```r
+block_variance_manhattan_plot(
+    haplo_obj = haploblock_obj
 )
 ```
 
 ### Required Inputs
 
 | Parameter | Description |
-|:---|:---|
-| `haplo_obj` | Object returned from `compute_local_GEBV()` |
+|:--|:--|
+| `haplo_obj` | Object returned by `compute_local_GEBV()` |
 
-### Optional Parameters
+### Shared Optional Parameters
 
 | Parameter | Default | Description |
-|:---|:---|:---|
-| `colors` | `c("#A01FF0", "#A7A8AA")` | Vector of length 2 defining alternating chromosome colors |
-| `pos_type` | `"midpoint"` | Haploblock positioning method |
+|:--|:--|:--|
+| `colors` | `c("#A01FF0","#A7A8AA")` | Alternating chromosome colours |
+| `pos_type` | `"midpoint"` | Position used to represent each haploblock |
 
-### `pos_type` Options
+### Position Options
 
-| Option | Description |
-|:---|:---|
-| `"midpoint"` | Plot effects at the midpoint of the haploblock |
-| `"start"` | Plot effects at the first marker in the haploblock |
+| Value | Description |
+|:--|:--|
+| `"midpoint"` | Uses the midpoint of each haploblock |
+| `"start"` | Uses the first marker position |
+
+### Returns
+
+A `ggplot2` object.
 
 ---
 
-## Block Variance Funnel Plot
+# Haploblock Variance Visualisations
 
-Plots haploblock variance (`Block_Var`) against haploblock size.
+These plots examine the relationship between haplotype effects and estimated haploblock variance.
+
+Internally, block variance is transformed using
+
+```
+log10(Block_Var)
+```
+
+before being min-max scaled to improve visualization.
+
+---
+
+## Haploblock Variance Funnel Plot
+
+Plots haplotype effects against scaled haploblock variance.
+
+```r
+haplo_block_var_funnel_plot(
+    haplo_obj = haploblock_obj
+)
+```
+
+---
+
+## localGEBV Variance Funnel Plot
+
+Plots localGEBV values against scaled haploblock variance.
+
+```r
+local_gebv_block_var_funnel_plot(
+    haplo_obj = haploblock_obj
+)
+```
+
+---
+
+## Generic Block Variance Funnel Plot
+
+Maintained for backwards compatibility.
 
 ```r
 block_var_funnel_plot(
-  haplo_obj    = haploblock_obj,
-  mean_line    = FALSE,
-  scale_colors = c("blue", "purple", "red")
+    haplo_obj = haploblock_obj
 )
 ```
 
 ### Required Inputs
 
 | Parameter | Description |
-|:---|:---|
-| `haplo_obj` | Object returned from `compute_local_GEBV()` |
+|:--|:--|
+| `haplo_obj` | Output from `compute_local_GEBV()` |
 
 ### Optional Parameters
 
 | Parameter | Default | Description |
-|:---|:---|:---|
-| `mean_line` | `FALSE` | Adds dashed mean variance line |
-| `scale_colors` | `c("blue", "purple", "red")` | Vector of length 3 defining low/mid/high localGEBV effect colors |
+|:--|:--|:--|
+| `mean_line` | `TRUE` | Draw dashed mean variance line, change to `FALSE` to remove |
+| `scale_colors` | `c("blue","purple","red")` | Gradient colors for effect size on the x axis |
 
 ### Notes
 
-- Haploblock variance is internally log-scaled for visualisation and then min-max scaled between 0 and 1.
-- Useful for visualising high-variance haploblocks
+* Larger values indicate higher estimated block variance.
+* Color represents effect magnitude.
 
 ---
 
+# Genome Structure Visualisations
+
 ## Haploblock Structure Plot
 
-Visualises haploblock boundaries across chromosomes.
+Displays haploblock boundaries across chromosomes.
 
 ```r
 plot_haploblocks(
-  haploblock_df = haploblock_obj$Haploblocks,
-  block_fill    = "#A01FF0",
-  chrom_fill    = NA,
-  height        = 0.30,
-  single_width_bp = NULL
+    haploblock_df = haploblock_obj$Haploblocks
 )
 ```
 
 ### Required Inputs
 
 | Parameter | Description |
-|:---|:---|
+|:--|:--|
 | `haploblock_df` | Haploblock dataframe |
 
 ### Optional Parameters
 
 | Parameter | Default | Description |
-|:---|:---|:---|
-| `block_fill` | `"#A01FF0"` | Haploblock fill color |
-| `chrom_fill` | `NA` | Chromosome background color |
+|:--|:--|:--|
+| `block_fill` | `"#A01FF0"` | Haploblock fill colour |
+| `chrom_fill` | `NA` | Chromosome background colour |
 | `height` | `0.30` | Chromosome track thickness |
-| `single_width_bp` | `NULL` | Width of single-marker blocks (mostly deprecated) |
+| `single_width_bp` | `NULL` | Width used to display single-marker blocks - mostly deprecated |
 
 ### Notes
 
-- `chrom_fill = NA` produces transparent chromosome backgrounds
-- Smaller `height` values create thinner chromosome tracks
+* Transparent chromosome backgrounds are produced with `chrom_fill = NA`.
+* Single-marker blocks are automatically given a visible width if `single_width_bp = NULL`.
 
 ---
 
 ## Marker Density Plot
 
-Displays marker density across chromosomes using fixed genomic bins.
+Plots marker density along chromosomes using fixed genomic bins.
 
 ```r
 plot_marker_density(
-  map        = map,
-  bin_size   = 500000,
-  height     = 0.30,
-  chrom_fill = NA,
-  col_low    = "white",
-  col_mid    = "purple",
-  col_high   = "red"
+    map = map
 )
 ```
 
 ### Required Inputs
 
 | Parameter | Description |
-|:---|:---|
-| `map` | Ordered map dataframe |
+|:--|:--|
+| `map` | Ordered marker map containing `Chromosome` and `Position` |
 
 ### Optional Parameters
 
 | Parameter | Default | Description |
-|:---|:---|:---|
-| `bin_size` | `500000` | Genomic bin size used for marker counting in units of map input (usually base pairs or cM) |
-| `height` | `0.30` | Chromosome track thickness |
-| `chrom_fill` | `NA` | Chromosome background color |
-| `col_low` | `"white"` | Low-density color |
-| `col_mid` | `"purple"` | Mid-density color |
-| `col_high` | `"red"` | High-density color |
+|:--|:--|:--|
+| `bin_size` | `500000` | Bin width used for counting markers |
+| `height` | `0.30` | Chromosome thickness |
+| `chrom_fill` | `NA` | Chromosome fill colour |
+| `col_low` | `"white"` | Low-density colour |
+| `col_mid` | `"purple"` | Mid-density colour |
+| `col_high` | `"red"` | High-density colour |
 
 ### Notes
 
-- Smaller `bin_size` values increase resolution but also increase noise
-- Larger bins produce smoother density patterns
-- Final bins are automatically capped at chromosome ends
+* Smaller bins increase resolution.
+* Larger bins produce smoother density estimates.
+* Final bins are automatically truncated at chromosome ends.
 
 ---
 
+# Linkage Disequilibrium
+
 ## LD Decay Plot
 
-Plots linkage disequilibrium (`r²`) against physical distance.
+Plots pairwise linkage disequilibrium (R²) as a function of physical distance.
 
 ```r
 plot_ld_decay(
-  map         = map,
-  ld          = ld_pairs,
-  max_kb      = 500,
-  span        = 0.3,
-  k           = 10,
-  method      = "gam_cr",
-  point_color = "#A7A8AA",
-  curve_color = "#A01FF0",
-  alpha       = 0.2
+    map = map,
+    ld = ld_pairs
 )
 ```
 
 ### Required Inputs
 
 | Parameter | Description |
-|:---|:---|
-| `map` | Ordered map dataframe |
+|:--|:--|
+| `map` | Marker map containing SNP names, chromosomes, and positions |
 | `ld` | Pairwise LD dataframe |
 
 ### Optional Parameters
 
 | Parameter | Default | Description |
-|:---|:---|:---|
-| `max_kb` | `500` | Maximum pairwise marker distance in kb |
+|:--|:--|:--|
+| `max_kb` | `500` | Maximum pairwise distance |
 | `method` | `"gam_cr"` | Curve fitting method |
-| `span` | `0.3` | LOESS smoothing parameter |
-| `k` | `10` | Integer number of GAM basis functions |
-| `point_color` | `"#A7A8AA"` | LD point color |
-| `curve_color` | `"#A01FF0"` | Fitted curve color |
-| `alpha` | `0.2` | Point transparency between 0 and 1 |
+| `k` | `50` | Number of basis functions for GAM |
+| `span` | `0.30` | LOESS smoothing span |
+| `point_color` | `"#A7A8AA"` | Scatter colour |
+| `curve_color` | `"#A01FF0"` | Fitted curve colour |
+| `alpha` | `0.20` | Point transparency |
 
-### `method` Options
+### Curve Options
 
-| Option | Description |
-|:---|:---|
+| Method | Description |
+|:--|:--|
 | `"gam_tp"` | Thin-plate regression spline GAM |
 | `"gam_cr"` | Cubic regression spline GAM |
 | `"exp"` | Exponential decay model |
-| `"loess"` | LOESS smoothing |
+| `"loess"` | LOESS smoother |
 
 ### Notes
 
-- `"exp"` enforces monotonic decay
-- `span` is only used by `"loess"`
-- `k` is only used by `"gam_tp"` and `"gam_cr"`
-- Smaller `span` or larger `k` values may increase overfitting
-- `span` should be between 0 and 1 and `k` should be an integer value
+* `"exp"` produces a monotonic decay curve.
+* `span` only affects LOESS.
+* `k` only affects GAM fitting.
+
+---
+
+# Genetic Algorithm Diagnostics
+
+## GA Progress Plot
+
+Visualizes convergence of the genetic algorithm during parent selection.
+
+```r
+GA_progress_plot(
+    parent_selection_object
+)
+```
+
+### Required Inputs
+
+| Parameter | Description |
+|:--|:--|
+| `parent_selection_object` | Object returned from `select_parents()` |
+
+### Optional Parameters
+
+| Parameter | Default | Description |
+|:--|:--|:--|
+| `max_color` | `"#A01FF0"` | Maximum fitness line colour |
+| `mean_color` | `"#A01FF0"` | Mean fitness line colour |
+| `ribbon_color` | `"#A01FF0"` | Interquartile ribbon colour |
+| `ribbon_alpha` | `0.35` | Ribbon transparency |
+| `max_linewidth` | `1.2` | Maximum fitness line width |
+| `mean_linewidth` | `0.8` | Mean fitness line width |
+
+### Details
+
+The figure displays:
+
+* Maximum objective value by generation.
+* Mean objective value by generation.
+* Interquartile range across the population.
+* Final maximum value labelled on the plot.
+
+Returns a `ggplot2` object.
