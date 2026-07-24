@@ -269,10 +269,10 @@ However, retaining too few blocks may:
 Users are encouraged to experiment with multiple selection thresholds depending on breeding goals and computational resources. The [Basic Simulation](basic-simulation.md) functions will be useful for interpreting the GA output.
 
 
-## `genetic_algorithm()`
+## `GA Functions`
 
 !!! warning
-    These individuals are selected via a heuristic search optimisation and are thus never guaranteed to be the best set of individuals! The heuristic search optimisation is necessary to make most problems computationally feasible. Generally, unless stuck in a very pre-mature local optima, the results are the best or close to the best solution. Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios. The `GA_output` object contains all solutions.
+    These individuals are selected via a heuristic search optimisation and are thus never guaranteed to be the best set of individuals! The heuristic search optimisation is necessary to make most problems computationally feasible. Generally, unless stuck in a very pre-mature local optima, the results are the best or close to the best solution. Furthermore, more than one unique set of parents with the same overall fitness may exist in smaller scenarios. The `GA` sub object contains all solutions.
 
 
 ```r
