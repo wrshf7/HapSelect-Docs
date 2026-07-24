@@ -47,9 +47,17 @@ where:
 |:---|:---|
 | *J* | Number of selected haploblocks |
 | $localGEBV_{ij/k}$ | localGEBV of individual `i` or `k` at haploblock `j` |
-| *(i,k)* | Pairwise founder combinations |
+| *(i,k)* | Pairwise unique founder combinations (same for all haploblocks) |
 
-For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.
+For each block, the GA identifies the founder pair with the highest expected offspring breeding value (EBV) and sums these optimal values across all blocks.
+
+
+### Selfing vs no-selfing at a block
+
+At a single block the GA keeps the best cross among the selected founders, where a cross's progeny value is the **mid-parent average** of the two parents' localGEBV. With `strategy = "no_selfing"` the two parents must be distinct; with `strategy = "selfing"` a founder may be crossed with itself, which lets a block lock in its single best founder rather than averaging two individuals. Selfing therefore never lowers a block's value, but constrains diversity.
+
+![Selfing vs no-selfing at a block](../assets/localgebv-cross.png)
+
 
 ### True Haplotypes
 
@@ -64,19 +72,29 @@ where:
 |:---|:---|
 | *J* | Number of selected haploblocks |
 | $haplotype_{ij/kl}$ | haplotypes of individual `i` and `k` at haploblock `j` |
-| *(il,kl)* | Pairwise haplotype combinations |
+| *(il,kl)* | Pairwise unique haplotype combinations (same for all haploblocks) |
+
+#### Haplotype Selection Strategies
+
+The localGEBV fitness above scores each founder by its diploid value at a block. HapSelect can instead work at the **haplotype** level: each founder contributes its two phased chromosomes, and a genotype's value at a block is the **sum** of the two chosen haplotype effects. Three strategies control which haplotype pairings are allowed at each block:
 
 !!! tip
-    The possible combinations of ijl and ikl depend on `strategy`. For example, `strategy = "OHS"` adds the constraint that $i \neq k$, while `l` is free to be any chromosome within an individual. That is, haplotypes must come from different individuals. The `strategy = "OPV"` allows for `i = k` and `l` to be the same value (in other words, the same haplotype can be chosen twice). The `strategy = "haploid_OHS"` allows `i = k`, but `l` must be two different values - or in other words, the same individual can be used, but it must be different chromosomes.
+    The possible combinations of ijl and ikl depend on `strategy`. For example, `strategy = "OHS"` adds the constraint that $i \neq k$, while `l` is free to be any chromosome within an individual. That is, haplotypes must come from different individuals. The `strategy = "OPV"` allows for `i = k` and `l` to be the same value (in other words, the same haplotype can be chosen twice). The `strategy = "Haploid_OHS"` allows `i = k`, but `l` must be two different values - or in other words, the same individual can be used, but it must be different chromosomes.
+    
+- **OPV** (Optimal Population Value) — any haplotype may be paired with itself, so a block's ceiling is its single best haplotype doubled. This represents a fully homozygous ideal line.
+- **Haploid_OHS** — the two haplotypes must be distinct, but may come from the same founder (for example an individual's two homologs), as achievable through doubled haploids.
+- **OHS** (Optimal Haplotype Selection) — the two haplotypes must come from different founders, representing a realistic biparental cross.
+
+![OPV vs Haploid_OHS vs OHS at a block](../assets/haplotype-strategies.png)
+
+As with localGEBV, the per-block winners are summed into the genome-wide total. Because each strategy restricts the allowed pairings further, the ultimate GEBV always ranks **OPV ≥ Haploid_OHS ≥ OHS**.
+
+![Ultimate GEBV under each haplotype strategy](../assets/haplotype-total.png)
+
 
 !!! warning
     Both localGEBV and haplotype methods only work for diploids currently. We plan to expand the localGEBV method to non-diploid soon.
 
-### Selfing vs no-selfing at a block
-
-At a single block the GA keeps the best cross among the selected founders, where a cross's progeny value is the **mid-parent average** of the two parents' localGEBV. With `selfing = FALSE` the two parents must be distinct; with `selfing = TRUE` a founder may be crossed with itself, which lets a block lock in its single best founder rather than averaging two down. Selfing therefore never lowers a block's value.
-
-![Selfing vs no-selfing at a block](../assets/localgebv-cross.png)
 
 ### The genome-wide total
 
@@ -98,7 +116,7 @@ Traditional truncation selection (TS):
 In contrast, the HapSelect GA:
 
 - searches for complementary founder combinations
-- rewards founder sets that collectively cover favourable haplotypes
+- rewards founder sets that collectively cover favourable haplotypes/localGEBV
 - allows different founders to contribute to different genomic regions
 - can retain valuable rare haplotypes ignored by standard TS
 
@@ -120,31 +138,7 @@ For each haploblock, the algorithm evaluates:
 combn(founders, 2)
 ```
 
-to test all possible pairwise combinations among the selected founders.
-
-If:
-
-```r
-selfing = TRUE
-```
-
-then self-crosses are also evaluated.
-
----
-
-## Haplotype Selection Strategies
-
-The localGEBV fitness above scores each founder by its diploid value at a block. HapSelect can instead work at the **haplotype** level: each founder contributes its two phased chromosomes, and a genotype's value at a block is the **sum** of the two chosen haplotype effects. Three strategies control which haplotype pairings are allowed at each block:
-
-- **OPV** (Optimal Population Value) — any haplotype may be paired with itself, so a block's ceiling is its single best haplotype doubled. This represents a fully homozygous ideal line.
-- **Haploid_OHS** — the two haplotypes must be distinct, but may come from the same founder (for example an individual's two homologs), as achievable through doubled haploids.
-- **OHS** (Optimal Haplotype Selection) — the two haplotypes must come from different founders, representing a realistic biparental cross.
-
-![OPV vs Haploid_OHS vs OHS at a block](../assets/haplotype-strategies.png)
-
-As with localGEBV, the per-block winners are summed into the genome-wide total. Because each strategy restricts the allowed pairings further, the ultimate GEBV always ranks **OPV ≥ Haploid_OHS ≥ OHS**.
-
-![Ultimate GEBV under each haplotype strategy](../assets/haplotype-total.png)
+to test all possible pairwise combinations among the selected founders. In the case of haplotypes, `founders` is actually haplotype pairs (e.g., for a diploid, 2 possible haplotypes per individual).
 
 ---
 
@@ -156,9 +150,9 @@ The GA evolves founder sets over multiple iterations using:
 |:---|:---|
 | Population initialisation | Generate random founder sets |
 | Fitness evaluation | Score founder sets using haploblock complementarity |
-| Mutation | Randomly replace founders |
+| Mutation | Randomly replace a single founder in each population |
 | Crossover | Swap part of two founder sets |
-| Elite sampling | Bias replacement toward high-performing solutions (greatest GEBV) during Mutation and if Crossover yields overlapping individuals |
+
 
 The search attempts to balance:
 
@@ -199,38 +193,6 @@ The algorithm:
 3. Fills missing founders from elite solutions based on `pelite`
 
 This helps preserve useful founder combinations while still exploring new combinations.
-
----
-
-## Elite Founder Sampling
-
-The:
-
-```r
-pelite
-```
-
-parameter controls how strongly crossover favours founders from high-performing solutions.
-
-Example:
-
-```r
-#expressed in probability: i.e., between 0 and 1
-pelite = 0.2
-```
-
-means replacement founders are preferentially sampled from the top 20% of solutions ranked by overall fitness (GEBV).
-
-Smaller values:
-
-- increase selection pressure
-- may accelerate convergence if elite individuals contain most of the best haplotypes
-    - this may also cause convergence to a local optima if the value is too high
-
-Larger values:
-
-- maintain greater diversity
-- improve exploration
 
 ---
 
@@ -314,16 +276,30 @@ Users are encouraged to experiment with multiple selection thresholds depending 
 
 
 ```r
-GA_output <- genetic_algorithm(
-  localGEBV  = localGEBV,
+localGEBV_parent_obj <- local_gebv_parent_selection(
+  haploblock_obj = haploblock_obj,
   n_founders = 20,
-  popSize    = 10,
-  maxiter    = 300,
-  run        = 150,
-  selfing    = FALSE,
-  pmutation  = 0.2,
-  pcrossover = 0.8,
-  pelite     = 0.5
+  popSize = 10,
+  maxiter = 300,
+  run = 150,
+  strategy = "no_selfing",
+  pmutation = 0.6,
+  pcrossover = 0.6,
+  maximize = TRUE,
+  monitor = TRUE
+)
+
+haplotype_parent_obj <- haplotype_parent_selection(
+  haploblock_obj = haploblock_obj,
+  n_founders = 20,
+  popSize = 10,
+  maxiter = 300,
+  run = 150,
+  strategy = "OHS",
+  pmutation = 0.6,
+  pcrossover = 0.6,
+  maximize = TRUE,
+  monitor = TRUE
 )
 ```
 
@@ -362,11 +338,9 @@ GA_output <- genetic_algorithm(
     </tr>
 
     <tr>
-      <td><code>selfing</code></td>
+      <td><code>strategy</code></td>
       <td>
-        Allow selfing (i.e., for the fitness function allow the same
-        parent at a block). If <code>FALSE</code>, requires two different
-        parents per chosen block.
+        Whether to allow selfing (localGEBV) or constraints to haplotype pairing (haplotypes)
       </td>
     </tr>
 
@@ -387,15 +361,6 @@ GA_output <- genetic_algorithm(
       </td>
     </tr>
 
-    <tr>
-      <td><code>pelite</code></td>
-      <td>
-        Elite proportion (between 0 and 1) — constrains choosing
-        individuals from the total population to the highest
-        <code>pelite</code> proportion based on GEBV when needed to find
-        non-overlapping parents for <code>pcrossover</code>.
-      </td>
-    </tr>
   </tbody>
 </table>
 
@@ -469,7 +434,7 @@ Number of iterations allowed without improvement before stopping.
 
 Mutation probability.
 
-Mutation randomly substitutes one individual within populations from the total population.
+Mutation randomly substitutes one individual within populations from the total population. Values between 0.5 and 0.75 seem to be fairly optimal so far.
 
 #### Trade-off
 
@@ -486,7 +451,7 @@ Overly large mutation probabilities can prevent convergence entirely because hig
 
 ### `pcrossover`
 
-Probability populations exchange parental subsets (half of each pair swapped). If there are overlapping individuals after swapping, then the duplicates are dropped and non-duplicate individuals are randomly sampled from the total population.
+Probability populations exchange parental subsets (half of each pair swapped). If there are overlapping individuals after swapping, then the duplicates are dropped and non-duplicate individuals are randomly sampled from the total population. Values between 0.50 and 0.75 seem to be optimal so far.
 
 #### Trade-offs
 
@@ -498,43 +463,24 @@ Probability populations exchange parental subsets (half of each pair swapped). I
 
 Very high crossover rates may cause the GA to overshoot promising solutions and continuously disrupt near-optimal parental combinations.
 
-
----
-
-### `pelite`
-
-Restricts replacement individuals to the proportion of the population ranked by GEBV.
-
-#### Trade-offs
-
-| Smaller `pelite` | Larger `pelite` |
-|:---|:---|
-| Faster convergence | Greater diversity |
-| Stronger selection pressure | Better exploration |
-| Risk premature convergence | Slower convergence |
-
-Very aggressive elite selection may reduce genetic diversity within the GA search process and increase the likelihood of local optima.
-
 ---
 
 ### If convergence is unstable:
 
 - decrease `pmutation`
 - decrease `pcrossover`
-- increase `pelite`
 - increase `run`
 
 ### If convergence is too slow:
 
 - increase `popSize`
-- slightly increase `pmutation`
-- slightly increase `pcrossover`
+- increase `pmutation`
+- increase `pcrossover`
 
 ### If solutions appear trapped in local optima:
 
 - increase `popSize`
 - increase `pmutation`
-- increase `pelite`
 - increase `run`
 
 ---
@@ -543,7 +489,10 @@ Very aggressive elite selection may reduce genetic diversity within the GA searc
 
 ```r
 # One optimal set of selected parents
-GA_output$One_Solution
+parent_obj$selected_founders
+
+#GA information and statistics over iterations
+parent_obj$GA
 ```
 
-The output contains the selected parent IDs and names. More information is available in the internal `GA` object about GA performance, change in the best localGEBV and meanGEBV of the parental sets over iterations, etc. There may be more than one set of parents that give rise to the same optimum. Additional sets of parents are contained in the `GA` object and only the first set is presented in `$One_Solution`
+The output contains the selected parent IDs and names. More information is available in the internal `GA` object about GA performance, change in the best localGEBV and meanGEBV of the parental sets over iterations, etc. There may be more than one set of parents that give rise to the same optimum. Additional sets of parents are contained in the `GA` object and only the first set is presented in `$selected_founders`
