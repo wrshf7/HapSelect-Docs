@@ -35,6 +35,7 @@ rather than simply selecting the individuals with the highest total GEBV (trunca
 
 ## The Fitness Function
 
+### localGEBV
 Conceptually, the fitness function is:
 
 $$
@@ -45,10 +46,31 @@ where:
 | Symbol | Meaning |
 |:---|:---|
 | *J* | Number of selected haploblocks |
-| $localGEBV_{ij}$ | localGEBV of individual `i` at haploblock `j` |
+| $localGEBV_{ij/k}$ | localGEBV of individual `i` or `k` at haploblock `j` |
 | *(i,k)* | Pairwise founder combinations |
 
 For each block, the GA identifies the founder pair with the highest expected offspring value (EPD) and sums these optimal values across all blocks.
+
+### True Haplotypes
+
+The true haplotype fitness function si as follows:
+
+$$
+\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(i,k)} {haplotype_{ijl} + haplotype_{kjl}}
+$$
+where:
+
+| Symbol | Meaning |
+|:---|:---|
+| *J* | Number of selected haploblocks |
+| $haplotype_{ij/kl}$ | haplotypes of individual `i` and `k` at haploblock `j` |
+| *(il,kl)* | Pairwise haplotype combinations |
+
+!!! tip
+    The possible combinations of ijl and ikl depend on `strategy`. For example, `strategy = "OHS"` adds the constraint that $i \neq k$, while `l` is free to be any chromosome within an individual. That is, haplotypes must come from different individuals. The `strategy = "OPV"` allows for `i = k` and `l` to be the same value (in other words, the same haplotype can be chosen twice). The `strategy = "haploid_OHS"` allows `i = k`, but `l` must be two different values - or in other words, the same individual can be used, but it must be different chromosomes.
+
+!!! warning
+    Both localGEBV and haplotype methods only work for diploids currently. We plan to expand the localGEBV method to non-diploid soon.
 
 ### Selfing vs no-selfing at a block
 
