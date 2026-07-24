@@ -2,9 +2,9 @@
 
 ## How the Genetic Algorithm Works
 
-The HapSelect genetic algorithm (GA) attempts to identify a founder set that maximises the potential to recover favourable haplotypes across the selected haploblocks.
+The HapSelect genetic algorithm (GA) for localGEBV or haplotype effects attempts to identify a founder set of individuals from a larger population that maximises the potential to recover favourable localGEBV or haplotype effects across the selected haploblocks.
 
-Rather than optimising overall GEBV directly, the GA optimises the ability of the selected founder pool to produce highly favourable offspring combinations across genomic regions. This is the core idea behind "The Ultimate Genotype" presented in [Hayes et al., 2024](https://doi.org/10.1038/s41588-024-01942-0). While it is currently impossible to construct an ultimate genotype in practice, these tools still serve to maintain diversity while providing potential for long-term genetic gain in breeding programs. The package implements fitness functions for GA optimization for both localGEBV and haplotypes with different strategies (see package citation).
+Rather than optimising overall GEBV directly, which often limits diversity, the GA optimises the ability of the selected founder pool to produce elite offspring across genomic regions if the best regions could be simultaneously combined. This is the core idea behind "The Ultimate Genotype" presented in [Hayes et al., 2024](https://doi.org/10.1038/s41588-024-01942-0). While it is currently impossible to construct an ultimate genotype in practice, these tools excel in maintaining diversity while providing potential for long-term genetic gain in breeding programs. The package implements fitness functions that the GA uses to optimise for both localGEBV and haplotype effects with different strategies (see package citation). Custom fitness functions can also be provided - we plan to offer an extensive guide to this in the future.
 
 The GA core algorithm relies on the following R package while the fitness, mutation, and crossover functions are custom designed in HapSelect:
 
@@ -17,17 +17,17 @@ The GA core algorithm relies on the following R package while the fitness, mutat
 For each haploblock:
 
 1. All possible pairwise crosses among the selected founders (localGEBV) or chromosomes (haplotypes) are evaluated
-2. Combinations that violate optimisation conditions (for example, selfing in localGEBV or haplotypes derived from the same parent with optimal haplotype stacking) are removed.
+2. Combinations that violate optimisation conditions (for example, selfing in localGEBV or haplotypes derived from the same parent with optimal haplotype stacking) are removed. This depends on the `strategy` argument.
 3. The expected offspring localGEBV for each cross is calculated (average of parental localGEBV or sum of chosen haplotypes)
 4. The highest-scoring cross for that haploblock is retained
 5. The process repeats across all haploblocks
-6. The fitness values are summed across haploblocks to determine "The Ultimate GEBV" for each set of founders.
+6. The average localGEBV or haplotype sums ("fitness") values are summed across haploblocks to determine "The Ultimate GEBV" for each set of founders across the entire genome.
 
 The GA therefore attempts to maximise:
 
 - favourable haplotype complementarity
 - genomic coverage of elite haplotypes
-- the best achievable offspring configuration across blocks that meet optimisation constraints
+- the best achievable offspring configuration across blocks that meet optimisation constraints (e.g., limited starting founders from a large population)
 
 rather than simply selecting the individuals with the highest total GEBV (truncation selection, TS).
 
