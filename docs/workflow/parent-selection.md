@@ -64,7 +64,7 @@ At a single block the GA keeps the best cross among the selected founders, where
 The true haplotype fitness function si as follows:
 
 $$
-\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(i,k)} {haplotype_{ijl} + haplotype_{kjl}}
+\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(i,k)}({haplotype_{ijl} + haplotype_{kjl}})
 $$
 where:
 
