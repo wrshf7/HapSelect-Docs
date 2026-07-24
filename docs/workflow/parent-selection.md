@@ -46,7 +46,7 @@ where:
 | Symbol | Meaning |
 |:---|:---|
 | *J* | Number of selected haploblocks |
-| $localGEBV_{ij/k}$ | localGEBV of individual `i` or `k` at haploblock `j` |
+| $localGEBV_{i/kj}$ | localGEBV of individual `i` or `k` at haploblock `j` |
 | *(i,k)* | Pairwise unique founder combinations (same for all haploblocks) |
 
 For each block, the GA identifies the founder pair with the highest expected offspring breeding value (EBV) and sums these optimal values across all blocks.
@@ -64,14 +64,14 @@ At a single block the GA keeps the best cross among the selected founders, where
 The true haplotype fitness function si as follows:
 
 $$
-\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(i,k)}({haplotype_{ijl} + haplotype_{kjl}})
+\mathrm{Fitness} = \sum_{j=1}^{J} \max_{(il,kl)}({haplotype_{ijl} + haplotype_{kjl}})
 $$
 where:
 
 | Symbol | Meaning |
 |:---|:---|
 | *J* | Number of selected haploblocks |
-| $haplotype_{ij/kl}$ | haplotypes of individual `i` and `k` at haploblock `j` |
+| $haplotype_{i/kjl}$ | haplotypes of individual `i` and `k` at haploblock `j` |
 | *(il,kl)* | Pairwise unique haplotype combinations (same for all haploblocks) |
 
 #### Haplotype Selection Strategies
