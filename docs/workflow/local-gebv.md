@@ -26,7 +26,7 @@ $$
 \text{Haplotype}_{jkl} = \sum_{i \in \text{block}_j} ({x_{ikl}} - \frac{\overline{x_{i}}}{2}) \cdot \hat{\alpha}_i
 $$
 
-where all terms are the same, except \(({x_{ikl}} - \frac{\overline{x_{i}}}{2})\) is the **centered** allele of individual \(k\) on chromosome \(l\) at marker \(i\) in haploblock \(j\) and the result is the haplotype effect of individual \(k\) for chromosome \(l\) and haploblock \(j\). The centered allele is equivalent to subtracting the allele frequency, p, from the allele in 0/1 format. Dividing the mean dosage by 2 is equivalent for a diploid where the mean is 2p.
+where all terms are the same, except \(({x_{ikl}} - \frac{\overline{x_{i}}}{2})\) is the **centered** allele of individual \(k\) on chromosome \(l\) at marker \(i\) in haploblock \(j\) and the result is the haplotype effect of individual \(k\) for chromosome \(l\) and haploblock \(j\). The centered allele is equivalent to subtracting the allele frequency, p, from the allele in 0/1 format. Dividing the mean dosage by 2 is equivalent for a diploid where the mean is 2p. If the mean is equivalent to 2p for a diplid, then the mean of a haplotype (on average 1/2 of the GEBV) if simply p, which is the mean divided by 2.
 
 This produces an **\(\text{J × NL}\) matrix** of haplotype effects — one value per individual per chromosome for \(L\) chromosome sets per haploblock for \(J\) haploblocks.
 
