@@ -1064,7 +1064,7 @@ localGEBV_Sim <- localGEBV_vs_TS_simulation(
 )
 
 Haplotype_Sim <- Haplotype_vs_TS_simulation(
-  GA_output = localGEBV_parent_obj,
+  GA_output = haplotype_parent_obj,
   geno_phased = geno,
   marker_effects = marker_effects,
   map = map,
