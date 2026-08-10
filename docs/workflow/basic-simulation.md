@@ -1,11 +1,17 @@
 # Basic GA vs TS Simulation
 
-The `GA_vs_TS_simulation()` function performs a simplified recurrent genomic selection simulation comparing:
+The `localGEBV_vs_TS_simulation()` and `Haplotype_vs_TS_simulation` functions perform a simplified recurrent genomic selection simulation comparing:
 
-- parents selected using the HapSelect genetic algorithm (GA)
+- parents selected using the HapSelect genetic algorithm (GA) with localGEBV or haplotype effects
 - parents selected using standard genomic truncation selection (TS)
 
-The simulation evaluates long-term breeding value trajectories across generations and can optionally visualise population structure using PCA.
+The simulation evaluates long-term breeding value trajectories across generations and can optionally visualise population structure using PCA to demonstrate where parents are being sourced.
+
+## Advantages of GA vs TS
+
+In general, if a population has been under selection for a given trait, the best parents identified by whole-genome GEBV via TS tend to be related. In other words, they're good because they share the same good genomic segements; but conversely, they also share the same bad genomic segments. The GA with the default fitness functions, in comparison, will attempt to match indviduals by potential contribution. This necessarily means individuals tend to be less related if the population has been under selection for the given trait. This also means genetic variance tends to be greater in these individuals, even if the mean GEBV of the GA parents is initially worse than the TS parents. Thus, long-term selection potential is usually greater. This simulation attempts to demonstrate that diversity potential.
+
+In the PCA, GA, TS, and overlapping parents are marked for visualisation. If the TS-selected parents tend to cluster to a small region of the PCA plot, it usually means that trait has been under selection in that population and such a scenario is where GA-selected parents shine. However, if TS are dispersed and thus unrelated, then realised differences between the GA and TS-selected parents tend to be minimal or even unfavourable.
 
 ---
 
@@ -13,13 +19,13 @@ The simulation evaluates long-term breeding value trajectories across generation
 
 The simulation performs the following steps:
 
-1. Extracts GA-selected parents from the `genetic_algorithm()` output
+1. Extracts GA-selected parents from the GA output object (`haplotype_parent_selection()` or `local_gebv_parent_selection()` functions
 2. Selects TS parents based on highest GEBV
-3. Converts physical marker positions to genetic positions (if needed)
-4. Simulates recurrent crossing and selection across generations
+3. Converts physical marker positions to proportional genetic positions in cM (if needed)
+4. Simulates recurrent random crossing and selection across generations
 5. Repeats the simulation multiple times to quantify Monte Carlo variability
 6. Summarises breeding value trajectories
-7. Generates trajectory and PCA visualisations
+7. Generates trajectory and PCA visualisations of selected parents
 
 The simulation is intentionally simple and designed primarily for:
 
@@ -33,22 +39,44 @@ The simulation is intentionally simple and designed primarily for:
 # Running the Simulation
 
 ```r
-parent_sln_obj <- GA_vs_TS_simulation(
-  GA_output           = GA_output,
-  geno                = geno,
-  marker_effects      = marker_effects,
-  map                 = map,
+#localGEBV
+localGEBV_Sim  <- localGEBV_vs_TS_simulation(
+  GA_output            = localGEBV_parent_obj,
+  geno                 = geno,
+  marker_effects       = marker_effects,
+  map                  = map,
   genetic_map_position = NULL,
-  num_gen             = 50,
-  num_sim_reps        = 30,
-  num_cross_per_gen   = 1000,
-  num_TS_parents      = NULL,
-  mean_adjust         = TRUE,
-  max_cM_chr          = 100,
-  PCA                 = TRUE,
-  colors              = c("green", "#d95f02", "#A01FF0", "gray80"),
-  alpha               = c(1,1,1,0.5)
+  num_gen              = 50,
+  num_sim_reps         = 30,
+  num_cross_per_gen    = 1000,
+  num_TS_parents       = NULL,
+  mean_adjust          = TRUE,
+  maximize             = TRUE,
+  max_cM_chr           = 100,
+  PCA                  = TRUE,
+  colors               = c("green", "#d95f02", "#A01FF0", "gray80"),
+  alpha                = c(1,1,1,0.5)
 )
+
+#Haplotype
+Haplotype_Sim  <- Haplotype_vs_TS_simulation(
+  GA_output            = haplotype_parent_obj,
+  geno_phased          = geno,
+  marker_effects       = marker_effects,
+  map                  = map,
+  genetic_map_position = NULL,
+  num_gen              = 50,
+  num_sim_reps         = 30,
+  num_cross_per_gen    = 100,
+  num_TS_parents       = NULL,
+  mean_adjust          = TRUE,
+  maximize             = TRUE,
+  max_cM_chr           = 100,
+  PCA                  = TRUE,
+  colors               = c("green", "#d95f02", "#A01FF0", "gray80"),
+  alpha                = c(1,1,1,0.5)
+)
+
 ```
 
 ---
@@ -57,8 +85,8 @@ parent_sln_obj <- GA_vs_TS_simulation(
 
 | Parameter | Description |
 |:---|:---|
-| `GA_output` | Output object returned from `genetic_algorithm()` |
-| `geno` | Genotype dataframe used throughout the HapSelect workflow |
+| `GA_output` | Output object returned from `local_gebv_parent_selection()` or `haplotype_parent_selection()` |
+| `geno` | Genotype/Haplotype dataframe used throughout the HapSelect workflow |
 | `marker_effects` | Marker effects dataframe |
 | `map` | Ordered map dataframe |
 
@@ -68,33 +96,23 @@ parent_sln_obj <- GA_vs_TS_simulation(
 
 | Parameter | Default | Description |
 |:---|:---|:---|
-| `genetic_map_position` | `NULL` | Optional vector of genetic map positions in cM |
+| `genetic_map_position` | `NULL` | Optional vector of genetic map positions in cM - defined proportional to physical position if `NULL` |
 | `num_gen` | `50` | Number of recurrent selection generations |
 | `num_sim_reps` | `30` | Number of simulation replicates |
-| `num_cross_per_gen` | `1000` | Number of progeny generated per generation |
-| `num_TS_parents` | `NULL` | Number of truncation-selected parents |
-| `mean_adjust` | `TRUE` | Whether to internally center markers |
-| `max_cM_chr` | `100` | Chromosome genetic length assumption if no genetic map is supplied |
+| `num_cross_per_gen` | `1000` | Number of progeny generated per generation by random mating |
+| `num_TS_parents` | `NULL` | Number of truncation-selected parents, default is the same as supplied GA parents |
+| `mean_adjust` | `TRUE` | Whether to internally center markers for TS GEBV |
+| `maximize` | `TRUE` | If `TRUE`, assumes larger GEBV is better. If `FALSE`, tries to minimize GEBV |
+| `max_cM_chr` | `100` | Per-chromosome genetic length assumption if no genetic map is supplied |
 | `PCA` | `TRUE` | Whether to compute PCA visualisation |
-| `colors` | `c("green", "#d95f02", "#A01FF0", "gray80")` | Plot colors |
-| `alpha` | `c(1,1,1,0.5)` | PCA transparency values |
+| `colors` | `c("green", "#d95f02", "#A01FF0", "gray80")` | Plot colors for GA, TS, Overlap, and Not Selected individuals |
+| `alpha` | `c(1,1,1,0.5)` | PCA transparency values for GA, TS, Overlap, and Not Selected individuals |
 
 ---
 
 # Simulation Workflow
 
-## 1. Parent Extraction
-
-The function extracts:
-
-- GA-selected parents from `GA_output`
-- TS-selected parents based on highest GEBV
-
-If `num_TS_parents = NULL`, the number of TS parents automatically matches the number of GA parents.
-
----
-
-## 2. Marker Compatibility Checks
+## 1. Marker Compatibility Checks
 
 The function internally verifies that:
 
@@ -106,7 +124,7 @@ The simulation will stop immediately if incompatibilities are detected.
 
 ---
 
-## 3. GEBV Calculation
+## 2. GEBV Calculation
 
 The function computes genomic estimated breeding values (GEBV) using:
 
@@ -121,13 +139,14 @@ where:
 
 If `mean_adjust = TRUE`, markers are internally centered before GEBV calculation.
 
-This should remain `TRUE` in almost all analyses.
+This should remain `TRUE` in almost all analyses, but in practice will not affect the simulation because it will not change GEBV ranking.
 
 ---
 
-## 4. TS Parent Selection
+## 3. TS Parent Selection
 
-Truncation-selected parents are chosen as the individuals with the highest GEBV values.
+Truncation-selected parents are chosen as the individuals with the highest (or lowest when `maximize = FALSE` GEBV values.
+
 
 Example:
 
@@ -136,6 +155,9 @@ num_TS_parents = 20
 ```
 
 selects the top 20 individuals ranked by GEBV.
+
+If `num_TS_parents = NULL`, the number of TS parents automatically matches the number of GA parents.
+
 
 ---
 
@@ -147,9 +169,10 @@ Two approaches are supported.
 
 ---
 
-## Using a True Genetic Map (Recommended)
+### Using a True Genetic Map (Recommended)
 
 ```r
+#example of how to supply the genetic map positions
 genetic_map_position = map$cM
 ```
 
@@ -202,13 +225,7 @@ For each generation:
 3. Random crosses generate the next generation
 4. The process repeats for `num_gen` generations
 
-This procedure is independently repeated:
-
-```r
-num_sim_reps
-```
-
-times to quantify stochastic simulation variability.
+This procedure is independently repeated `num_sim_reps` times to quantify stochastic simulation variability. Variability is derived from recombination differences, random mating sampling, Mendelian sampling (random inheritance), and, in the case of unphased data, random phasing of heterozygotes initially.
 
 ---
 
@@ -240,6 +257,7 @@ Replicates differ because of:
 - recombination randomness
 - stochastic inheritance
 - random mating patterns
+- random phasing (if using dosage heterozygotes)
 
 ### Larger Values
 
@@ -267,6 +285,7 @@ Advantages:
 - stronger selection intensity
 - greater opportunity for favourable recombination
 - smoother trajectories
+- more stable representation of genomic variability (i.e., less drift)
 
 Disadvantages:
 
@@ -285,7 +304,10 @@ Recommended setting:
 mean_adjust = TRUE
 ```
 
-This should only be disabled if you know what you are doing!
+This should only be disabled if you know what you are doing! However, in practice, it affects very little in this step.
+
+!!! Warning
+    Centering is currently not conducted in GenomicSimulation simulations - therefore, BV may be mean shifted!
 
 ---
 
@@ -305,6 +327,7 @@ This helps visualise:
 - diversity retention
 - population structure
 - overlap between strategies
+- presence of selection pressure
 
 ---
 
@@ -370,6 +393,7 @@ the function returns:
 list(
   Simulation_Plot,
   PCA_Plot,
+  Simulation_Summary,
   PCA_df
 )
 ```
@@ -405,6 +429,18 @@ parent_sln_obj$PCA_Plot
 
 ---
 
+## `Simulation_Summary`
+
+A data frame in long-format giving the mean and standard deviation of simulation replicates at each generation for GA and TS.
+
+Access:
+
+```r
+parent_sln_obj$Simulation_Summary
+```
+
+---
+
 ## `PCA_df`
 
 A dataframe containing:
@@ -421,37 +457,11 @@ head(parent_sln_obj$PCA_df)
 
 ---
 
-# Example Workflow
-
-```r
-# Run GA
-GA_output <- genetic_algorithm(
-  localGEBV = haploblock_obj$Haplotype_Effect_Matrix_GA,
-  n_founders = 20
-)
-
-# Run simulation
-parent_sln_obj <- GA_vs_TS_simulation(
-  GA_output = GA_output,
-  geno = geno,
-  marker_effects = marker_effects,
-  map = map,
-  num_gen = 50,
-  num_sim_reps = 30
-)
-
-# Display plots
-parent_sln_obj$Simulation_Plot
-
-parent_sln_obj$PCA_Plot
-```
-
----
-
 # Notes
 
 - Simulations utilise random mating
-- Selection occurs entirely on GEBV
-- Missing genotype values are internally replaced prior to simulation
+- Selection each generation occurs entirely on GEBV (TS)
+- Missing genotype values are internally replaced prior to simulation (currently as heterozygous and randomly phased by GenomicSimulation)
 - Temporary files are automatically created and deleted internally
 - Simulations are stochastic and results will vary slightly between runs
+- Imputing before beginning HapSelect and providing a phased input for simulation (haplotype genotype matrix and function call, even if parent selection was with localGEBV) will reduce some of the stochastic behavior between runs
