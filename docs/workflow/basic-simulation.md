@@ -15,7 +15,7 @@ In the PCA, GA, TS, and overlapping parents are marked for visualisation. If the
 
 ---
 
-# Overview
+## Overview
 
 The simulation performs the following steps:
 
@@ -36,7 +36,7 @@ The simulation is intentionally simple and designed primarily for:
 
 ---
 
-# Running the Simulation
+## Running the Simulation
 
 ```r
 #localGEBV
@@ -81,7 +81,7 @@ Haplotype_Sim  <- Haplotype_vs_TS_simulation(
 
 ---
 
-# Required Inputs
+## Required Inputs
 
 | Parameter | Description |
 |:---|:---|
@@ -92,7 +92,7 @@ Haplotype_Sim  <- Haplotype_vs_TS_simulation(
 
 ---
 
-# Optional Parameters
+## Optional Parameters
 
 | Parameter | Default | Description |
 |:---|:---|:---|
@@ -110,9 +110,9 @@ Haplotype_Sim  <- Haplotype_vs_TS_simulation(
 
 ---
 
-# Simulation Workflow
+## Simulation Workflow
 
-## 1. Marker Compatibility Checks
+### 1. Marker Compatibility Checks
 
 The function internally verifies that:
 
@@ -124,7 +124,7 @@ The simulation will stop immediately if incompatibilities are detected.
 
 ---
 
-## 2. GEBV Calculation
+### 2. GEBV Calculation
 
 The function computes genomic estimated breeding values (GEBV) using:
 
@@ -143,7 +143,7 @@ This should remain `TRUE` in almost all analyses, but in practice will not affec
 
 ---
 
-## 3. TS Parent Selection
+### 3. TS Parent Selection
 
 Truncation-selected parents are chosen as the individuals with the highest (or lowest when `maximize = FALSE` GEBV values.
 
@@ -161,7 +161,7 @@ If `num_TS_parents = NULL`, the number of TS parents automatically matches the n
 
 ---
 
-## 5. Genetic Map Construction
+### 5. Genetic Map Construction
 
 The simulation requires marker positions in centiMorgans (cM).
 
@@ -169,7 +169,7 @@ Two approaches are supported.
 
 ---
 
-### Using a True Genetic Map (Recommended)
+#### Using a True Genetic Map (Recommended)
 
 ```r
 #example of how to supply the genetic map positions
@@ -186,7 +186,7 @@ This is the most biologically realistic option.
 
 ---
 
-## Inferring Genetic Positions from Physical Distance
+### Inferring Genetic Positions from Physical Distance
 
 If:
 
@@ -214,7 +214,7 @@ would assume each chromosome spans 150 cM.
 
 ---
 
-# Recurrent Selection Simulation
+## Recurrent Selection Simulation
 
 The simulation uses the `genomicSimulation` package internally.
 
@@ -229,26 +229,26 @@ This procedure is independently repeated `num_sim_reps` times to quantify stocha
 
 ---
 
-# Understanding Simulation Parameters
+## Understanding Simulation Parameters
 
-## `num_gen`
+### `num_gen`
 
 Controls the number of recurrent selection generations.
 
-### Larger Values
+#### Larger Values
 
 - better evaluate long-term gain
 - reveal selection plateaus
 - better assess diversity preservation
 
-### Smaller Values
+#### Smaller Values
 
 - faster simulations
 - emphasize short-term gain
 
 ---
 
-## `num_sim_reps`
+### `num_sim_reps`
 
 Controls the number of independent simulation replicates.
 
@@ -259,7 +259,7 @@ Replicates differ because of:
 - random mating patterns
 - random phasing (if using dosage heterozygotes)
 
-### Larger Values
+#### Larger Values
 
 Advantages:
 
@@ -274,11 +274,11 @@ Disadvantages:
 
 ---
 
-## `num_cross_per_gen`
+### `num_cross_per_gen`
 
 Controls the number of progeny generated each generation.
 
-### Larger Values
+#### Larger Values
 
 Advantages:
 
@@ -294,7 +294,7 @@ Disadvantages:
 
 ---
 
-## `mean_adjust`
+### `mean_adjust`
 
 Controls genotype centering before GEBV calculation.
 
@@ -311,7 +311,7 @@ This should only be disabled if you know what you are doing! However, in practic
 
 ---
 
-## `PCA`
+### `PCA`
 
 If `TRUE`, PCA is performed on the genotype matrix.
 
@@ -331,7 +331,7 @@ This helps visualise:
 
 ---
 
-# PCA Plot Colors
+## PCA Plot Colors
 
 The `colors` argument must contain exactly four valid R colors in the following order:
 
@@ -356,7 +356,7 @@ colors = c(
 
 ---
 
-# PCA Transparency
+## PCA Transparency
 
 The `alpha` argument controls point transparency on the PCA plot.
 
@@ -379,7 +379,7 @@ All values must be between:
 
 ---
 
-# Simulation Outputs
+## Simulation Outputs
 
 If:
 
@@ -400,7 +400,7 @@ list(
 
 ---
 
-## `Simulation_Plot`
+### `Simulation_Plot`
 
 A `ggplot2` trajectory plot showing:
 
@@ -417,7 +417,7 @@ parent_sln_obj$Simulation_Plot
 
 ---
 
-## `PCA_Plot`
+### `PCA_Plot`
 
 A PCA visualisation of the genotype matrix showing selected parents.
 
@@ -429,7 +429,7 @@ parent_sln_obj$PCA_Plot
 
 ---
 
-## `Simulation_Summary`
+### `Simulation_Summary`
 
 A data frame in long-format giving the mean and standard deviation of simulation replicates at each generation for GA and TS.
 
@@ -441,7 +441,7 @@ parent_sln_obj$Simulation_Summary
 
 ---
 
-## `PCA_df`
+### `PCA_df`
 
 A dataframe containing:
 
@@ -457,7 +457,7 @@ head(parent_sln_obj$PCA_df)
 
 ---
 
-# Notes
+## Notes
 
 - Simulations utilise random mating
 - Selection each generation occurs entirely on GEBV (TS)
