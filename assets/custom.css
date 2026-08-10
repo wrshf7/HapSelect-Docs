@@ -1,0 +1,72 @@
+:root,
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        #2C4A6E;
+  --md-primary-fg-color--light: #3D6491;
+  --md-primary-fg-color--dark:  #1A2F45;
+  --md-accent-fg-color:         #4A90A4;
+}
+
+[data-md-color-scheme="slate"] {
+  --md-primary-fg-color:        #4A7FB5;
+  --md-primary-fg-color--light: #5A90C8;
+  --md-primary-fg-color--dark:  #2C4A6E;
+  --md-accent-fg-color:         #5AAFC4;
+}
+
+/* Cleaner header */
+.md-header {
+  box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+}
+
+/* Tighter nav */
+.md-nav__title {
+  font-weight: 600;
+}
+
+/* Overview diagram */
+.overview-diagram {
+  display: block;
+  margin: 2rem auto;
+  max-width: 560px;
+  width: 100%;
+}
+
+/* Step cards on overview page */
+.process-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.process-card {
+  background: #f5f7fa;
+  border-left: 4px solid #2C4A6E;
+  border-radius: 4px;
+  padding: 1rem 1.2rem;
+}
+
+.process-card h3 {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.95rem;
+  color: #2C4A6E;
+}
+
+.process-card p {
+  margin: 0;
+  font-size: 0.88rem;
+  color: #444;
+}
+
+[data-md-color-scheme="slate"] .process-card {
+  background: #1e2a3a;
+  border-left-color: #4A7FB5;
+}
+
+[data-md-color-scheme="slate"] .process-card h3 {
+  color: #7ab3d9;
+}
+
+[data-md-color-scheme="slate"] .process-card p {
+  color: #b0bec5;
+}
