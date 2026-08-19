@@ -13,11 +13,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - uses: actions/setup-python@v5
         with:
           python-version: 3.x
 
-      - run: pip install mkdocs-material
+      - run: pip install -r requirements.txt
 
-      - run: mkdocs gh-deploy --force
+      - name: Configure git for mike
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - run: git fetch origin gh-pages --depth=1 || true
+
+      # NOTE: version string below is hardcoded. Needs updating on new HapSelect release.
+      - run: mike deploy --push --update-aliases 1.0.1 latest
+
+      - run: mike set-default --push latest

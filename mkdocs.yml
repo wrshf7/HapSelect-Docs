@@ -51,6 +51,7 @@ extra_javascript:
 
 nav:
   - Home: index.md
+  - Changelog: changelog.md
   - Overview: overview.md
   - Installation: installation.md
   - Getting Started: getting-started.md
@@ -66,3 +67,7 @@ nav:
         - Parent Selection: workflow/parent-selection.md
         - Basic Simulation: workflow/basic-simulation.md
   #- Function Reference: reference.md
+
+extra:
+  version:
+    provider: mike
