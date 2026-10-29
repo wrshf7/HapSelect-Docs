@@ -1,6 +1,6 @@
 # HapSelect
 
-HapSelect is an R package for haploblock-based genomic selection. It partitions the genome into linkage disequilibrium blocks (haploblocks), estimates regional genetic value using either a localGEBV framework or a true haplotype-effect framework, identifies high-value genomic regions, optimizes parent selection using a genetic algorithm, and performs simulation to compare alternative selection strategies.
+HapSelect is an R package for haploblock-based genomic selection. It processes inpute genomic and phenotypic files, partitions the genome into blocks (haploblocks), estimates regional genetic value using either a localGEBV framework or a true haplotype-effect framework, identifies high-value genomic regions, optimizes parent selection using a genetic algorithm, and performs simulation to compare alternative selection strategies.
 
 The package is designed for breeding programs running genomic selection, where identifying and targeting the genomic regions with the most exploitable diversity can improve the efficiency of parent choice.
 
@@ -27,9 +27,9 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 ## Installation
 
-1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/)
+1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/latest)
 
-2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed. If you wish to use PLINK, it **MUST be installed** as an actual program with an executable in the user/bin folder!
+2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows) and [genomicSimulation](https://github.com/vllrs/genomicSimulation) are installed and the OPTIONAL [PLINK 1.9](https://www.cog-genomics.org/plink/) bin and [BEAGLE](https://faculty.washington.edu/browning/beagle/beagle.html) .jar files are in a folder located in the sytem PATH or /user/bin folder.
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
@@ -44,11 +44,11 @@ install.packages("HapSelect", type = "source", repos = NULL)
 ```
 
 !!! warning
-    [genomicSimulation](https://github.com/vllrs/genomicSimulation), [PLINK 1.9](https://www.cog-genomics.org/plink/), and [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users) dependencies must be installed separately. Alternatively run the helper installation scripts to install all needed software. The package is usable without PLINK 1.9, but related functions that call PLINK will fail with an error. See [Installation](./installation.md) for more details.
+    [genomicSimulation](https://github.com/vllrs/genomicSimulation), [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users), [PLINK 1.9](https://www.cog-genomics.org/plink/) (optional), and [BEAGLE](https://faculty.washington.edu/browning/beagle/beagle.html) (optional) dependencies must be installed separately. Alternatively run the helper installation scripts to install all required software. The package is usable without PLINK 1.9 or BEAGLE, but related functions that call PLINK and/or BEAGLE will fail with an error. See [Installation](./installation.md) for more details.
 
 ## Important Papers
 <strong>localGEBV Method and Haploblock Formation:</strong><br>
-[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv (under review).](https://doi.org/10.1101/2025.08.28.672830)
+[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. Appl Plant Sci.](https://doi.org/10.1016/j.apsx.2026.100002)
 
 <strong>Origin of the localGEBV Method and Parent Optimisation with a Genetic Algorithm:</strong><br>
 [Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci.](https://doi.org/10.3168/jds.2011-5289)

@@ -1,14 +1,14 @@
 # Process Overview
 
-HapSelect implements a six-stage pipeline that moves from raw genotype/allelic data to an optimised set of founder parents for a genomic selection program.
+HapSelect implements a six-stage pipeline that moves from raw genotype/allelic data to aggregated genomic signals in the form of haplotype effects/localGEBV and haplotype catalogues, and finally to an optimised set of founder parents for a genomic selection program.
 
 ![HapSelect process overview](assets/overview-diagram.png){ .overview-diagram }
 
 ---
 
-## A — LD Computation and Block Formation
+## A — Block Formation
 
-The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers. We highly recommend using [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is installed and available in the `PATH` variable, we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
+The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers or a window-based approach. We highly recommend using our internal LD tool written in C++ or [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is available in the `PATH` variable (see [Installation](installation.md)), we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
 Starting from a pared-down VCF structured genotype/allelic matrix of **N individuals × I markers (localGEBV) or IL Chromosomes (Haplotypes)**, where I and L are the number of markers and ploidy (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
 
@@ -22,6 +22,15 @@ A custom haploblock dataframe can be provided, but it must follow the output str
 
 ```r
 #compute pairwise LD
+
+ld_pairs   <- pairwise_ld(
+  genotype_matrix = geno,
+  parallelize     = FALSE,
+  window          = NULL,
+  min_r2          = NULL,
+  min_obs         = 2L
+)
+
 ld_pairs   <- plink_pairwise_ld_geno(
   geno           = geno,
   ld_window      = 999999,
