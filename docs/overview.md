@@ -26,12 +26,12 @@ Starting from a map, HapSelect will group markers from left (start of a chromoso
 
 
 Graph-Based Blocking:
-Graph-based blocking is a new implementation and is similar in concept to LD based blocking. Starting from a map and pared-down VCF structured genotype matrix of **N individuals × I markers, HapSelect will:
+Graph-based blocking is a new implementation and is similar in concept to LD based blocking. Starting from a map and pared-down VCF structured genotype matrix of **N individuals × I markers**, HapSelect will:
 
 1. Compute pairwise r² between all marker pairs within each chromosome
 2. Compute core marker connections between markers to form seed regions based on high LD
 3. Extend core marker connections and bridge cores based on lower LD connections
-4. Linearize the proto-blocks because they often overlap
+4. Linearise the proto-blocks because they often overlap
 5. Refill markers that were not placed
 
 ```r
@@ -116,7 +116,7 @@ haploblocks <- def_blocks(
   )
 )
 
-#####turn the list object into a singular data frame #####
+#### turn the list object into a singular data frame #####
 
 # All methods:
 haploblocks <- block_obj_to_df(haploblocks, map = map)
@@ -131,7 +131,7 @@ haploblocks <- block_obj_to_df(haploblocks, map = map)
 
 ## B — SNP Effect Estimation
 
-Marker effects are estimated independently using a genomic prediction model — GBLUP with backsolve, BayesR, rrBLUP, other Bayesian methods, or any equivalent method that produces per-SNP effect estimates (\(\hat{u}_m\)).
+Marker effects are estimated independently using a genomic prediction model — GBLUP with backsolve, BayesR, rrBLUP, other Bayesian methods, or any equivalent method that produces per-SNP effect estimates (\(\hat{\alpha}_m\)).
 
 HapSelect offers a basic genomic prediction model (dosage genotype matrix only in localGEBV) by integrating the [rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html). However, the implementation is limited to utilising singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modelling, please consult the packages below. 
 

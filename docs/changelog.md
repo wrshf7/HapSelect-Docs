@@ -13,6 +13,7 @@ All notable changes to HapSelect are documented here. This project follows the [
 - VCF read and write functions added for file importation and exportation simplicity (Note: does not currently handle aneuploidy or variable ploidy)
 - `write_vcf_geno()`, `read_vcf_geno()`, `read_vcf_phased()`
 - Visualization for haploblock variance on physical/genetic chromosome location added to explore regional variance and block size: `plot_haploblocks_variance()`
+- Visualization for GA optimization and convergence `GA_progress_plot()`
 - Limitations to CPU handlers and machine-readable step reporting added: `set_cpu_cores()`
 - Custom C++ LD computation added to remove reliance on PLINK backbone: `pairwise_ld()` with C++ backbone
 - Functions to set PLINK executable/binary and BEAGLE .jar file locations added: `set_beagle_path()` and `set_plink_path()`

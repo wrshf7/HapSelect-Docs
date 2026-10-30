@@ -70,7 +70,7 @@ Brief Instructions from the [genomicSimulation Manual](https://vllrs.github.io/g
 
 ## R Package - HapSelect
 
-1. Download the `.zip` file [HapSelect](https://github.com/wrshf7/HapSelect/releases/).
+1. Download the [HapSelect](https://github.com/wrshf7/HapSelect/releases/) `.zip` file.
 2. Extract the `.zip` file.
 3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/Will/Downloads/HapSelect-2.0.0/HapSelect-2.0.0/")`) and run `install.packages("HapSelect-2.0.0/", repos = NULL, type = "source")`
 4. **OR** run `install.packages("path/to/HapSelect-2.0.0/HapSelect-2.0.0/", type = "source", repos = NULL)`
