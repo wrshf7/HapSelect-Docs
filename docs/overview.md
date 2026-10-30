@@ -8,9 +8,10 @@ HapSelect implements a six-stage pipeline that moves from raw genotype/allelic d
 
 ## A — Block Formation
 
-The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers or a window-based approach. We highly recommend using our internal LD tool written in C++ or [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is available in the `PATH` variable (see [Installation](installation.md)), we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
+The first stage partitions the genome into haplotype blocks (haploblocks) using linkage disequilibrium (LD) between markers or a window-based approach. We highly recommend using our internal LD tool written in C++ or [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is available in the `PATH` variable (see [Installation](installation.md)), we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
-Starting from a pared-down VCF structured genotype/allelic matrix of **N individuals × I markers (localGEBV) or IL Chromosomes (Haplotypes)**, where I and L are the number of markers and ploidy (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
+LD-Based Blocking:
+Starting from a map and pared-down VCF structured genotype/allelic matrix of **N individuals × I markers (localGEBV) or IL Chromosomes (Haplotypes)**, where I and L are the number of markers and ploidy (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
 
 1. Computes pairwise r² between all marker pairs within each chromosome
 2. Uses the r² matrix to define contiguous regions of high internal LD — **haploblocks**
@@ -20,9 +21,25 @@ Haploblock IDs follow the convention of **Chromosome:Block**, identifying blocks
 
 A custom haploblock dataframe can be provided, but it must follow the output structure produced from `block_obj_to_df()`.
 
+Window-Based Blocking:
+Starting from a map, HapSelect will group markers from left (start of a chromosome) to right. Grouping occurs by either physical/genetic distance in the map, or a specified number of markers - whichever is specified.
+
+
+Graph-Based Blocking:
+Graph-based blocking is a new implementation and is similar in concept to LD based blocking. Starting from a map and pared-down VCF structured genotype matrix of **N individuals × I markers, HapSelect will:
+
+1. Compute pairwise r² between all marker pairs within each chromosome
+2. Compute core marker connections between markers to form seed regions based on high LD
+3. Extend core marker connections and bridge cores based on lower LD connections
+4. Linearize the proto-blocks because they often overlap
+5. Refill markers that were not placed
+
 ```r
+#### LD-Based Blocking ####
+
 #compute pairwise LD
 
+#R implementation using a C++ backend
 ld_pairs   <- pairwise_ld(
   genotype_matrix = geno,
   parallelize     = FALSE,
@@ -31,6 +48,7 @@ ld_pairs   <- pairwise_ld(
   min_obs         = 2L
 )
 
+#PLINK backend
 ld_pairs   <- plink_pairwise_ld_geno(
   geno           = geno,
   ld_window      = 999999,
@@ -40,18 +58,74 @@ ld_pairs   <- plink_pairwise_ld_geno(
 
 #make a haploblock list object
 haploblocks <- def_blocks(
-  ld         = ld_pairs,
-  map        = map,
-  method     = "flanking",
-  threshold  = 0.2,
-  tolerance  = 4
+  map         = map,
+  strategy    = ld_strategy(
+    ld        = ld_pairs,
+    method    = "flanking",
+    tolerance = 3,
+    threshold = 0.5,
+    start     = "beginning",
+    tol_reset = TRUE
+    parallel  = FALSE
+  )
 )
 
-#turn the list object into a singular data frame
-haploblocks <- block_obj_to_df(haploblocks, map)
+#### Window-Based Blocking #####
+
+#make a haploblock list object
+
+#using fixed physical distance of cM widths, depending on the map
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 100000, # 100kb window
+    method    = "window_map"
+  )
+)
+
+#using fixed SNP intervals
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 50, # every 50 SNP
+    method    = "window_snp"
+  )
+)
+
+#### Graph-Based Blocking ####
+
+#LD calculated internally
+haploblocks <- def_blocks(
+  map          = map,
+  strategy     = graph_strategy(
+    theta_core        = 0.80,
+    theta_core_by_chr = NULL,
+    theta_extend      = 0.20,
+    theta_bridge      = 0.20,
+    theta_refill      = 0.80,
+    ld_min_r2         = 0.20,
+    window_ld         = 20,
+    window_core       = 20,
+    window_extend     = 50,
+    min_links         = 1,
+    max_gap_snps      = 2,
+    max_gap_markers   = 2,
+    max_gap_position  = NULL,
+    min_block_snps    = 2,
+    parallel          = FALSE
+  )
+)
+
+#####turn the list object into a singular data frame #####
+
+# All methods:
+haploblocks <- block_obj_to_df(haploblocks, map = map)
+
+
 ```
+
 !!! tip
-    There are many parameters that affect the behaviour of `def_blocks()` with various defaults. Be sure to check out all options and how they can influence the result. See [Haplotype Blocks](workflow/haploblocks.md) for more details!
+    There are many parameters that affect the behaviour of different `strategy` within `def_blocks()` with various defaults. Be sure to check out all options and how they can influence the result. See [Haplotype Blocks](workflow/haploblocks.md) for more details!
     
 ---
 
