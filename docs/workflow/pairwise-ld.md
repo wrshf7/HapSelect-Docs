@@ -87,7 +87,7 @@ ld_pairs <- pairwise_ld(
 | Parameter | Default | Description |
 |:---|:---|:---|
 | `genotype_matrix` | | Dosage genotype matrix. See `HapSelect::geno` for formatting examples or [Getting Started](../getting-started.md) |
-| `parallelize` | `FALSE` | Process chromosomes in parallel, using up to the number of cores allowed by `set_cpu_cores()` |
+| `parallelize` | `FALSE` | Process chromosomes in parallel, using up to the number of cores allowed by `set_cpu_cores()` (see [Configuration](../configuration.md)) |
 | `window` | `NULL` | Only compare markers at most this many positions apart. `NULL` compares every pair on a chromosome |
 | `min_r2` | `NULL` | Drop pairs with r² below this value. `NULL` keeps every pair |
 | `min_obs` | `2L` | Number of individuals that must be observed (non-missing) at both markers for an r² to be computed |
@@ -121,7 +121,7 @@ ld_pairs <- plink_pairwise_ld("path/to/plink_prefix")
 ```
 
 !!! warning
-    PLINK 1.9 MUST be installed in order to use these functions. If it cannot be found you will get an error message. See [Installation](../installation.md) for more details, or use `set_plink_path()` to point HapSelect at a specific executable.
+    PLINK 1.9 MUST be installed in order to use these functions. If it cannot be found you will get an error message. See [Installation](../installation.md) for more details, or use `set_plink_path()` to point HapSelect at a specific executable (see [Configuration](../configuration.md)).
 
 #### Parameters
 

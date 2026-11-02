@@ -88,7 +88,7 @@ geno_phased <- read_vcf_phased(
 The `beagle_*()` functions run [BEAGLE 5.5](https://faculty.washington.edu/browning/beagle/beagle.html) for you. BEAGLE always phases, and phasing fills in missing genotypes as it goes, so a single BEAGLE run both phases and imputes. The functions only differ in what they read and return.
 
 !!! warning
-    BEAGLE 5.5 and a Java runtime (Java 8 or later) MUST be installed to use these functions. HapSelect looks for a `beagle*.jar` file in the install scripts' `~/bin` folder, then in every folder on the system `PATH`, and only accepts BEAGLE 5.5. Use `set_beagle_path()` to point HapSelect at a specific `.jar` file. See [Installation](../installation.md) for more details.
+    BEAGLE 5.5 and a Java runtime (Java 8 or later) MUST be installed to use these functions. HapSelect looks for a `beagle*.jar` file in the install scripts' `~/bin` folder, then in every folder on the system `PATH`, and only accepts BEAGLE 5.5. Use `set_beagle_path()` to point HapSelect at a specific `.jar` file (see [Configuration](../configuration.md)). See [Installation](../installation.md) for more details.
 
 All three functions share the following optional parameters:
 

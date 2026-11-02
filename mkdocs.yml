@@ -54,6 +54,8 @@ nav:
   - Changelog: changelog.md
   - Overview: overview.md
   - Installation: installation.md
+  - Configuration: configuration.md
+  - Progress Reporting: progress.md
   - Getting Started: getting-started.md
   - Workflow:
     - Complete Workflow with Explanations: workflow/example_workflow.md

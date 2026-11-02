@@ -48,6 +48,12 @@
   color: var(--md-default-fg-color--light);
 }
 
+/* The terminal recording is wide rather than square */
+.method-video.progress-video,
+.method-video-caption.progress-video {
+  max-width: 100%;
+}
+
 /* Step cards on overview page */
 .process-grid {
   display: grid;

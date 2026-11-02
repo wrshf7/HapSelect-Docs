@@ -61,7 +61,7 @@ haploblocks <- def_blocks(
 | `tolerance` | `1` | Number of markers allowed to fall below `threshold` before terminating a block |
 | `tol_reset` | `TRUE` | If `TRUE`, reset the tolerance counter when a marker is successfully added to a block |
 | `start` | `"LD"` | Seed strategy for block boundaries (`"LD"` or `"beginning"`) |
-| `parallel` | `FALSE` | Process chromosomes in parallel, using up to the number of cores allowed by `set_cpu_cores()` |
+| `parallel` | `FALSE` | Process chromosomes in parallel, using up to the number of cores allowed by `set_cpu_cores()` (see [Configuration](../configuration.md)) |
 
 **`method`**
 
@@ -255,7 +255,7 @@ haploblocks <- def_blocks(
 | `max_gap_markers` | `2` | II | Maximum gap between consecutive members (in marker positions) before a block is split |
 | `max_gap_position` | `NULL` | II | Maximum gap between consecutive members in map units before a block is split, or `NULL` for no limit |
 | `min_block_snps` | `2` | II | Minimum number of markers for a segment to be kept |
-| `parallel` | `FALSE` | | Process chromosomes in parallel, using up to the number of cores allowed by `set_cpu_cores()` |
+| `parallel` | `FALSE` | | Process chromosomes in parallel, using up to the number of cores allowed by `set_cpu_cores()` (see [Configuration](../configuration.md)) |
 
 All r² thresholds (`theta_*` and `ld_min_r2`) must be between 0 and 1, and all window, gap, and count parameters must be whole numbers. `graph_strategy()` will also stop with an error if `ld_min_r2` is above `theta_core`, `theta_extend`, `theta_bridge`, or any `theta_core_by_chr` value, because edges below `ld_min_r2` are never stored and those thresholds could never be applied. A `window_core` larger than `window_ld` produces a warning, since pairs beyond `window_ld` are never computed.
 
