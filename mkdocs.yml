@@ -59,6 +59,7 @@ nav:
     - Complete Workflow with Explanations: workflow/example_workflow.md
     - Complete Workflow with Minimal Explanation: workflow/example_workflow_minimal_comments.md
     - Specific Sections:
+        - Data Import and Imputation: workflow/data-import.md
         - Pairwise LD: workflow/pairwise-ld.md
         - Haplotype Blocks: workflow/haploblocks.md
         - Marker Effects: workflow/marker-effects.md
