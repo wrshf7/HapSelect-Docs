@@ -1,6 +1,6 @@
 # Basic GA vs TS Simulation
 
-The `localGEBV_vs_TS_simulation()` and `Haplotype_vs_TS_simulation` functions perform a simplified recurrent genomic selection simulation comparing:
+The `localGEBV_vs_TS_simulation()` and `Haplotype_vs_TS_simulation()` functions perform a simplified recurrent genomic selection simulation comparing:
 
 - parents selected using the HapSelect genetic algorithm (GA) with localGEBV or haplotype effects
 - parents selected using standard genomic truncation selection (TS)
@@ -19,7 +19,7 @@ In the PCA, GA, TS, and overlapping parents are marked for visualisation. If the
 
 The simulation performs the following steps:
 
-1. Extracts GA-selected parents from the GA output object (`haplotype_parent_selection()` or `local_gebv_parent_selection()` functions
+1. Extracts GA-selected parents from the GA output object (`haplotype_parent_selection()` or `local_gebv_parent_selection()` functions)
 2. Selects TS parents based on highest GEBV
 3. Converts physical marker positions to proportional genetic positions in cM (if needed)
 4. Simulates recurrent random crossing and selection across generations
@@ -61,13 +61,13 @@ localGEBV_Sim  <- localGEBV_vs_TS_simulation(
 #Haplotype
 Haplotype_Sim  <- Haplotype_vs_TS_simulation(
   GA_output            = haplotype_parent_obj,
-  geno_phased          = geno,
+  geno_phased          = geno_phased,
   marker_effects       = marker_effects,
   map                  = map,
   genetic_map_position = NULL,
   num_gen              = 50,
   num_sim_reps         = 30,
-  num_cross_per_gen    = 100,
+  num_cross_per_gen    = 1000,
   num_TS_parents       = NULL,
   mean_adjust          = TRUE,
   maximize             = TRUE,
@@ -86,7 +86,7 @@ Haplotype_Sim  <- Haplotype_vs_TS_simulation(
 | Parameter | Description |
 |:---|:---|
 | `GA_output` | Output object returned from `local_gebv_parent_selection()` or `haplotype_parent_selection()` |
-| `geno` | Genotype/Haplotype dataframe used throughout the HapSelect workflow |
+| `geno` / `geno_phased` | Dosage genotype matrix (`localGEBV_vs_TS_simulation()`) or phased genotype matrix (`Haplotype_vs_TS_simulation()`) used throughout the HapSelect workflow |
 | `marker_effects` | Marker effects dataframe |
 | `map` | Ordered map dataframe |
 
@@ -161,7 +161,7 @@ If `num_TS_parents = NULL`, the number of TS parents automatically matches the n
 
 ---
 
-### 5. Genetic Map Construction
+### 4. Genetic Map Construction
 
 The simulation requires marker positions in centiMorgans (cM).
 
@@ -225,7 +225,7 @@ For each generation:
 3. Random crosses generate the next generation
 4. The process repeats for `num_gen` generations
 
-This procedure is independently repeated `num_sim_reps` times to quantify stochastic simulation variability. Variability is derived from recombination differences, random mating sampling, Mendelian sampling (random inheritance), and, in the case of unphased data, random phasing of heterozygotes initially.
+This procedure is independently repeated `num_sim_reps` times for each set of parents to quantify stochastic simulation variability. While the simulation runs, the progress bar shows which set of parents and replicate is being simulated (e.g., `GA parents | rep 3/30`), see [Progress Reporting](../progress.md). Variability is derived from recombination differences, random mating sampling, Mendelian sampling (random inheritance), and, in the case of unphased data, random phasing of heterozygotes initially.
 
 ---
 
@@ -398,6 +398,8 @@ list(
 )
 ```
 
+If `PCA = FALSE`, only `Simulation_Plot` and `Simulation_Summary` are returned.
+
 ---
 
 ### `Simulation_Plot`
@@ -431,7 +433,7 @@ parent_sln_obj$PCA_Plot
 
 ### `Simulation_Summary`
 
-A data frame in long-format giving the mean and standard deviation of simulation replicates at each generation for GA and TS.
+A data frame in long-format giving the mean and standard error of the simulation replicates at each generation for GA and TS, with columns `method` (GA or TS), `gen` (generation), `mean`, and `se`.
 
 Access:
 
@@ -462,6 +464,6 @@ head(parent_sln_obj$PCA_df)
 - Simulations utilise random mating
 - Selection each generation occurs entirely on GEBV (TS)
 - Missing genotype values are internally replaced prior to simulation (currently as heterozygous and randomly phased by GenomicSimulation)
-- Temporary files are automatically created and deleted internally
+- Temporary files are written to R's temporary directory (`tempdir()`) and deleted automatically, so nothing is left in your working directory
 - Simulations are stochastic and results will vary slightly between runs
 - Imputing before beginning HapSelect and providing a phased input for simulation (haplotype genotype matrix and function call, even if parent selection was with localGEBV) will reduce some of the stochastic behavior between runs
