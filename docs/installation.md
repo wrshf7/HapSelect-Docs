@@ -75,12 +75,14 @@ Brief Instructions from the [genomicSimulation Manual](https://vllrs.github.io/g
 
 1. Download the [HapSelect](https://github.com/wrshf7/HapSelect/releases/) `.zip` file.
 2. Extract the `.zip` file.
-3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/<username>/Downloads/HapSelect-2.0.0/HapSelect-2.0.0/")`) and run `install.packages("HapSelect-2.0.0/", repos = NULL, type = "source")`
+3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/<username>/Downloads/HapSelect-2.0.0/HapSelect-2.0.0/")`) and run `install.packages("./", repos = NULL, type = "source")`
 4. **OR** run `install.packages("path/to/HapSelect-2.0.0/HapSelect-2.0.0/", type = "source", repos = NULL)`
 
 ## PLINK and BEAGLE (Optional)
 PLINK1.9 executable (.exe)/binary download: [PLINK1.9](https://www.cog-genomics.org/plink/)
+
 BEAGLE .jar download: [BEAGLE5.5](https://faculty.washington.edu/browning/beagle/beagle.html)
+
 To use various functions, such as: `plink_pairwise_ld_geno()`, `plink_pairwise_ld()`, `beagle_impute()`, `beagle_impute_geno()`, and `beagle_phase_geno()`, PLINK and BEAGLE will need to be available. BEAGLE also requires a Java runtime (Java 8 or later) to be installed. HapSelect requires PLINK 1.9 and BEAGLE 5.5 specifically - other versions are rejected.
 
 The simplest way is to place the `plink.exe` and `beagle.27Feb25.75f.jar` files into the /user/bin folder (Windows)
