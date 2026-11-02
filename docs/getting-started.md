@@ -95,30 +95,89 @@ map <- order_map(map = map)
 ## Step 2 — Compute Pairwise LD
 
 ```r
-# Internal R implementation (slow for large datasets)
-ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
+# Internal R implementation with C++ backend
+ld_pairs   <- pairwise_ld(
+  genotype_matrix = geno,
+  parallelize     = FALSE,
+  window          = NULL,
+  min_r2          = NULL,
+  min_obs         = 2L
+)
 
-# Recommended: PLINK-backed implementation (recommended)
-ld_pairs <- plink_pairwise_ld_geno(geno = geno)
+# PLINK-backed implementation (requires PLINK to be in PATH, see Installation)
+ld_pairs   <- plink_pairwise_ld_geno(
+  geno           = geno,
+  ld_window      = 999999,
+  ld_window_kb   = 1e6,
+  ld_window_r2   = 0
+)
 ```
 
-!!! tip
-    For large marker panels, use `plink_pairwise_ld_geno()`. See [Pairwise LD](workflow/pairwise-ld.md) for details.
 
 ## Step 3 — Define Haplotype Blocks
 
 ```r
+
+#LD Blocking
 haploblocks <- def_blocks(
-  ld        = ld_pairs,
-  map       = map,
-  method    = "flanking", #compares new marker to adjacent marker only
-  threshold = 0.2,        #LD threshold to include a marker
-  tolerance = 4,          #how many markers can fail the check for inclusion
-  tol_reset = TRUE,       #if a marker is added, reset the tolerance counter
-  start     = "beginning",       #blocking starts at the highest LD pair
-  parallel  = FALSE       #parallelise for large datasets (~25k+ markers)
+  map         = map,
+  strategy    = ld_strategy(
+    ld        = ld_pairs,
+    method    = "flanking",
+    tolerance = 3,
+    threshold = 0.5,
+    start     = "beginning",
+    tol_reset = TRUE
+    parallel  = FALSE
+  )
 )
 
+#### Window-Based Blocking #####
+
+#make a haploblock list object
+
+#using fixed physical distance of cM widths, depending on the map
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 100000, # 100kb window
+    method    = "window_map"
+  )
+)
+
+#using fixed SNP intervals
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 50, # every 50 SNP
+    method    = "window_snp"
+  )
+)
+
+#Graph-based blocking (LD calculated internally)
+haploblocks <- def_blocks(
+  map          = map,
+  strategy     = graph_strategy(
+    theta_core        = 0.80,
+    theta_core_by_chr = NULL,
+    theta_extend      = 0.20,
+    theta_bridge      = 0.20,
+    theta_refill      = 0.80,
+    ld_min_r2         = 0.20,
+    window_ld         = 20,
+    window_core       = 20,
+    window_extend     = 50,
+    min_links         = 1,
+    max_gap_snps      = 2,
+    max_gap_markers   = 2,
+    max_gap_position  = NULL,
+    min_block_snps    = 2,
+    parallel          = FALSE
+  )
+)
+
+
+#turn object into an interpretable
 haploblocks <- block_obj_to_df(haploblocks, map)
 
 #Report basic block statistics:
@@ -132,7 +191,7 @@ block_summary(block_df = haploblocks)
 ```r
 #localGEBV
 haploblock_obj <- compute_local_GEBV(
-  geno           = geno_phased,
+  geno           = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing genotypes in a block will return NA for the localGEBV
@@ -141,7 +200,7 @@ haploblock_obj <- compute_local_GEBV(
 
 #haplotypes
 haploblock_obj <- compute_haplotype_effects(
-  geno           = geno,
+  geno           = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing alleles in a block will return NA for the haplotype effect
@@ -166,6 +225,11 @@ unique_localGEBV_effects_plot(haplo_obj = haploblock_obj) #localGEBV
 
 #Visualization of block sizes and block positions
 plot_haploblocks(haploblock_df = haploblock_obj$Haploblocks)
+
+#Visualization of block sizes, positions, and variance (after calculating localGEBV/haplotype effects)
+block_variance_manhattan_plot(
+  haplo_obj = haploblock_obj
+)
 
 #Tornado plots demonstrating the spread of localGEBV and haplotype effects with blocks ordered by variance
 haplo_block_var_funnel_plot(haplo_obj = haploblock_obj, mean_line = FALSE) #haplotypes
@@ -204,7 +268,7 @@ haploblock_obj = select_top_blocks(haploblock_obj = haploblock_obj, perc_of_tota
 
 #Parent Selection (localGEBV)
 GA_output = local_gebv_parent_selection(
-    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks()
+    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks() computed using compute_local_GEBV()
     n_founders = 20,                    #number of parents to select
     popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
     maxiter = 300,                      #max number of iterations
@@ -218,7 +282,7 @@ GA_output = local_gebv_parent_selection(
 
 #Parent Selection (haplotypes - diploid only!)
 GA_output = ohs_parent_selection(
-    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks()
+    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks() computed using compute_haplotype_effects()
     n_founders = 20,                    #number of parents to select
     popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
     maxiter = 300,                      #max number of iterations
@@ -265,7 +329,7 @@ parent_sln_obj = OHS_vs_TS_simulation(
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
 parent_sln_obj = localGEBV_vs_TS_simulation(
     GA_output = GA_output,
-    geno = geno,                                           #genotype matrix from previous steps
+    geno = geno_phased,                                    #genotype matrix from previous steps - recommended to use phased over dosage here
     marker_effects = marker_effects,                       #marker effects dataframe previously used
     map = map,                                             #map dataframe previously used
     genetic_map_position = NULL,                           #vector of genetic map positions for each markers (in cM) - if NULL, map positions are assumed to be proportionally distributed to chromosomal physical position (0 to max_cM_chr)
