@@ -23,7 +23,7 @@ Some HapSelect functions (PLINK-backed LD calculation and BEAGLE imputation and 
     ```
 
 ### Important Notes 
-- The locations described are relative to the root folder in the R package directory. Please download and extract the `.zip` file and set your current directory to the root folder. This can be accomplished with the `cd` command from `bash` on a Linux/Unix or MacOS command line, for example. Example command: `cd /User/Will/HapSelect`.
+- The locations described are relative to the root folder in the R package directory. Please download and extract the `.zip` file and set your current directory to the root folder. This can be accomplished with the `cd` command from `bash` on a Linux/Unix or MacOS command line, for example. Example command: `cd /Users/<username>/HapSelect`.
 - System dependencies included in the install scripts include [PLINK 1.9](https://www.cog-genomics.org/plink/) and, for Windows users, [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html). PLINK 1.9 is optional and the package will install without it, but RTools 4.5 is required for Windows users. PLINK LD function calls will not run, however, without PLINK 1.9 installed and available to the system `PATH` variable.
     - You can manually install the software using the links above if you do not wish to use the command line or Windows PowerShell to run the install scripts or lack administrator access to do so.
 - Other systems (Unix/Linux and MacOS) must have a C++ compiler compatible with the `Rcpp` R package. This is normally detected and referenced by default during R installation.
@@ -72,7 +72,7 @@ Brief Instructions from the [genomicSimulation Manual](https://vllrs.github.io/g
 
 1. Download the [HapSelect](https://github.com/wrshf7/HapSelect/releases/) `.zip` file.
 2. Extract the `.zip` file.
-3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/Will/Downloads/HapSelect-2.0.0/HapSelect-2.0.0/")`) and run `install.packages("HapSelect-2.0.0/", repos = NULL, type = "source")`
+3. Set the working directory (in R) to the extracted file (e.g., `setwd("C:/Users/<username>/Downloads/HapSelect-2.0.0/HapSelect-2.0.0/")`) and run `install.packages("HapSelect-2.0.0/", repos = NULL, type = "source")`
 4. **OR** run `install.packages("path/to/HapSelect-2.0.0/HapSelect-2.0.0/", type = "source", repos = NULL)`
 
 ## PLINK and BEAGLE (Optional)
@@ -81,7 +81,7 @@ BEAGLE .jar download: [BEAGLE5.5](https://faculty.washington.edu/browning/beagle
 To use various functions, such as: `plink_pairwise_ld_geno()`, `beagle_impute()`, and `beagle_phase()`, PLINK and BEAGLE will need to be available.
 
 The simplest way is to place the `plink.exe` and `beagle.27Feb25.75f.jar` files into the /user/bin folder (Windows)
-- For example, `C:/Users/Will/bin` folder: `C:/Users/Will/bin/plink.exe` and `C:/Users/Will/bin/beagle.27Feb25.75f.jar` for Windows
+- For example, `C:/Users/<username>/bin` folder: `C:/Users/<username>/bin/plink.exe` and `C:/Users/<username>/bin/beagle.27Feb25.75f.jar` for Windows
 - For Linux and Unix: create the `/home/username/bin` (same as `~/bin` but replace `username` with your username) folder manually ad place `plink` and `beagle.27Feb25.75f.jar` in this folder (make sure they are executable! Run `chmod 755 plink` and `chmod 755 beagle.27Feb25.75f.jar` in the terminal to make them executable)
 - For Mac: create `/Users/username/bin` and replicate the process for Linux and Unix. Ensure you replace `username` with your username
 

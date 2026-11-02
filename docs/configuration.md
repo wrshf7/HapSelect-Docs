@@ -26,19 +26,19 @@ Each candidate is checked by actually running it. PLINK must report version 1.9 
 ### `set_plink_path()`
 
 ```r
-set_plink_path(path = "C:/Users/Will/tools/plink.exe")  #the executable
-set_plink_path(path = "C:/Users/Will/tools")            #or the folder containing it
+set_plink_path(path = "C:/Users/<username>/tools/plink.exe")  #the executable
+set_plink_path(path = "C:/Users/<username>/tools")            #or the folder containing it
 
-set_plink_path(path = NULL)                             #clear the setting and search automatically again
+set_plink_path(path = NULL)                                   #clear the setting and search automatically again
 ```
 
 ### `set_beagle_path()`
 
 ```r
-set_beagle_path(path = "C:/Users/Will/tools/beagle.27Feb25.75f.jar")  #the .jar file
-set_beagle_path(path = "C:/Users/Will/tools")                         #or the folder containing it
+set_beagle_path(path = "C:/Users/<username>/tools/beagle.27Feb25.75f.jar")  #the .jar file
+set_beagle_path(path = "C:/Users/<username>/tools")                         #or the folder containing it
 
-set_beagle_path(path = NULL)                                          #clear the setting and search automatically again
+set_beagle_path(path = NULL)                                                #clear the setting and search automatically again
 ```
 
 | Parameter | Default | Description |
@@ -102,8 +102,8 @@ Every setting above is stored as an R option, so you can apply them every time R
 
 ```r
 options(
-  HapSelect.plink_path  = "C:/Users/Will/tools/plink.exe",
-  HapSelect.beagle_path = "C:/Users/Will/tools/beagle.27Feb25.75f.jar",
+  HapSelect.plink_path  = "C:/Users/<username>/tools/plink.exe",
+  HapSelect.beagle_path = "C:/Users/<username>/tools/beagle.27Feb25.75f.jar",
   HapSelect.cpu_cores   = 4
 )
 ```
