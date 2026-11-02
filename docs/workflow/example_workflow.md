@@ -539,7 +539,11 @@ If `TRUE`:
 
 If `FALSE`:
 
-- localGEBV is computed using the non-missing markers
+- localGEBV is computed using the non-missing markers. This is equivalent to setting the dosage equal to the mean (i.e., contribution of 0 to localGEBV)
+
+
+!!! warning
+    For `set_missing_NA = TRUE`: In practice, while many markers may pass missigness filters within a block, sometimes a block will have the vast majority of individuals with >= 1 missing genotype calls. This can artificially raise the variance. A missingness filter or imputation is recommended to avoid this: see [Data Import and Imputation](data-import.md) for more details.
 
 ---
 
@@ -548,9 +552,9 @@ If `FALSE`:
 Centers markers internally.
 
 This is usually required because marker effects are typically estimated from centered genotype matrices.
-Only set to `FALSE` if you are highly confident in what you are doing!
+Only set to `FALSE` if you are **highly confident** in what you are doing!
 
-Recommended for 99% of cases, otherwise GEBV and localGEBV will be biased (will not affect the haploblock variance):
+Recommended for 99% of cases, otherwise GEBV and localGEBV will be biased (will not affect the haploblock variance, but will affect parent selection optimization):
 
 ```r
 mean_adjust = TRUE
@@ -561,7 +565,7 @@ A good confirmation things are working properly is to reconstruct GEBV from Zu, 
 
 The package will internally center markers if `mean_adjust = TRUE`. If the matrix is already centered, centering won't change the values or centering can be set to `FALSE`.
 
-If you want genotype/haplotype configurations to match the 0/1/2/# dosage format, provide the uncentered genotype matrix and set `mean_adjust = TRUE`. Otherwise, the reported genotype/haplotype configurations will reflect centered values. For clarity, you must provide dosage format (usually 0/1/2 for diploid, any integer for polypoid).
+If you want genotype/haplotype configurations in the output to match the 0/1/2/# dosage format, provide the __uncentered__ genotype matrix and set `mean_adjust = TRUE`. Otherwise, the reported genotype/haplotype configurations will reflect centered values. For clarity, you must provide dosage format (usually 0/1/2 for diploid, any integer for polypoid).
 
 ---
 
@@ -583,7 +587,7 @@ haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end,
 - by represents what to increment the axis labels by
 - Example: seq(0,1e9, 1e8) would create a vector with values every 100 Mb up to 1 Gb
 - breaks are where to create labels
-- labels specifies the labeling of the labels: seq(x,yz,) / 1e6 scales it to Mb and are then converted into characters
+- labels specifies the labeling of the labels: seq(x,y,z) / 1e6 scales it to Mb and are then converted into characters
 - limits specifying the min and max values
 - labs(x = "Name") renames the x-axis
 
@@ -820,7 +824,7 @@ variance_plot
 
 ### Haploblock Variance Plot
 
-The haploblock position plot with each block coloured by its variance, showing where the high-variance regions sit on each chromosome.
+The haploblock position plot with each block coloured by its variance, showing where the high-variance regions sit on each chromosome and the block size.
 
 ```r
 block_var_plot <- plot_haploblocks_variance(

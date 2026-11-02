@@ -10,7 +10,7 @@ HapSelect implements a six-stage pipeline that moves from raw genotype/allelic d
 
 The first stage partitions the genome into haplotype blocks (haploblocks) using linkage disequilibrium (LD) between markers or a window-based approach. We highly recommend using our internal LD tool written in C++ or [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is installed (see [Installation](installation.md) and [Configuration](configuration.md)), we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
-LD-Based Blocking:
+**LD-Based Blocking:**
 Starting from a map and pared-down VCF structured genotype/allelic matrix of **N individuals × I markers (localGEBV) or IL Chromosomes (Haplotypes)**, where I and L are the number of markers and ploidy (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
 
 1. Computes pairwise r² between all marker pairs within each chromosome
@@ -21,11 +21,11 @@ Haploblock IDs follow the convention of **Chromosome:Block**, identifying blocks
 
 A custom haploblock dataframe can be provided, but it must follow the output structure produced from `block_obj_to_df()`.
 
-Window-Based Blocking:
+**Window-Based Blocking:**
 Starting from a map, HapSelect will group markers from left (start of a chromosome) to right. Grouping occurs by either physical/genetic distance in the map, or a specified number of markers - whichever is specified. No LD is required.
 
 
-Graph-Based Blocking:
+**Graph-Based Blocking:**
 Graph-based blocking is a new implementation and is similar in concept to LD based blocking. Starting from a map and pared-down VCF structured genotype matrix of **N individuals × I markers**, HapSelect will:
 
 1. Compute pairwise r² between all marker pairs within each chromosome

@@ -310,6 +310,9 @@ After selection, some markers sit inside a block's span without belonging to it.
 
 !!! warning
     A marker inside a block's span that fails the refill test is **dropped** and appears in **no** block. Unlike `ld_strategy()` and `window_strategy()`, the graph method does not guarantee every marker in the map is assigned to a block! On the bundled example data with the default parameters, 486 of the 6,070 markers are dropped. Dropped markers do not contribute to localGEBV or haplotype effects. Lowering `theta_refill` keeps more of them, and `attr(haploblocks, "graph_diagnostics")` reports how many were dropped on each chromosome (see below).
+    
+!!! warning
+    Do **NOT** estimate marker effects prior to using the graph approach! Marker effects should **only be estimated with the final marker set**!
 
 ### Diagnostics
 

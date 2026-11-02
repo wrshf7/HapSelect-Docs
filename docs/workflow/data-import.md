@@ -94,8 +94,8 @@ All three functions share the following optional parameters:
 
 | Parameter | Default | Description |
 |:---|:---|:---|
-| `ref` | `NULL` | Path to a reference panel VCF for reference-based imputation |
-| `map` | `NULL` | Path to a PLINK-format genetic map, passed to BEAGLE's `map=` argument. This is **not** the HapSelect map data frame! |
+| `ref` | `NULL` | Path to a reference panel VCF for reference-based imputation (Optional) |
+| `map` | `NULL` | Path to a PLINK-format **genetic** map, passed to BEAGLE's `map=` argument. This is **not the HapSelect map** data frame! (Optional) |
 | `extra_args` | `character()` | Additional BEAGLE `key=value` arguments, e.g., `c("ne=100", "window=40")` |
 
 !!! tip
