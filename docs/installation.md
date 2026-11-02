@@ -51,13 +51,16 @@ HapSelect imports the following packages, which will be installed automatically.
 | `cowplot` | Plot composition |
 | `dplyr` / `purrr` | Data manipulation |
 | `furrr` / `future` | Parallel computation |
-| `Rcpp` | C++ extensions for LD calculation |
-| `progressr` | Progress reporting |
+| `Rcpp` | C++ extensions for LD calculation and blocking |
+| `data.table` | Fast data manipulation for graph-based blocking |
+| `progressr` / `cli` | Progress reporting |
+| `jsonlite` | Machine-readable progress reporting |
+| `processx` | Running PLINK and BEAGLE |
 
 For convenience, please run the following function to install all R packages:
 
 ```r
-install.packages(c("rrBLUP", "GA", "ggplot2", "cowplot", "dplyr", "purrr", "furrr", "future", "Rcpp", "progressr"))
+install.packages(c("rrBLUP", "GA", "ggplot2", "cowplot", "dplyr", "purrr", "furrr", "future", "Rcpp", "data.table", "progressr", "cli", "jsonlite", "processx"))
 ```
 
 ## R Dependencies - GitHub
@@ -78,7 +81,7 @@ Brief Instructions from the [genomicSimulation Manual](https://vllrs.github.io/g
 ## PLINK and BEAGLE (Optional)
 PLINK1.9 executable (.exe)/binary download: [PLINK1.9](https://www.cog-genomics.org/plink/)
 BEAGLE .jar download: [BEAGLE5.5](https://faculty.washington.edu/browning/beagle/beagle.html)
-To use various functions, such as: `plink_pairwise_ld_geno()`, `beagle_impute()`, and `beagle_phase()`, PLINK and BEAGLE will need to be available.
+To use various functions, such as: `plink_pairwise_ld_geno()`, `plink_pairwise_ld()`, `beagle_impute()`, `beagle_impute_geno()`, and `beagle_phase_geno()`, PLINK and BEAGLE will need to be available. BEAGLE also requires a Java runtime (Java 8 or later) to be installed. HapSelect requires PLINK 1.9 and BEAGLE 5.5 specifically - other versions are rejected.
 
 The simplest way is to place the `plink.exe` and `beagle.27Feb25.75f.jar` files into the /user/bin folder (Windows)
 - For example, `C:/Users/<username>/bin` folder: `C:/Users/<username>/bin/plink.exe` and `C:/Users/<username>/bin/beagle.27Feb25.75f.jar` for Windows
@@ -92,4 +95,4 @@ Alternative method 2: modify `PATH` temporarily in R to include folders where th
 !!! warning
     Do not attempt to modify the system `PATH` variable unless you know what you are doing! Modifying the `PATH` within R is temporary, but the system `PATH` is something many programs rely on!
 
-Alternative method 3: address the default location directly within HapSelect using the `set_beagle_path()` and `set_plink_path()` functions
+Alternative method 3: address the default location directly within HapSelect using the `set_beagle_path()` and `set_plink_path()` functions. See [Configuration](configuration.md) for details, including how to make these settings permanent.

@@ -15,11 +15,12 @@ The package is designed for breeding programs running genomic selection, where i
 
 | Stage | What it does | Key function |
 |-------|-------------|--------------|
+| Data Import (optional) | Read VCF files, and impute and phase genotypes with BEAGLE | `read_vcf_geno()` / `beagle_phase_geno()` |
 | Pairwise LD | Compute r² between all marker pairs | `pairwise_ld()` / `plink_pairwise_ld_geno()` |
-| Haploblocking | Partition genome into LD-based haploblocks | `def_blocks()` / `block_obj_to_df()`|
+| Haploblocking | Partition genome into haploblocks using LD-based, window-based, or graph-based blocking | `def_blocks()` with `ld_strategy()`, `window_strategy()`, or `graph_strategy()` / `block_obj_to_df()`|
 | Genomic Prediction | Compute marker effects and prediction accuracy | `create_marker_effects_file()`, `n_fold_cross_validation()`, `cross_validation()` |
 | LocalGEBV/Haplotype Effect | Estimate per-block GEBV or haplotype effects per individual | `compute_local_GEBV()` / `compute_haplotype_effects()` |
-| Visualisation | Explore haploblock structure, localGEBV/haplotype patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
+| Visualisation | Explore haploblock structure, localGEBV/haplotype patterns, and more | `plot_haploblocks()`, `plot_haploblocks_variance()`, `plot_ld_decay()`, … |
 | Parent selection | Optimise parent selection using a genetic algorithm | `local_gebv_parent_selection()` / `haplotype_parent_selection()`|
 | Basic Simulation | Compare GA and TS parent performance over time and explore how diversity is captured using the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package. | `localGEBV_vs_TS_simulation()` / `Haplotype_vs_TS_simulation()` |
 
@@ -29,7 +30,7 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/latest)
 
-2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows) and [genomicSimulation](https://github.com/vllrs/genomicSimulation) are installed and the OPTIONAL [PLINK 1.9](https://www.cog-genomics.org/plink/) bin and [BEAGLE](https://faculty.washington.edu/browning/beagle/beagle.html) .jar files are in a folder located in the sytem PATH or /user/bin folder.
+2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows) and [genomicSimulation](https://github.com/vllrs/genomicSimulation) are installed and the OPTIONAL [PLINK 1.9](https://www.cog-genomics.org/plink/) bin and [BEAGLE](https://faculty.washington.edu/browning/beagle/beagle.html) .jar files are in the `bin` folder in your home directory (`~/bin`, or `C:/Users/<username>/bin` on Windows) or a folder on the system `PATH`. Alternatively, point HapSelect at them with `set_plink_path()` and `set_beagle_path()` (see [Configuration](configuration.md)).
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
