@@ -180,10 +180,7 @@ A more generalised version of `n_fold_cross_validation()`. This function splits 
 
 `train_prop` must be a value between 0 and 1 (i.e., the proportion). The default is `0.9`. This is taken as `train_prop` * number of rows rounded up. The rest of the data is utilised for validation.
 
-`fold` is an integer value (e.g., `30L` and not `30`) that is utilised to repeat the random sampling with replacement `fold` times for `fold` validations.
-
-!!! warning
-    Always provide `fold` as an integer, e.g., `fold = 30L`. In v2.0.0, leaving `fold` at its default value (`30`, which is not an integer) causes an error.
+`fold` is an integer value (e.g., `30L` and not `30`) that is utilised to repeat the random sampling with replacement `fold` times for `fold` validations. The default is `30L`.
 
 ## Important Information
 !!! warning
