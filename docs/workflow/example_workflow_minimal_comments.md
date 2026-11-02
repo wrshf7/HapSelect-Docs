@@ -2,13 +2,16 @@
 
 Minimal workflow demonstrating:
 
-1. LD calculation
-2. Haploblock construction
-3. Marker effect estimation
-4. localGEBV computation
-5. Visualisation
-6. GA parent selection
-7. Recurrent truncation selection simulation on GA selected parents and TS selected parents
+1. (Optional) VCF import, imputation, and phasing
+2. LD calculation
+3. Haploblock construction (LD, window, or graph)
+4. Marker effect estimation
+5. localGEBV/haplotype effect computation
+6. Visualisation
+7. GA parent selection
+8. Recurrent truncation selection simulation on GA selected parents and TS selected parents
+
+See [Complete Workflow with Explanations](example_workflow.md) for the same workflow with explanations.
 
 ---
 
@@ -20,6 +23,19 @@ library(HapSelect)
 map         <- HapSelect::map
 geno        <- HapSelect::geno
 geno_phased <- HapSelect::geno_phased
+BLUE        <- HapSelect::BLUE
+```
+
+---
+
+## Import from VCF (Optional)
+
+```r
+geno <- read_vcf_geno("path/to/genotypes.vcf.gz")
+map  <- order_map(geno[, 1:3], verbose = TRUE)
+geno <- order_geno(geno, map)
+
+geno_phased <- beagle_phase_geno(geno) # requires BEAGLE 5.5 and Java
 ```
 
 ---
@@ -32,6 +48,11 @@ map2 <- map[sample(1:nrow(map), nrow(map)), ]
 
 # reorder
 map2 <- order_map(map = map2)
+
+# order the map and genotypes used from here on
+map         <- order_map(map = map)
+geno        <- order_geno(geno = geno, map = map)
+geno_phased <- order_geno(geno = geno_phased, map = map)
 ```
 
 ---
@@ -39,13 +60,18 @@ map2 <- order_map(map = map2)
 ### Pairwise LD (Native Function)
 
 ```r
-# very slow; demonstration only
-# ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
+ld_pairs <- pairwise_ld(
+  genotype_matrix = geno,
+  parallelize = FALSE,
+  window = NULL,
+  min_r2 = NULL,
+  min_obs = 2L
+)
 ```
 
 ---
 
-### Pairwise LD with PLINK (Recommended)
+### Pairwise LD with PLINK
 
 ```r
 ld_pairs <- plink_pairwise_ld_geno(
@@ -56,7 +82,7 @@ ld_pairs <- plink_pairwise_ld_geno(
 )
 ```
 
-Requires PLINK v1.9 installed and available in the system `PATH`.
+Requires PLINK v1.9 installed (see [Configuration](../configuration.md)).
 
 
 ## Load Example LD Data
@@ -70,16 +96,25 @@ ld_pairs <- HapSelect::ld_pairs
 ## Construct Haploblocks
 
 ```r
+# LD-based
 haploblocks <- def_blocks(
-  ld = ld_pairs,
   map = map,
-  method = "flanking",
-  threshold = 0.4,
-  tolerance = 3,
-  tol_reset = TRUE,
-  start = "beginning",
-  parallel = FALSE
+  strategy = ld_strategy(
+    ld = ld_pairs,
+    method = "flanking",
+    threshold = 0.4,
+    tolerance = 3,
+    tol_reset = TRUE,
+    start = "beginning",
+    parallel = FALSE
+  )
 )
+
+# window-based (alternative)
+# haploblocks <- def_blocks(map = map, strategy = window_strategy(window = 50, method = "window_snp"))
+
+# graph-based (alternative) - geno is required
+# haploblocks <- def_blocks(map = map, geno = geno, strategy = graph_strategy(theta_core = 0.8))
 ```
 
 ---
@@ -108,13 +143,12 @@ block_summary(block_df = haploblocks)
 - no other effects in the model, see [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modelling.
 
 ```r
-BLUE <- HapSelect::BLUE
-
 marker_effects <- create_marker_effects_file(
   geno = geno,
   BLUE = BLUE,
   h2_method = "VanRaden",
-  ploidy = 2L
+  ploidy = 2L,
+  mean_impute = TRUE
 )
 ```
 
@@ -130,7 +164,8 @@ CV <- n_fold_cross_validation(
   BLUE = BLUE,
   nfold = 5L,
   h2_method = "VanRaden",
-  ploidy = 2L
+  ploidy = 2L,
+  mean_impute = TRUE
 )
 ```
 
@@ -141,9 +176,10 @@ CV <- cross_validation(
   geno = geno,
   BLUE = BLUE,
   train_prop = 0.9,
-  fold = 5L,
+  fold = 30L,
   h2_method = "VanRaden",
-  ploidy = 2L
+  ploidy = 2L,
+  mean_impute = TRUE
 )
 ```
 
@@ -165,7 +201,7 @@ haploblock_obj <- compute_local_GEBV(
 )
 
 #haplotypes
-haploblock_obj <- compute_haplotype_effects(
+haplotype_obj <- compute_haplotype_effects(
   geno = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
@@ -184,7 +220,7 @@ haploblock_obj <- compute_haplotype_effects(
 ```r
 haploblock_plot <- haploblock_plot + labs(x = "cM")
 
-haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position (Mb)")
 ```
 
 
@@ -215,7 +251,7 @@ localGEBV_plot <- unique_localGEBV_effects_plot(
 localGEBV_plot
 
 haplo_eff_plot <- unique_haplo_effects_plot(
-  haplo_obj = haploblock_obj,
+  haplo_obj = haplotype_obj,
   colors = c("#A01FF0", "#A7A8AA"),
   pos_type = "midpoint"
 )
@@ -237,7 +273,7 @@ funnel_plot <- local_gebv_block_var_funnel_plot(
 
 #haplotype
 funnel_plot <- haplo_block_var_funnel_plot(
-  haplo_obj = haploblock_obj,
+  haplo_obj = haplotype_obj,
   mean_line = FALSE,
   scale_colors = c("blue", "purple", "red")
 )
@@ -311,6 +347,18 @@ variance_plot
 
 ```
 
+### Haploblock Variance Plot
+
+```r
+block_var_plot <- plot_haploblocks_variance(
+  haploblock_obj = haploblock_obj,
+  variance = "Block_Var",
+  scale_viridis_option = "magma"
+)
+
+block_var_plot
+```
+
 ---
 
 ## Select Haploblocks for the GA
@@ -345,6 +393,12 @@ haploblock_obj <- select_top_blocks(
   perc_of_total_var = 0.9
 )
 
+#the same selection for the haplotype effects object
+haplotype_obj <- select_top_blocks(
+  haploblock_obj = haplotype_obj,
+  perc_of_total_var = 0.9
+)
+
 nrow(haploblock_obj$Haploblocks_GA)
 ```
 
@@ -367,7 +421,7 @@ localGEBV_parent_obj <- local_gebv_parent_selection(
 )
 
 haplotype_parent_obj <- haplotype_parent_selection(
-  haploblock_obj = haploblock_obj,
+  haploblock_obj = haplotype_obj,
   n_founders = 20,
   popSize = 10,
   maxiter = 300,
@@ -393,15 +447,7 @@ localGEBV_parent_obj$selected_founders #substitute haplotype_parent_obj for hapl
 ### Optimisation Progress Plot
 
 ```r
-optimisation_progress_plot <- GA_progress_plot(
-  parent_selection_object = localGEBV_parent_obj, #substitute haplotype_parent_obj for haplotypes
-  max_color = "#A01FF0",
-  mean_color = "#A01FF0",
-  ribbon_color = "#A01FF0",
-  ribbon_alpha = 0.35,
-  max_linewidth = 1.2,
-  mean_linewidth = 0.8
-)
+plot(localGEBV_parent_obj$GA) #substitute haplotype_parent_obj for haplotypes
 ```
 
 ---
@@ -429,7 +475,7 @@ localGEBV_Sim <- localGEBV_vs_TS_simulation(
 
 Haplotype_Sim <- Haplotype_vs_TS_simulation(
   GA_output = haplotype_parent_obj,
-  geno_phased = geno,
+  geno_phased = geno_phased,
   marker_effects = marker_effects,
   map = map,
   genetic_map_position = NULL,
