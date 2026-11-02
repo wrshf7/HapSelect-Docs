@@ -69,7 +69,7 @@ nav:
         - Visualisations: workflow/visualizations.md
         - Parent Selection: workflow/parent-selection.md
         - Basic Simulation: workflow/basic-simulation.md
-  #- Function Reference: reference.md
+  - Function Reference: reference.md
 
 extra:
   version:
