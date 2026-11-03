@@ -140,7 +140,7 @@ block_summary(block_df = haploblocks)
 #### Important Note:
 - One BLUE, deregressed BLUP, or adjusted phenotype per individual only
 - rrBLUP implementation
-- no other effects in the model, see [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modelling.
+- no other effects in the model, see [Documentation Overview](../overview.md) for more details and alternative R packages for independent modelling.
 
 ```r
 marker_effects <- create_marker_effects_file(

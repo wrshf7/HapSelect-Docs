@@ -393,7 +393,7 @@ The BLUE dataframe should contain:
 
 #### Important Note
 We do not currently support other effects in the model or multiple observations per individual. If more advanced modelling is needed, please utilise other software.
-See the [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modelling.
+See the [Documentation Overview](../overview.md) for more details and alternative R packages for independent modelling.
 
 ---
 
