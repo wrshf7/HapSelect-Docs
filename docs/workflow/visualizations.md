@@ -5,6 +5,8 @@ HapSelect provides a collection of publication-quality `ggplot2` visualisation f
 All plotting functions return standard `ggplot2` objects, allowing further customization using normal `ggplot2` syntax.
 
 ```r
+#Examle of creating and modifying a HapSelect ggplot object
+
 p <- marker_effects_plot(...)
 
 p +
@@ -14,7 +16,7 @@ p +
 
 As a special case:
 
-We use default posotion values because of the ability to choose between genetic map position (cM) and physical map position (bp), the following is an example convert the positions on some graphs to Mb:
+We use default position values because of the ability to choose between genetic map position (cM) and physical map position (bp), the following is an example convert the positions on some graphs to Mb:
 
 ```r
 haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position (Mb)")
@@ -33,7 +35,7 @@ Creates a Manhattan-style scatter plot displaying estimated marker effects acros
 
 ```r
 marker_effects_plot(
-  marker_effects = marker_effects$Effect,
+  marker_effects = marker_effects$Effect, #these MUST be in the same order as the map file!
   chr            = map$Chromosome,
   pos            = map$Position
 )
@@ -67,7 +69,7 @@ marker_effects_plot(
 
 # Haplotype Effect Visualisations
 
-These functions visualize estimated effects assigned to individual haplotypes or local genomic breeding values in a Manhattan-style plot.
+These functions visualize estimated effects assigned to individual haplotypes or localGEBV in a Manhattan-style plot.
 
 ## Unique Haplotype Effects
 
@@ -263,7 +265,7 @@ plot_haploblocks_variance(
 
 ### Notes
 
-* Variance is shown on its original scale (not log transformed), so a few very high-variance blocks will stand out against the rest.
+* Variance is shown on its original scale (not log transformed), so a few very high-variance blocks will stand out against the rest. This can be manually scaled in the `haploblock_obj$Haploblocks` data frame
 * Single-marker blocks are automatically given a visible width if `single_width_bp = NULL`.
 * `haploblock_obj` must contain localGEBV/haplotype effects - a haploblock data frame from `block_obj_to_df()` alone does not have a variance column.
 
@@ -289,7 +291,7 @@ plot_marker_density(
 
 | Parameter | Default | Description |
 |:--|:--|:--|
-| `bin_size` | `500000` | Bin width used for counting markers |
+| `bin_size` | `500000` | Bin width used for counting markers (500 Kb default) |
 | `height` | `0.30` | Chromosome thickness |
 | `chrom_fill` | `NA` | Chromosome fill colour |
 | `col_low` | `"white"` | Low-density colour |

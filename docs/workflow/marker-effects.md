@@ -39,7 +39,7 @@ Prediction Accuracy (cor(GEBV, BLUE or deregressed BLUP or adj pheno)) is: 0.78
 ```
 
 !!! warning
-    The prediction accuracy printed by `create_marker_effects_file()` is calculated on the same individuals the model was trained on, so it will be optimistic. Use `n_fold_cross_validation()` or `cross_validation()` (below) to estimate how well the model predicts individuals it has not seen.
+    The prediction accuracy printed by `create_marker_effects_file()` is calculated on the same individuals the model was trained on, so it will be optimistic. Use `n_fold_cross_validation()` or `cross_validation()` (below) to estimate how well the model predicts individuals it has not seen. However, prediction accuracy will be necessarily low with small datasets and using an n-fold subsampling or the bootstrap method with low training proportion.
 
 ### Marker Effect Parameters
 
@@ -109,7 +109,7 @@ This is the structure that must be provided if marker effects are provided exter
 
 ## `solve_marker_effects()` and `compute_prediction_accuracy()`
 
-`create_marker_effects_file()` is a wrapper around these two functions. They are exported for users who need the full model output, such as the variance components or fixed effect, rather than only the marker effects.
+`create_marker_effects_file()` is a wrapper around these two functions. They are exported for users who need the full model output, such as the variance components or intercept, rather than only the marker effects.
 
 ```r
 #fit the model - every argument must be given, there are no defaults
@@ -140,7 +140,11 @@ accuracy <- compute_prediction_accuracy(
 
 ---
 
-## `n_fold_cross_validation()`
+## Prediction Accuracy with Bootstrapping and Cross-Validation Methods
+
+![HapSelect prediction accuracy](../assets/Prediction_accuracy.png)
+
+### `n_fold_cross_validation()`
 This function performs the marker effects calculation, but is utilised to evaluate model performance.
 
 ```r
@@ -162,7 +166,7 @@ The function prints the variance components for each fold and the mean predictio
 
 ---
 
-## `cross_validation()`
+### `cross_validation()`
 
 ```r
 CV <- cross_validation(
@@ -176,7 +180,9 @@ CV <- cross_validation(
 )
 ```
 
-A more generalised version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration. Across iteration, the sampling is conducted indepenently with replacement. That is, similar groups could be utilised for training and validation in different iterations. Thus, more folds are likely needed compared to `n_fold_cross_validation()` to adequately assess uncertainty.
+A more generalised version of `n_fold_cross_validation()`. This function splits the data into `train_prop` and 1 - `train_prop` proportions randomly each iteration. Across iteration, the sampling is conducted indepenently with replacement (i.e., bootstrapping). That is, similar groups could be utilised for training and validation in different iterations. Thus, more folds are likely needed compared to `n_fold_cross_validation()` to adequately assess uncertainty, but may be a better option for small datasets.
+
+For small datasets, it is recommended that `train_pop` be closer to 1 or to make `nfold` a large integer, such that very few individuals are left out for training. This will, of course, necessitate more folds to assess accuracy.
 
 `train_prop` must be a value between 0 and 1 (i.e., the proportion). The default is `0.9`. This is taken as `train_prop` * number of rows rounded up. The rest of the data is utilised for validation.
 
@@ -188,3 +194,4 @@ A more generalised version of `n_fold_cross_validation()`. This function splits 
 
 !!! tip
     Both cross-validation functions split the data randomly, so results will differ slightly between runs. Use `set.seed()` before calling them to make the results reproducible.
+

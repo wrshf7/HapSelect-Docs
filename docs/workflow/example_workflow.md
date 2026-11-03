@@ -409,7 +409,7 @@ marker_effects <- create_marker_effects_file(
 )
 ```
 
-The variance components and prediction accuracy are printed. This prediction accuracy is measured on the individuals used to train the model, so it will be optimistic - use the cross validation functions below for a fair estimate.
+The variance components and prediction accuracy are printed. This prediction accuracy is measured on the individuals used to train the model, so it will be optimistic - use the cross validation functions below with a large enough dataset for a fair estimate.
 
 ---
 

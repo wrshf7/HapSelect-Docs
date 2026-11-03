@@ -31,6 +31,9 @@ The GA therefore attempts to maximise:
 
 rather than simply selecting the individuals with the highest total GEBV (truncation selection, TS).
 
+
+![HapSelect GA overview](../assets/genetic_algorithm.png)
+
 ---
 
 ## The Fitness Function
@@ -51,6 +54,7 @@ where:
 
 For each block, the GA identifies the founder pair with the highest expected offspring breeding value (EBV) and sums these optimal values across all blocks.
 
+![HapSelect localGEBV fitness function](../assets/localGEBV_fitness.png)
 
 ### Selfing vs no-selfing at a block
 
@@ -75,6 +79,8 @@ where:
 | *(il,kl)* | Pairwise unique haplotype combinations (same for all haploblocks) |
 
 #### Haplotype Selection Strategies
+
+![HapSelect haplotype fitness function](../assets/haplotype_fitness.png)
 
 The localGEBV fitness above scores each founder by its diploid value at a block. HapSelect can instead work at the **haplotype** level: each founder contributes its two phased chromosomes, and a genotype's value at a block is the **sum** of the two chosen haplotype effects. Three strategies control which haplotype pairings are allowed at each block:
 

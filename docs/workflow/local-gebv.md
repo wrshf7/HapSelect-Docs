@@ -1,4 +1,6 @@
-# LocalGEBV
+#localGEBV and Haplotype Effects
+
+## LocalGEBV
 
 Local genomic estimated breeding values (localGEBV) quantify the breeding value contribution of each haploblock for each individual. The localGEBV are calculated as:
 
@@ -30,7 +32,12 @@ This produces an **\(\text{J × NL}\) matrix** of haplotype effects — one valu
 
 Variance is compute in the same fashion. However, because there are LN (LN = 2N for diploid) values per haploblock and each haplotype effect is less than a corresponding localGEBV (exactly 1/2 if the case of a completely inbred and homozygous population), the variance of haplotype effects is usually substantially less the variance of localGEBV. However, the ranking of blocks is still the same for completely inbred populations and likely highly correlated even for highly outbred populations. Thus, its intended purpose as a metric to choose informative haploblocks and assess genome architecture is nearly invariant to choose of localGEBV or haplotype effects.
 
-## `compute_local_GEBV()` and `compute_haplotype_effects()`
+
+## Formulas Visualised
+
+![HapSelect localGEBV and haplotype effects](../assets/localGEBV_Haplotype_effects.png)
+
+## `compute_local_GEBV()` and `compute_haplotype_effects()` functions
 
 ```r
 #localGEBV
@@ -73,7 +80,7 @@ haploblock_obj <- compute_haplotype_effects(
 
 -`TRUE` if a haplotype/marker configuration for an individual in a haploblock is missing $>=$ 1 genotype call, the localGEBV value/haplotype effect for that individual's block is set to `NA`.
 
--`FALSE` localGEBV/haplotype effects are calculated with all non-missing genotypes. The missing genotypes are imputed to the mean. In the case of `mean_adjust = TRUE`, this is 0 and thus do not affect the value. For uncentered marker matrices, this is the genotype mean (2p for a diploid, or kp for other ploidy where k is ploidy and p is the alternative allele frequency). An individual missing **every** genotype in a block is still set to `NA`.
+-`FALSE` localGEBV/haplotype effects are calculated with all non-missing genotypes. The missing genotypes are imputed to the mean. In the case of `mean_adjust = TRUE`, this is 0 and thus do not affect the value. For uncentered marker matrices, this is the genotype mean ($2p$ for a diploid, or $lp$ for other ploidy where $l$ is ploidy and $p$ is the alternative allele frequency). An individual missing **every** genotype in a block is still set to `NA`.
 
 ### `mean_adjust`
 
@@ -99,7 +106,7 @@ With `parallel = TRUE`, haploblocks are grouped into chunks of similar computati
 `compute_local_GEBV()` and `compute_haplotype_effects()` return a list with:
 
 - **`$Haploblocks`** — haploblock dataframe from [Haplotype Blocks](haploblocks.md) extended with:
-    - `Num_Uniq_Hap` — number of unique haplotypes (marker configurations) observed in the block
+    - `Num_Uniq_Hap` — number of unique haplotypes (marker or allele configurations for localGEBV and haplotype effects, respectively) observed in the block
     - `Block_Var` — population variance of localGEBV/haplotype effects across individuals (or chromosomes). This is the variance used to rank blocks
     - `Unique_Haplo_Block_Var` — population variance of the effects of the **unique** haplotypes, ignoring how often each occurs
 - **`$Haplotype_ID_Matrix`** - blocks (J) × individuals (K) or chromosomes (KL) matrix of unique localGEBV/haplotype IDs listed in `$Haplotypes` dataframe
