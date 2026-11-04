@@ -98,6 +98,8 @@ cpu_cores()
 
 ## Making settings permanent
 
+### BEAGLE, PLINK, and parallelisation Options
+
 Every setting above is stored as an R option, so you can apply them every time R starts by adding the options to your `.Rprofile` file (e.g., with `usethis::edit_r_profile()`):
 
 ```r
@@ -109,6 +111,26 @@ options(
 ```
 
 Options set this way are checked the first time they are used, rather than when they are set.
+
+### Progress Bar Updates
+
+HapSelect throttles progress bar updates by default to avoid sending too many updates to the RStudio GUI. On large or computationally intensive operations with many small, incremental updates, frequent progress updates can introduce unnecessary overhead and cause the RStudio interface to become sluggish and, at worst, freeze.
+
+You can increase the minimum time between progress bar updates by setting `HapSelect.progress_interval`. This makes updates less frequent, which can improve responsiveness when running long operations. However, the default value of 0.2 seconds should be sufficient for the vast majority of users:
+
+| Option | Default | Description |
+|:---|:---|:---|
+| `HapSelect.progress_interval` | `0.2` | Minimum time between progress bar updates, in seconds. Increase this value to reduce update frequency. |
+
+For example, to update the progress bar at most every second:
+
+```r
+options(
+  HapSelect.progress_interval = 1
+)
+```
+
+Add this option to your .Rprofile alongside the other settings to make it permanent. A value of 0.2 (200 ms) is the default.
 
 ---
 
