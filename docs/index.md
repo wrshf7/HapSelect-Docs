@@ -1,6 +1,6 @@
 # HapSelect
 
-HapSelect is an R package for haploblock-based genomic selection. It partitions the genome into linkage disequilibrium blocks (haploblocks), estimates regional genetic value using either a localGEBV framework or a true haplotype-effect framework, identifies high-value genomic regions, optimizes parent selection using a genetic algorithm, and performs simulation to compare alternative selection strategies.
+HapSelect is an R package for haploblock-based genomic selection. It processes inpute genomic and phenotypic files, partitions the genome into blocks (haploblocks), estimates regional genetic value using either a localGEBV framework or a true haplotype-effect framework, identifies high-value genomic regions, optimizes parent selection using a genetic algorithm, and performs simulation to compare alternative selection strategies.
 
 The package is designed for breeding programs running genomic selection, where identifying and targeting the genomic regions with the most exploitable diversity can improve the efficiency of parent choice.
 
@@ -15,11 +15,12 @@ The package is designed for breeding programs running genomic selection, where i
 
 | Stage | What it does | Key function |
 |-------|-------------|--------------|
+| Data Import (optional) | Read VCF files, and impute and phase genotypes with BEAGLE | `read_vcf_geno()` / `beagle_phase_geno()` |
 | Pairwise LD | Compute r² between all marker pairs | `pairwise_ld()` / `plink_pairwise_ld_geno()` |
-| Haploblocking | Partition genome into LD-based haploblocks | `def_blocks()` / `block_obj_to_df()`|
+| Haploblocking | Partition genome into haploblocks using LD-based, window-based, or graph-based blocking | `def_blocks()` with `ld_strategy()`, `window_strategy()`, or `graph_strategy()` / `block_obj_to_df()`|
 | Genomic Prediction | Compute marker effects and prediction accuracy | `create_marker_effects_file()`, `n_fold_cross_validation()`, `cross_validation()` |
 | LocalGEBV/Haplotype Effect | Estimate per-block GEBV or haplotype effects per individual | `compute_local_GEBV()` / `compute_haplotype_effects()` |
-| Visualisation | Explore haploblock structure, localGEBV/haplotype patterns, and more | `plot_haploblocks()`, `plot_ld_decay()`, … |
+| Visualisation | Explore haploblock structure, localGEBV/haplotype patterns, and more | `plot_haploblocks()`, `plot_haploblocks_variance()`, `plot_ld_decay()`, … |
 | Parent selection | Optimise parent selection using a genetic algorithm | `local_gebv_parent_selection()` / `haplotype_parent_selection()`|
 | Basic Simulation | Compare GA and TS parent performance over time and explore how diversity is captured using the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package. | `localGEBV_vs_TS_simulation()` / `Haplotype_vs_TS_simulation()` |
 
@@ -27,9 +28,9 @@ See the [Overview](overview.md) for a full explanation of the method, or jump to
 
 ## Installation
 
-1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/)
+1. Download and extract the `.zip` file here: [HapSelect](https://github.com/wrshf7/HapSelect/releases/latest)
 
-2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows), [genomicSimulation](https://github.com/vllrs/genomicSimulation), and (optionally) [PLINK 1.9](https://www.cog-genomics.org/plink/) are installed. If you wish to use PLINK, it **MUST be installed** as an actual program with an executable in the user/bin folder!
+2. Ensure [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (Windows) and [genomicSimulation](https://github.com/vllrs/genomicSimulation) are installed and the OPTIONAL [PLINK 1.9](https://www.cog-genomics.org/plink/) bin and [BEAGLE](https://faculty.washington.edu/browning/beagle/beagle.html) .jar files are in the `bin` folder in your home directory (`~/bin`, or `C:/Users/<username>/bin` on Windows) or a folder on the system `PATH`. Alternatively, point HapSelect at them with `set_plink_path()` and `set_beagle_path()` (see [Configuration](configuration.md)).
    - Non-Windows machines must have a C++ compiler compatible with the Rcpp R package.
    - This is usually detected automatically and shipped natively with Linux/Unix and macOS systems.
 
@@ -44,11 +45,11 @@ install.packages("HapSelect", type = "source", repos = NULL)
 ```
 
 !!! warning
-    [genomicSimulation](https://github.com/vllrs/genomicSimulation), [PLINK 1.9](https://www.cog-genomics.org/plink/), and [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users) dependencies must be installed separately. Alternatively run the helper installation scripts to install all needed software. The package is usable without PLINK 1.9, but related functions that call PLINK will fail with an error. See [Installation](./installation.md) for more details.
+    [genomicSimulation](https://github.com/vllrs/genomicSimulation), [RTools 4.5](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) (for Windows users), [PLINK 1.9](https://www.cog-genomics.org/plink/) (optional), and [BEAGLE](https://faculty.washington.edu/browning/beagle/beagle.html) (optional) dependencies must be installed separately. Alternatively run the helper installation scripts to install all required software. The package is usable without PLINK 1.9 or BEAGLE, but related functions that call PLINK and/or BEAGLE will fail with an error. See [Installation](./installation.md) for more details.
 
 ## Important Papers
 <strong>localGEBV Method and Haploblock Formation:</strong><br>
-[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. bioRxiv (under review).](https://doi.org/10.1101/2025.08.28.672830)
+[Shaffer et al. 2025. Local genomic estimates provide a powerful framework for haplotype discovery. Appl Plant Sci.](https://doi.org/10.1016/j.apsx.2026.100002)
 
 <strong>Origin of the localGEBV Method and Parent Optimisation with a Genetic Algorithm:</strong><br>
 [Kemper et al. 2012. Long-term selection strategies for complex traits using high-density genetic markers. J Dairy Sci.](https://doi.org/10.3168/jds.2011-5289)

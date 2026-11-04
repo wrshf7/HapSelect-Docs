@@ -31,6 +31,9 @@ The GA therefore attempts to maximise:
 
 rather than simply selecting the individuals with the highest total GEBV (truncation selection, TS).
 
+
+![HapSelect GA overview](../assets/genetic_algorithm.png)
+
 ---
 
 ## The Fitness Function
@@ -51,6 +54,7 @@ where:
 
 For each block, the GA identifies the founder pair with the highest expected offspring breeding value (EBV) and sums these optimal values across all blocks.
 
+![HapSelect localGEBV fitness function](../assets/localGEBV_fitness.png)
 
 ### Selfing vs no-selfing at a block
 
@@ -61,7 +65,7 @@ At a single block the GA keeps the best cross among the selected founders, where
 
 ### True Haplotypes
 
-The true haplotype fitness function si as follows:
+The true haplotype fitness function is as follows:
 
 $$
 \mathrm{Fitness} = \sum_{j=1}^{J} \max_{(il,kl)}({haplotype_{ijl} + haplotype_{kjl}})
@@ -75,6 +79,8 @@ where:
 | *(il,kl)* | Pairwise unique haplotype combinations (same for all haploblocks) |
 
 #### Haplotype Selection Strategies
+
+![HapSelect haplotype fitness function](../assets/haplotype_fitness.png)
 
 The localGEBV fitness above scores each founder by its diploid value at a block. HapSelect can instead work at the **haplotype** level: each founder contributes its two phased chromosomes, and a genotype's value at a block is the **sum** of the two chosen haplotype effects. Three strategies control which haplotype pairings are allowed at each block:
 
@@ -167,7 +173,7 @@ Mutation randomly replaces one founder within a solution:
 
 ```r
 #expressed in probability: i.e., between 0 and 1
-pmutation = 0.1
+pmutation = 0.6 #default
 ```
 
 Higher mutation rates:
@@ -188,9 +194,11 @@ Crossover exchanges founders between two high-performing solutions.
 
 The algorithm:
 
-1. Retains part of each founder set
-2. Combines non-overlapping founders
-3. Fills missing founders from elite solutions based on `pelite`
+1. Takes a random half of the founders from one solution
+2. Combines them with all of the founders in the other solution, dropping duplicates
+3. Randomly samples the combined set back down to `n_founders` (or, if there are too few founders after dropping duplicates, tops it up with random individuals from the total population)
+
+Each crossover produces two new solutions, one starting from each parent solution.
 
 This helps preserve useful founder combinations while still exploring new combinations.
 
@@ -246,7 +254,12 @@ haploblock_obj <- select_top_blocks(
 | Top percentage | Scales with dataset size | May retain weak blocks or discard high-variance blocks |
 | Variance explained | Biologically adaptive | Number of retained blocks varies between traits and architecture |
 
-The output is a modified `haploblock_obj` that contains subsetted matrices and dataframes needed for the GA.
+The output is a modified `haploblock_obj` that contains subsetted matrices and dataframes needed for the GA:
+
+- `$Haploblocks_GA` — the selected rows of `$Haploblocks`, ordered from the highest to lowest `Block_Var`
+- `$Haplotype_Effect_Matrix_GA` — the localGEBV/haplotype effects of the selected blocks, with individuals (or chromosomes) as rows and blocks as columns
+
+Only one of `n`, `perc_total`, or `perc_of_total_var` may be given. `n` cannot be larger than the number of blocks, and `perc_total` and `perc_of_total_var` must be between 0 and 1.
 
 ---
 
@@ -277,92 +290,76 @@ Users are encouraged to experiment with multiple selection thresholds depending 
 
 ```r
 localGEBV_parent_obj <- local_gebv_parent_selection(
-  haploblock_obj = haploblock_obj,
-  n_founders = 20,
-  popSize = 10,
-  maxiter = 300,
-  run = 150,
-  strategy = "no_selfing",
-  pmutation = 0.6,
-  pcrossover = 0.6,
-  maximize = TRUE,
-  monitor = TRUE
+  haploblock_obj = haploblock_obj,  #output of select_top_blocks() on compute_local_GEBV() output
+  strategy       = "no_selfing",
+  n_founders     = 20,
+  popSize        = 100,
+  maxiter        = 500,
+  run            = 50,
+  pmutation      = 0.6,
+  pcrossover     = 0.6,
+  maximize       = TRUE,
+  monitor        = TRUE
 )
 
 haplotype_parent_obj <- haplotype_parent_selection(
-  haploblock_obj = haploblock_obj,
-  n_founders = 20,
-  popSize = 10,
-  maxiter = 300,
-  run = 150,
-  strategy = "OHS",
-  pmutation = 0.6,
-  pcrossover = 0.6,
-  maximize = TRUE,
-  monitor = TRUE
+  haploblock_obj = haploblock_obj,  #output of select_top_blocks() on compute_haplotype_effects() output
+  strategy       = "OHS",
+  n_founders     = 20,
+  popSize        = 100,
+  maxiter        = 500,
+  run            = 50,
+  pmutation      = 0.6,
+  pcrossover     = 0.6,
+  maximize       = TRUE,
+  monitor        = TRUE
 )
 ```
 
-<table>
-  <colgroup>
-    <col style="width: 20%; white-space: nowrap;">
-    <col style="width: 80%;">
-  </colgroup>
+!!! warning
+    `haploblock_obj` **MUST** be the output of `select_top_blocks()`, otherwise the GA functions will stop with an error. To use every block, use `select_top_blocks(haploblock_obj, perc_total = 1)`.
 
-  <thead>
-    <tr>
-      <th>Parameter</th>
-      <th>Description</th>
-    </tr>
-  </thead>
+| Parameter | Default | Description |
+|:---|:---|:---|
+| `haploblock_obj` | | Output of `select_top_blocks()` |
+| `strategy` | `"selfing"` (localGEBV) / `"OPV"` (haplotypes) | Whether to allow selfing (localGEBV) or constraints on haplotype pairing (haplotypes). See below |
+| `n_founders` | `20` | Integer number of parents to choose |
+| `popSize` | `100` | Integer number of parental sets per iteration |
+| `maxiter` | `500` | Maximum iterations before termination |
+| `run` | `50` | Iterations without improvement before terminating |
+| `pmutation` | `0.6` | Mutation probability — swaps out one random individual for another from the total population |
+| `pcrossover` | `0.6` | Crossover probability — combines two parental sets; if there is overlap, non-overlapping parents are chosen randomly from the total population |
+| `maximize` | `TRUE` | If `TRUE`, maximise the ultimate GEBV. If `FALSE`, minimise it |
+| `monitor` | `TRUE` | If `TRUE`, report the best and mean fitness each iteration |
 
-  <tbody>
-    <tr>
-      <td><code>n_founders</code></td>
-      <td>Integer number of parents to choose</td>
-    </tr>
+### `strategy`
 
-    <tr>
-      <td><code>popSize</code></td>
-      <td>Integer number of parental sets per simulation iteration</td>
-    </tr>
+| Function | Options | Default |
+|:---|:---|:---|
+| `local_gebv_parent_selection()` | `"selfing"`, `"no_selfing"` | `"selfing"` |
+| `haplotype_parent_selection()` | `"OPV"`, `"Haploid_OHS"`, `"OHS"` | `"OPV"` |
 
-    <tr>
-      <td><code>maxiter</code></td>
-      <td>Maximum iterations before termination</td>
-    </tr>
+See [The Fitness Function](#the-fitness-function) above for what each option allows.
 
-    <tr>
-      <td><code>run</code></td>
-      <td>Iterations without improvement before terminating</td>
-    </tr>
+!!! warning
+    The defaults are the **least** constrained strategies, which give the highest ultimate GEBV but may not represent a realistic crossing scheme. For a biparental crossing program, specify `strategy = "no_selfing"` (localGEBV) or `strategy = "OHS"` (haplotypes) explicitly.
 
-    <tr>
-      <td><code>strategy</code></td>
-      <td>
-        Whether to allow selfing (localGEBV) or constraints to haplotype pairing (haplotypes)
-      </td>
-    </tr>
+### `monitor`
 
-    <tr>
-      <td><code>pmutation</code></td>
-      <td>
-        Mutation probability — swaps out one random individual for another
-        from the total population.
-      </td>
-    </tr>
+- `TRUE` → while progress bars are shown, the best and mean fitness of the current iteration are displayed beside the parent selection bar. When progress bars are off (e.g., in a batch job), one line is printed per iteration instead:
 
-    <tr>
-      <td><code>pcrossover</code></td>
-      <td>
-        Crossover probability — swaps half of each population; if there is
-        overlap, non-overlapping parents are chosen randomly from the total
-        population.
-      </td>
-    </tr>
+```text
+Iter    1 | Best = 1.541 | Mean = 1.492 | SD = 0.028
+Iter    2 | Best = 1.542 | Mean = 1.502 | SD = 0.026
+```
 
-  </tbody>
-</table>
+- `FALSE` → no fitness information is shown. The progress bar is still drawn.
+
+See [Progress Reporting](../progress.md) for more information.
+
+### `maximize`
+
+The GA can only maximise, so minimisation is performed by multiplying the fitness by -1. The fitness values in the returned `GA` object are converted back to the original scale.
 
 The genetic algorithm (GA) balances:
 
@@ -493,6 +490,16 @@ parent_obj$selected_founders
 
 #GA information and statistics over iterations
 parent_obj$GA
+
+#plot the best, mean, and median fitness over iterations to check convergence
+plot(parent_obj$GA)
 ```
+
+`$selected_founders` is a data frame with the `indices` (row numbers in the effect matrix) and `individuals` (names, as in the genotype file) of the selected parents. `$GA` is the `ga` object returned by the [GA package](https://cran.r-project.org/web/packages/GA/index.html). Useful parts include:
+
+- `parent_obj$GA@fitnessValue` — the ultimate GEBV of the best solution
+- `parent_obj$GA@summary` — the `max`, `mean`, `q3`, `median`, `q1`, and `min` fitness of the population at each iteration
+- `parent_obj$GA@solution` — every solution with the best fitness
+- `parent_obj$GA@iter` — the number of iterations run
 
 The output contains the selected parent IDs and names. More information is available in the internal `GA` object about GA performance, change in the best localGEBV and meanGEBV of the parental sets over iterations, etc. There may be more than one set of parents that give rise to the same optimum. Additional sets of parents are contained in the `GA` object and only the first set is presented in `$selected_founders`

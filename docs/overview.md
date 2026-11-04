@@ -1,16 +1,17 @@
 # Process Overview
 
-HapSelect implements a six-stage pipeline that moves from raw genotype/allelic data to an optimised set of founder parents for a genomic selection program.
+HapSelect implements a six-stage pipeline that moves from raw genotype/allelic data to aggregated genomic signals in the form of haplotype effects/localGEBV and haplotype catalogues, and finally to an optimised set of founder parents for a genomic selection program.
 
 ![HapSelect process overview](assets/overview-diagram.png){ .overview-diagram }
 
 ---
 
-## A — LD Computation and Block Formation
+## A — Block Formation
 
-The first stage partitions the genome into haplotype blocks using linkage disequilibrium (LD) between markers. We highly recommend using [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is installed and available in the `PATH` variable, we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
+The first stage partitions the genome into haplotype blocks (haploblocks) using linkage disequilibrium (LD) between markers or a window-based approach. We highly recommend using our internal LD tool written in C++ or [PLINK 1.9](https://www.cog-genomics.org/plink/) to compute pairwise LD. If PLINK 1.9 is installed (see [Installation](installation.md) and [Configuration](configuration.md)), we offer a wrapper function to compute LD and format the output appropriately with the `plink_pairwise_ld_geno()` function. See [Pairwise LD](workflow/pairwise-ld.md) for more information.
 
-Starting from a pared-down VCF structured genotype/allelic matrix of **N individuals × I markers (localGEBV) or IL Chromosomes (Haplotypes)**, where I and L are the number of markers and ploidy (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
+**LD-Based Blocking:**
+Starting from a map and pared-down VCF structured genotype/allelic matrix of **N individuals × I markers (localGEBV) or IL Chromosomes (Haplotypes)**, where I and L are the number of markers and ploidy (see [Pairwise LD](workflow/pairwise-ld.md) for more details), HapSelect:
 
 1. Computes pairwise r² between all marker pairs within each chromosome
 2. Uses the r² matrix to define contiguous regions of high internal LD — **haploblocks**
@@ -20,8 +21,36 @@ Haploblock IDs follow the convention of **Chromosome:Block**, identifying blocks
 
 A custom haploblock dataframe can be provided, but it must follow the output structure produced from `block_obj_to_df()`.
 
+**Window-Based Blocking:**
+Starting from a map, HapSelect will group markers from left (start of a chromosome) to right. Grouping occurs by either physical/genetic distance in the map, or a specified number of markers - whichever is specified. No LD is required.
+
+
+**Graph-Based Blocking:**
+Graph-based blocking is a new implementation and is similar in concept to LD based blocking. Starting from a map and pared-down VCF structured genotype matrix of **N individuals × I markers**, HapSelect will:
+
+1. Compute pairwise r² between all marker pairs within each chromosome
+2. Compute core marker connections between markers to form seed regions based on high LD
+3. Extend core marker connections and bridge cores based on lower LD connections
+4. Linearise the proto-blocks because they often overlap
+5. Refill markers that were not placed
+
+Because LD is computed within a short window of each marker, graph-based blocking computes the LD it needs internally from the genotype matrix and does not require a pairwise LD table. See [Haplotype Blocks](workflow/haploblocks.md) for diagrams of each strategy.
+
 ```r
+#### LD-Based Blocking ####
+
 #compute pairwise LD
+
+#R implementation using a C++ backend
+ld_pairs   <- pairwise_ld(
+  genotype_matrix = geno,
+  parallelize     = FALSE,
+  window          = NULL,
+  min_r2          = NULL,
+  min_obs         = 2L
+)
+
+#PLINK backend
 ld_pairs   <- plink_pairwise_ld_geno(
   geno           = geno,
   ld_window      = 999999,
@@ -31,24 +60,81 @@ ld_pairs   <- plink_pairwise_ld_geno(
 
 #make a haploblock list object
 haploblocks <- def_blocks(
-  ld         = ld_pairs,
-  map        = map,
-  method     = "flanking",
-  threshold  = 0.2,
-  tolerance  = 4
+  map         = map,
+  strategy    = ld_strategy(
+    ld        = ld_pairs,
+    method    = "flanking",
+    tolerance = 3,
+    threshold = 0.5,
+    start     = "beginning",
+    tol_reset = TRUE,
+    parallel  = FALSE
+  )
 )
 
-#turn the list object into a singular data frame
-haploblocks <- block_obj_to_df(haploblocks, map)
+#### Window-Based Blocking #####
+
+#make a haploblock list object
+
+#using fixed physical distance of cM widths, depending on the map
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 100000, # 100kb window
+    method    = "window_map"
+  )
+)
+
+#using fixed SNP intervals
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 50, # every 50 SNP
+    method    = "window_snp"
+  )
+)
+
+#### Graph-Based Blocking ####
+
+#LD calculated internally - geno is required
+haploblocks <- def_blocks(
+  map          = map,
+  geno         = geno,
+  strategy     = graph_strategy(
+    theta_core        = 0.80,
+    theta_core_by_chr = NULL,
+    theta_extend      = 0.20,
+    theta_bridge      = 0.20,
+    theta_refill      = 0.80,
+    ld_min_r2         = 0.20,
+    window_ld         = 20,
+    window_core       = 20,
+    window_extend     = 50,
+    min_links         = 1,
+    max_gap_snps      = 2,
+    max_gap_markers   = 2,
+    max_gap_position  = NULL,
+    min_block_snps    = 2,
+    parallel          = FALSE
+  )
+)
+
+#### turn the list object into a singular data frame #####
+
+# All methods:
+haploblocks <- block_obj_to_df(haploblocks, map = map)
+
+
 ```
+
 !!! tip
-    There are many parameters that affect the behaviour of `def_blocks()` with various defaults. Be sure to check out all options and how they can influence the result. See [Haplotype Blocks](workflow/haploblocks.md) for more details!
+    There are many parameters that affect the behaviour of different `strategy` within `def_blocks()` with various defaults. Be sure to check out all options and how they can influence the result. See [Haplotype Blocks](workflow/haploblocks.md) for more details!
     
 ---
 
 ## B — SNP Effect Estimation
 
-Marker effects are estimated independently using a genomic prediction model — GBLUP with backsolve, BayesR, rrBLUP, other Bayesian methods, or any equivalent method that produces per-SNP effect estimates (\(\hat{u}_m\)).
+Marker effects are estimated independently using a genomic prediction model — GBLUP with backsolve, BayesR, rrBLUP, other Bayesian methods, or any equivalent method that produces per-SNP effect estimates (\(\hat{\alpha}_m\)).
 
 HapSelect offers a basic genomic prediction model (dosage genotype matrix only in localGEBV) by integrating the [rrBLUP R Package](https://cran.r-project.org/web/packages/rrBLUP/index.html). However, the implementation is limited to utilising singular BLUE, adjusted phenotype, or deregressed BLUP for each individual and no other effects may be included in the model. For any users needing to employ more advanced modelling, please consult the packages below. 
 
@@ -88,7 +174,7 @@ This produces an **\(\text{J × N}\) matrix** of localGEBV values — one value 
 ```r
 #localGEBV
 haploblock_obj <- compute_local_GEBV(
-  geno           = geno_phased,
+  geno           = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing genotypes in a block will return NA for the localGEBV
@@ -96,8 +182,8 @@ haploblock_obj <- compute_local_GEBV(
 )
 
 #haplotypes
-haploblock_obj <- compute_haplotype_effects(
-  geno           = geno,
+haplotype_obj <- compute_haplotype_effects(
+  geno           = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing alleles in a block will return NA for the haplotype effect
@@ -130,13 +216,13 @@ where \(\text{var}(\mathbf{\text{localGEBV}_j})\) is the haploblock variance. Si
 
 High-variance blocks are those where individuals differ substantially in their localGEBV/haplotype effects — these are the genomic regions where parent choice will have the greatest impact on offspring breeding value.
 
-The funnel plots visualise this across all blocks, with localGEBV/haplotype effects on the x-axis and block variance on the y-axis scaled using a 0 to 1 min-max scaling procedure. Similarly, localGEBV/haplotype effects can be visualised in a Manhattan-style plot (for more details and information, see [Visualisations](workflow/visualisations.md)).
+The funnel plots visualise this across all blocks, with localGEBV/haplotype effects on the x-axis and block variance on the y-axis scaled using a 0 to 1 min-max scaling procedure. Similarly, localGEBV/haplotype effects can be visualised in a Manhattan-style plot (for more details and information, see [Visualisations](workflow/visualizations.md)).
 
 ---
 
 ## E and F — Haploblock and Parent Selection
 
-The top-ranked haploblocks (by variance) are used as targets for the genetic algorithm. `local_gebv_parent_selection()`/`ohs_parent_selection()` searches for a set of **n_founders** parents that collectively carry the highest-value localGEBV/haplotype alleles across the selected blocks, subject to constraints on crossing scheme and population size.
+The top-ranked haploblocks (by variance) are used as targets for the genetic algorithm. `local_gebv_parent_selection()`/`haplotype_parent_selection()` searches for a set of **n_founders** parents that collectively carry the highest-value localGEBV/haplotype alleles across the selected blocks, subject to constraints on crossing scheme and population size.
 
 ```r
 
@@ -150,7 +236,7 @@ haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_total 
 haploblock_obj <- select_top_blocks(haploblock_obj = haploblock_obj, perc_of_total_var = 0.9)
 
 #Parent Selection (localGEBV)
-GA_output = local_gebv_parent_selection(
+localGEBV_parent_obj = local_gebv_parent_selection(
     haploblock_obj   = haploblock_obj, 
     n_founders       = 20,                    
     popSize          = 10,                       
@@ -158,8 +244,10 @@ GA_output = local_gebv_parent_selection(
 )
 
 #Parent Selection (haplotypes - diploid only!)
-GA_output = haplotype_parent_selection(
-    haploblock_obj   = haploblock_obj,
+haplotype_obj <- select_top_blocks(haploblock_obj = haplotype_obj, perc_of_total_var = 0.9)
+
+haplotype_parent_obj = haplotype_parent_selection(
+    haploblock_obj   = haplotype_obj,
     n_founders       = 20,                    
     popSize          = 10,                       
     strategy         = "OHS"                    
@@ -173,22 +261,22 @@ GA_output = haplotype_parent_selection(
 
 ## G — Basic Simulation and Parental Diversity
 
-The parents selected by the genetic algorithm (GA) and the parents selected by truncation selection (TS; i.e., best whole-genome GEBV) can be utilised in a basic simulation using recurrent TS for each set of parents to compare genetic gain over time. We have provided a wrapper for the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package [(Villiers et al., 2022)](https://doi.org/10.1093/g3journal/jkac216) to conduct the simulation and plot the rate of genetic gain based on each set of parents. Furthermore, we also offer an option to conduct principle component analysis (PCA) and return a PCA dataframe as well as a PCA plot for the first two PC that maps where each set of parents and their overlap sit in the overall population diversity. The whole-genome GEBV of the GA parents and TS parents (calculated internally) are then utilised to perform the simulation.
+The parents selected by the genetic algorithm (GA) and the parents selected by truncation selection (TS; i.e., best whole-genome GEBV) can be utilised in a basic simulation using recurrent TS for each set of parents to compare genetic gain over time. We have provided a wrapper for the [genomicSimulation](https://github.com/vllrs/genomicSimulation) R package [(Villiers et al., 2022)](https://doi.org/10.1093/g3journal/jkac216) to conduct the simulation and plot the rate of genetic gain based on each set of parents. Furthermore, we also offer an option to conduct principal component analysis (PCA) and return a PCA dataframe as well as a PCA plot for the first two PC that maps where each set of parents and their overlap sit in the overall population diversity. The whole-genome GEBV of the GA parents and TS parents (calculated internally) are then utilised to perform the simulation.
 
 For more information on parameters, see [Basic Simulation](workflow/basic-simulation.md).
 
 ```r
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
-parent_sln_obj = Hapotype_vs_TS_simulation(
-    GA_output      = GA_output,
-    geno_phased    = geno,                                    
+Haplotype_Sim = Haplotype_vs_TS_simulation(
+    GA_output      = haplotype_parent_obj,
+    geno_phased    = geno_phased,                                    
     marker_effects = marker_effects,                       
     map            = map
 )
 
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
-parent_sln_obj = localGEBV_vs_TS_simulation(
-    GA_output      = GA_output,
+localGEBV_Sim = localGEBV_vs_TS_simulation(
+    GA_output      = localGEBV_parent_obj,
     geno           = geno,                                           
     marker_effects = marker_effects,                       
     map            = map
@@ -197,6 +285,6 @@ parent_sln_obj = localGEBV_vs_TS_simulation(
 ```
 
 !!! tip
-    There are many parameters that affect the behaviour of `GA_vs_TS_simulation`. Be sure to check out all options and how they can influence the result. See [Basic Simulation](workflow/basic-simulation.md) for full parameter details!
+    There are many parameters that affect the behaviour of `localGEBV_vs_TS_simulation()` and `Haplotype_vs_TS_simulation()`. Be sure to check out all options and how they can influence the result. See [Basic Simulation](workflow/basic-simulation.md) for full parameter details!
 
 ---

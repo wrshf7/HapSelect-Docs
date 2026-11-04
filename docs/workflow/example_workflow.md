@@ -2,14 +2,16 @@
 
 This tutorial demonstrates a complete HapSelect workflow, including:
 
-1. Preparing genotype and map files
+1. Preparing genotype and map files (and, optionally, importing, imputing, and phasing a VCF file)
 2. Computing linkage disequilibrium (LD)
-3. Constructing haploblocks
+3. Constructing haploblocks with LD-based, window-based, or graph-based blocking
 4. Estimating marker effects
-5. Computing localGEBV
+5. Computing localGEBV/haplotype effects
 6. Visualizing haploblocks, marker effects, localGEBV, haploblock variance, LD decay, and more
 7. Parent selection with the genetic algorithm (GA)
 8. Simulating recurrent truncation selection (TS) with GA selected parents vs TS selected parents
+
+Each step links to its own page with the full parameter documentation.
 
 ---
 
@@ -19,12 +21,18 @@ HapSelect ships with several small example datasets:
 
 - `map`
 - `geno`
+- `geno_phased`
 - `ld_pairs`
 - `BLUE`
 - `marker_effects`
 
 ```r
 library(HapSelect)
+
+map            <- HapSelect::map
+geno           <- HapSelect::geno
+geno_phased    <- HapSelect::geno_phased
+BLUE           <- HapSelect::BLUE
 ```
 
 ---
@@ -80,6 +88,25 @@ head(HapSelect::geno_phased[,1:10])
 
 ---
 
+### Importing Your Own Data from a VCF File (Optional)
+
+If your genotypes are in a VCF file, they can be read directly into the format above. If they need imputing or phasing (required for haplotype effects), BEAGLE 5.5 can be run from R. See [Data Import, Imputation, and Phasing](data-import.md) for all options.
+
+```r
+#read dosages and number/sort the chromosomes
+geno <- read_vcf_geno("path/to/genotypes.vcf.gz")
+map  <- order_map(geno[, 1:3], verbose = TRUE)
+geno <- order_geno(geno, map)
+
+#impute and phase with BEAGLE (requires BEAGLE 5.5 and Java)
+geno_phased <- beagle_phase_geno(geno)
+```
+
+!!! tip
+    BEAGLE also fills in missing genotypes. To use the imputed dosages for localGEBV as well, use `beagle_impute_geno(geno)`, or sum each individual's two chromosome columns in `geno_phased`.
+
+---
+
 ## Ordering the Map File
 
 Map files must be ordered by:
@@ -90,20 +117,26 @@ Map files must be ordered by:
 Example:
 
 ```r
-map <- HapSelect::map
-
 # simulate unordered map
 map2 <- map[sample(1:nrow(map), nrow(map)), ]
 
 # reorder map
 map2 <- order_map(map = map2)
+
+# order the map used for the rest of the tutorial, and put the genotype files in the same order
+map         <- order_map(map = map)
+geno        <- order_geno(geno = geno, map = map)
+geno_phased <- order_geno(geno = geno_phased, map = map)
 ```
 
 The `order_map()` function:
 
 - checks some formatting
+- converts non-numeric chromosome labels (e.g., `"1A"`, `"chr2"`) to numbers (set `verbose = TRUE` to print the conversion)
 - ensures proper ordering
 - standardizes column names (assumes columns are in the right order)
+
+The `order_geno()` function puts a genotype file in the same order as the map, matching markers by name, and drops (with a warning) any markers that are not in both. See [Pairwise LD](pairwise-ld.md) for more details.
 
 ---
 
@@ -111,26 +144,33 @@ The `order_map()` function:
 
 ### Native LD Computation
 
-The package contains a native LD calculator (not recommended for use).
+The package contains a native LD calculator written in C++.
 
 ```r
-ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
+ld_pairs <- pairwise_ld(
+  genotype_matrix = geno,
+  parallelize     = FALSE,
+  window          = NULL,
+  min_r2          = NULL,
+  min_obs         = 2L
+)
 ```
 
 #### Important Notes
 
-- This is primarily for demonstration purposes
-- It will be very slow for moderate to large datasets
-- PLINK v1.9 is strongly recommended for real analyses
+- `window` limits LD to markers within that many positions of each other, which keeps the size of the LD table manageable on dense marker panels
+- `min_r2` drops weak pairs from the table
+- `parallelize = TRUE` processes chromosomes in parallel and is worthwhile on larger datasets
+- See [Pairwise LD](pairwise-ld.md) for all parameters
 
 ---
 
-### Computing Pairwise LD with PLINK (**Recommended**)
+### Computing Pairwise LD with PLINK
 
 #### Important Notes
-- PLINK 1.9 **MUST** be installed and available in the `PATH` to use this function!
-- See the [Installation Guide](https://wrshf7.github.io/HapSelect-Docs/installation/) for more details
-- LD can be calculated externally, but must be provided in the same format as utilised in this package
+- PLINK 1.9 **MUST** be installed to use this function! HapSelect looks in `~/bin` and the system `PATH`, or the location set with `set_plink_path()`
+- See the [Installation Guide](../installation.md) and [Configuration](../configuration.md) for more details
+- LD can be calculated externally, but must be provided in the same format as utilised in this package (see `format_plink_ld()` in [Pairwise LD](pairwise-ld.md))
 
 ```r
 ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999, 
@@ -142,10 +182,10 @@ ld_pairs <- plink_pairwise_ld_geno(geno = geno, ld_window = 999999,
 
 | Parameter | Description |
 |:---|:---|
-| `prefix` | PLINK binary prefix |
+| `geno` | Dosage genotype matrix (whole numbers only) |
 | `ld_window` | Maximum number of SNP pairs ahead to compute LD |
 | `ld_window_kb` | LD window size in kb |
-| `ld_window_r2` | Minimum LD threshold before termination of LD calculation |
+| `ld_window_r2` | Minimum r² for a pair to be reported |
 | `extra_args` | Additional PLINK arguments |
 
 ---
@@ -182,16 +222,22 @@ Columns:
 
 ## Constructing Haploblocks
 
+HapSelect has three haploblocking strategies, each passed to `def_blocks()` as a strategy object. This tutorial uses LD-based blocking from here on - see [Haplotype Blocks](haploblocks.md) for diagrams and the full parameter documentation of each strategy.
+
+### LD-Based Blocking
+
 ```r
 haploblocks <- def_blocks(
-  ld = ld_pairs,
-  map = map,
-  method = "flanking",
-  threshold = 0.3,
-  tolerance = 3,
-  tol_reset = TRUE,
-  start = "beginning",
-  parallel = FALSE
+  map         = map,
+  strategy    = ld_strategy(
+    ld        = ld_pairs,
+    method    = "flanking",
+    threshold = 0.3,
+    tolerance = 3,
+    tol_reset = TRUE,
+    start     = "beginning",
+    parallel  = FALSE
+  )
 )
 ```
 
@@ -259,6 +305,51 @@ Options:
 
 ---
 
+### Window-Based Blocking
+
+Cuts blocks from the map alone, with no LD calculation, either every `window` markers (`"window_snp"`) or every `window` map units (`"window_map"`).
+
+```r
+#every 50 SNP
+haploblocks_window <- def_blocks(
+  map      = map,
+  strategy = window_strategy(window = 50, method = "window_snp")
+)
+
+#every 1 Mb (physical map) - use cM for a genetic map
+haploblocks_window <- def_blocks(
+  map      = map,
+  strategy = window_strategy(window = 1e6, method = "window_map")
+)
+```
+
+---
+
+### Graph-Based Blocking
+
+Builds blocks from a local LD graph, computing the LD it needs directly from the genotypes, so `geno` **MUST** be provided.
+
+```r
+haploblocks_graph <- def_blocks(
+  map      = map,
+  geno     = geno,
+  strategy = graph_strategy(
+    theta_core   = 0.80,
+    theta_extend = 0.20,
+    theta_bridge = 0.20,
+    theta_refill = 0.80
+  )
+)
+
+#how many markers were placed and dropped on each chromosome
+attr(haploblocks_graph, "graph_diagnostics")
+```
+
+!!! warning
+    Unlike the other strategies, graph-based blocking can leave some markers out of every block. See [Haplotype Blocks](haploblocks.md) for details.
+
+---
+
 ## Convert Haploblocks to a Dataframe
 
 The former function returns a list object which may be useful in some applications. This function will turn it into a more easily digestible format and report some information.
@@ -275,6 +366,10 @@ Reports various summary statistics about blocks including average number of SNP 
 
 ```r
 block_summary(block_df = haploblocks)
+
+#compare against the other strategies
+block_summary(block_df = block_obj_to_df(haploblocks_window, map))
+block_summary(block_df = block_obj_to_df(haploblocks_graph, map))
 ```
 
 ---
@@ -287,6 +382,8 @@ block_summary(block_df = haploblocks)
 BLUE <- HapSelect::BLUE
 ```
 
+`BLUE` was already loaded at the start of this tutorial - it is repeated here for clarity.
+
 The BLUE dataframe should contain:
 
 | Column | Description |
@@ -296,7 +393,7 @@ The BLUE dataframe should contain:
 
 #### Important Note
 We do not currently support other effects in the model or multiple observations per individual. If more advanced modelling is needed, please utilise other software.
-See the [Documentation Overview](https://wrshf7.github.io/HapSelect-Docs/overview/) for more details and alternative R packages for independent modelling.
+See the [Documentation Overview](../overview.md) for more details and alternative R packages for independent modelling.
 
 ---
 
@@ -307,9 +404,12 @@ marker_effects <- create_marker_effects_file(
   geno = geno,
   BLUE = BLUE,
   h2_method = "VanRaden",
-  ploidy = 2L
+  ploidy = 2L,
+  mean_impute = TRUE
 )
 ```
+
+The variance components and prediction accuracy are printed. This prediction accuracy is measured on the individuals used to train the model, so it will be optimistic - use the cross validation functions below with a large enough dataset for a fair estimate.
 
 ---
 
@@ -344,6 +444,12 @@ NOT:
 
 ---
 
+##### `mean_impute`
+
+If `TRUE` (default), missing genotypes are replaced with the marker mean before fitting. If `FALSE`, the genotype matrix must not contain any `NA` values. See [Marker Effects](marker-effects.md) for more details.
+
+---
+
 ### Cross Validation
 
 ### N-fold Cross Validation
@@ -354,7 +460,8 @@ CV <- n_fold_cross_validation(
   BLUE = BLUE,
   nfold = 5L,
   h2_method = "VanRaden",
-  ploidy = 2L
+  ploidy = 2L,
+  mean_impute = TRUE
 )
 ```
 
@@ -375,22 +482,26 @@ CV <- cross_validation(
   geno = geno,
   BLUE = BLUE,
   train_prop = 0.9,
-  fold = 5L,
+  fold = 30L,
   h2_method = "VanRaden",
-  ploidy = 2L
+  ploidy = 2L,
+  mean_impute = TRUE
 )
 ```
 
 New Options:
-- `train_prop` the proportion of data utilised to train (rounded down) with the rest utilised for validation
-- `fold` the numb of times to randomly sample a training and validation set with replacement
+- `train_prop` the proportion of data utilised to train (rounded up) with the rest utilised for validation
+- `fold` the number of times to randomly sample a training and validation set with replacement, as an integer (default `30L`)
+
+!!! tip
+    Cross validation splits the data randomly. Use `set.seed()` beforehand to make the results reproducible.
 
 ---
 
 ## Computing localGEBV/haplotype effects
 
 ```r
-#load example data
+#load example data (or use the marker effects estimated above)
 marker_effects <- HapSelect::marker_effects
 
 #localGEBV
@@ -400,11 +511,11 @@ haploblock_obj <- compute_local_GEBV(
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,
   mean_adjust = TRUE,
-  parallel = TRUE
+  parallel = TRUE         #uses up to the number of cores allowed by set_cpu_cores()
 )
 
 #haplotypes
-haploblock_obj <- compute_haplotype_effects(
+haplotype_obj <- compute_haplotype_effects(
   geno = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
@@ -416,6 +527,8 @@ haploblock_obj <- compute_haplotype_effects(
 
 ---
 
+The localGEBV and haplotype effects are kept in separate objects (`haploblock_obj` and `haplotype_obj`) so both can be carried through the rest of the tutorial.
+
 ### localGEBV/Haplotype Parameters
 
 #### `set_missing_NA`
@@ -426,7 +539,11 @@ If `TRUE`:
 
 If `FALSE`:
 
-- localGEBV is computed using the non-missing markers
+- localGEBV is computed using the non-missing markers. This is equivalent to setting the dosage equal to the mean (i.e., contribution of 0 to localGEBV)
+
+
+!!! warning
+    For `set_missing_NA = TRUE`: In practice, while many markers may pass missigness filters within a block, sometimes a block will have the vast majority of individuals with >= 1 missing genotype calls. This can artificially raise the variance. A missingness filter or imputation is recommended to avoid this: see [Data Import and Imputation](data-import.md) for more details.
 
 ---
 
@@ -435,9 +552,9 @@ If `FALSE`:
 Centers markers internally.
 
 This is usually required because marker effects are typically estimated from centered genotype matrices.
-Only set to `FALSE` if you are highly confident in what you are doing!
+Only set to `FALSE` if you are **highly confident** in what you are doing!
 
-Recommended for 99% of cases, otherwise GEBV and localGEBV will be biased (will not affect the haploblock variance):
+Recommended for 99% of cases, otherwise GEBV and localGEBV will be biased (will not affect the haploblock variance, but will affect parent selection optimization):
 
 ```r
 mean_adjust = TRUE
@@ -448,7 +565,7 @@ A good confirmation things are working properly is to reconstruct GEBV from Zu, 
 
 The package will internally center markers if `mean_adjust = TRUE`. If the matrix is already centered, centering won't change the values or centering can be set to `FALSE`.
 
-If you want genotype/haplotype configurations to match the 0/1/2/# dosage format, provide the uncentered genotype matrix and set `mean_adjust = TRUE`. Otherwise, the reported genotype/haplotype configurations will reflect centered values. For clarity, you must provide dosage format (usually 0/1/2 for diploid, any integer for polypoid).
+If you want genotype/haplotype configurations in the output to match the 0/1/2/# dosage format, provide the __uncentered__ genotype matrix and set `mean_adjust = TRUE`. Otherwise, the reported genotype/haplotype configurations will reflect centered values. For clarity, you must provide dosage format (usually 0/1/2 for diploid, any integer for polypoid).
 
 ---
 
@@ -463,14 +580,14 @@ haploblock_plot <- haploblock_plot + labs(x = "cM")
 In the case of positions, the following can be used to convert the positions to Mb:
 
 ```r
-haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position (Mb)")
 ```
 
 - start and end represent the values (in base pairs/base units) to graph
 - by represents what to increment the axis labels by
 - Example: seq(0,1e9, 1e8) would create a vector with values every 100 Mb up to 1 Gb
 - breaks are where to create labels
-- labels specifies the labeling of the labels: seq(x,yz,) / 1e6 scales it to Mb and are then converted into characters
+- labels specifies the labeling of the labels: seq(x,y,z) / 1e6 scales it to Mb and are then converted into characters
 - limits specifying the min and max values
 - labs(x = "Name") renames the x-axis
 
@@ -514,7 +631,7 @@ localGEBV_plot <- unique_localGEBV_effects_plot(
 localGEBV_plot
 
 haplo_eff_plot <- unique_haplo_effects_plot(
-  haplo_obj = haploblock_obj,
+  haplo_obj = haplotype_obj,
   colors = c("#A01FF0", "#A7A8AA"),
   pos_type = "midpoint"
 )
@@ -547,7 +664,7 @@ funnel_plot <- local_gebv_block_var_funnel_plot(
 )
 
 funnel_plot <- haplo_block_var_funnel_plot(
-  haplo_obj = haploblock_obj,
+  haplo_obj = haplotype_obj,
   mean_line = FALSE,
   scale_colors = c("blue", "purple", "red")
 )
@@ -557,7 +674,7 @@ funnel_plot
 
 | Parameter | Description |
 |:---|:---|
-| `haplo_obj` | Object returned from `compute_local_GEBV()` |
+| `haplo_obj` | Object returned from `compute_local_GEBV()` or `compute_haplotype_effects()` |
 | `mean_line` | Adds dashed mean variance line |
 | `scale_colors` | Vector of length 3 defining low/mid/high effect colors |
 
@@ -703,6 +820,37 @@ variance_plot
 | `colors` | defaults are `c("#A01FF0", "#A7A8AA")` and control the alternating chromosome colors |
 | `pos_type` | either `"midpoint"` or `"start"` - controls where the block is plotted. The midpoint is the center of the block whereas the start is the first SNP in the block. For singleton blocks, it is the same. |
 
+---
+
+### Haploblock Variance Plot
+
+The haploblock position plot with each block coloured by its variance, showing where the high-variance regions sit on each chromosome and the block size.
+
+```r
+block_var_plot <- plot_haploblocks_variance(
+  haploblock_obj       = haploblock_obj,
+  variance             = "Block_Var",
+  scale_viridis_option = "magma",
+  chrom_fill           = NA,
+  height               = 0.30,
+  single_width_bp      = NULL
+)
+
+block_var_plot
+```
+
+| Parameter | Description |
+|:---|:---|
+| `haploblock_obj` | haploblock object from `compute_local_GEBV()` or `compute_haplotype_effects()` |
+| `variance` | Variance column to colour by, `"Block_Var"` or `"Unique_Haplo_Block_Var"` |
+| `scale_viridis_option` | Viridis colour palette (e.g., `"magma"`, `"viridis"`, `"turbo"`) |
+| `chrom_fill` | Chromosome background color |
+| `height` | Chromosome thickness |
+| `single_width_bp` | Width of single-marker blocks |
+
+See [Visualisations](visualizations.md) for more details.
+
+
 ## Selecting Haploblocks for the GA
 
 Before running the genetic algorithm (GA), haploblocks can be filtered to reduce dimensionality and focus on the most important genomic regions. This will aid in convergence and computational efficiency. Generally speaking, as little as 10% of blocks may explain 90% of the genetic variance.
@@ -776,6 +924,12 @@ Retains the minimum number of haploblocks required to explain a specified propor
 ```r
 haploblock_obj <- select_top_blocks(
   haploblock_obj = haploblock_obj,
+  perc_of_total_var = 0.9
+)
+
+#the same selection for the haplotype effects object
+haplotype_obj <- select_top_blocks(
+  haploblock_obj = haplotype_obj,
   perc_of_total_var = 0.9
 )
 ```
@@ -852,7 +1006,7 @@ localGEBV_parent_obj <- local_gebv_parent_selection(
 )
 
 haplotype_parent_obj <- haplotype_parent_selection(
-  haploblock_obj = haploblock_obj,
+  haploblock_obj = haplotype_obj,
   n_founders = 20,
   popSize = 10,
   maxiter = 300,
@@ -879,7 +1033,10 @@ haplotype_parent_obj <- haplotype_parent_selection(
 | `pmutation` | Mutation probability - swaps out one random individual for another from the total population |
 | `pcrossover` | Crossover probability - swaps half of each population; if there is overlap, non-overlapping parents are chosen randomly from the total population |
 | `maximize` | If `TRUE`, greater ultimate GEBV are better. If `FALSE`, lower ultimate GEBV are considered better |
-| `monitor` | If `TRUE`, report statistics about the populations each iteration. If `FALSE`, no reporting is output to the console. |
+| `monitor` | If `TRUE`, report the best and mean fitness each iteration (beside the progress bar, or printed when progress bars are off). If `FALSE`, no fitness information is reported. |
+
+!!! warning
+    If `strategy` is not specified, the least constrained strategy is used: `"selfing"` for localGEBV and `"OPV"` for haplotypes. Specify it explicitly, as above, for a realistic crossing scheme. See [Parent Selection](parent-selection.md) for all defaults.
 
 The genetic algorithm (GA) balances:
 
@@ -1012,33 +1169,13 @@ localGEBV_parent_obj$selected_founders #substitute haplotype_parent_obj for hapl
 
 ---
 
-### Plotting GA Peformance
+### Plotting GA Performance
 
-Visualize GA performance over iterations - plots a mean and max line over iterations as well as the interquartile range (IQR) as a ribbon.
+The `GA` object returned by the GA functions can be plotted directly to visualize GA performance over iterations. It plots the best, mean, and median fitness of the populations each iteration, which is useful to check whether the GA converged.
 
 ```r
-optimisation_progress_plot <- GA_progress_plot(
-  parent_selection_object = localGEBV_parent_obj, #substitute haplotype_parent_obj for haplotypes
-  max_color = "#A01FF0",
-  mean_color = "#A01FF0",
-  ribbon_color = "#A01FF0",
-  ribbon_alpha = 0.35,
-  max_linewidth = 1.2,
-  mean_linewidth = 0.8
-)
+plot(localGEBV_parent_obj$GA) #substitute haplotype_parent_obj for haplotypes
 ```
-
-#### Parameters
-
-| Parameter | Description |
-|:---|:---|
-| `parent_selection_object` | object generated from GA functions |
-| `max_color` | color to use for the maximum line |
-| `mean_color` | color to use for the mean line |
-| `ribbon_color` | color to use for the IQR ribbon |
-| `ribbon_alpha` | value between 0 and 1 to control the ribbon transparency for hte IQR |
-| `max_linewidth` | controls the thickness of the max line |
-| `mean_linewidth` | controls the thickness of the mean line |
 
 ---
 
@@ -1065,7 +1202,7 @@ localGEBV_Sim <- localGEBV_vs_TS_simulation(
 
 Haplotype_Sim <- Haplotype_vs_TS_simulation(
   GA_output = haplotype_parent_obj,
-  geno_phased = geno,
+  geno_phased = geno_phased,
   marker_effects = marker_effects,
   map = map,
   genetic_map_position = NULL,
@@ -1090,6 +1227,9 @@ Haplotype_Sim <- Haplotype_vs_TS_simulation(
 localGEBV_Sim$Simulation_Plot
 
 localGEBV_Sim$PCA_Plot
+
+#mean and standard error of each generation
+localGEBV_Sim$Simulation_Summary
 ```
 
 ### Simulation Parameters

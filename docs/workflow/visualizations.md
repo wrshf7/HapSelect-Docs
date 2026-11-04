@@ -1,10 +1,12 @@
 # Visualisations
 
-HapSelect provides a collection of publication-quality `ggplot2` visualisation functions for exploring marker effects, haplotype architecture, haploblock structure, linkage disequilibrium, and optimization progress.
+HapSelect provides a collection of publication-quality `ggplot2` visualisation functions for exploring marker effects, haplotype architecture, haploblock structure, and linkage disequilibrium.
 
 All plotting functions return standard `ggplot2` objects, allowing further customization using normal `ggplot2` syntax.
 
 ```r
+#Examle of creating and modifying a HapSelect ggplot object
+
 p <- marker_effects_plot(...)
 
 p +
@@ -14,10 +16,10 @@ p +
 
 As a special case:
 
-We use default posotion values because of the ability to choose between genetic map position (cM) and physical map position (bp), the following is an example convert the positions on some graphs to Mb:
+We use default position values because of the ability to choose between genetic map position (cM) and physical map position (bp), the following is an example convert the positions on some graphs to Mb:
 
 ```r
-haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position, Mb)
+haploblock_plot <- haploblock_plot + scale_x_continuous(breaks = seq(start, end, by), labels = as.character(seq(start, end, by) / 1e6), limits = c(start, end)) + labs(x = "Position (Mb)")
 ```
 
 where `breaks = seq(start, end, by / 1e6)` controls where labels should go and `seq` is a function in R that takes a start position (where the x axis starts), an end position (where the x axis ends), and a by argument (where should labels be put on the x axis). The `labels = as.character(seq(start, end, by) / 1e6)` controls the names of the labels set by `breaks` and you will notice the entire sequence vector is divided by `1e6`, or 1 million. This converts the labels into Mb. Similarly, 100 Kb increments can be defined by replacing `1e6` with `1e5` and Gb can be defined by replacing `1e6` with `1e9`.
@@ -33,7 +35,7 @@ Creates a Manhattan-style scatter plot displaying estimated marker effects acros
 
 ```r
 marker_effects_plot(
-  marker_effects = marker_effects$Effect,
+  marker_effects = marker_effects$Effect, #these MUST be in the same order as the map file!
   chr            = map$Chromosome,
   pos            = map$Position
 )
@@ -67,7 +69,7 @@ marker_effects_plot(
 
 # Haplotype Effect Visualisations
 
-These functions visualize estimated effects assigned to individual haplotypes or local genomic breeding values in a Manhattan-style plot.
+These functions visualize estimated effects assigned to individual haplotypes or localGEBV in a Manhattan-style plot.
 
 ## Unique Haplotype Effects
 
@@ -107,9 +109,11 @@ block_variance_manhattan_plot(
 
 | Parameter | Description |
 |:--|:--|
-| `haplo_obj` | Object returned by `compute_local_GEBV()` |
+| `haplo_obj` | Object returned by `compute_local_GEBV()` or `compute_haplotype_effects()` |
 
 ### Shared Optional Parameters
+
+These apply to `unique_haplo_effects_plot()`, `unique_localGEBV_effects_plot()`, and `block_variance_manhattan_plot()`.
 
 | Parameter | Default | Description |
 |:--|:--|:--|
@@ -181,9 +185,11 @@ block_var_funnel_plot(
 
 | Parameter | Description |
 |:--|:--|
-| `haplo_obj` | Output from `compute_local_GEBV()` |
+| `haplo_obj` | Output from `compute_local_GEBV()` or `compute_haplotype_effects()` |
 
 ### Optional Parameters
+
+These apply to all three funnel plots.
 
 | Parameter | Default | Description |
 |:--|:--|:--|
@@ -231,6 +237,40 @@ plot_haploblocks(
 
 ---
 
+## Haploblock Variance Plot
+
+Displays haploblock boundaries across chromosomes, like `plot_haploblocks()`, with each block coloured by its variance. This shows where the high-variance regions sit on each chromosome as well as how large the blocks are.
+
+```r
+plot_haploblocks_variance(
+    haploblock_obj = haploblock_obj
+)
+```
+
+### Required Inputs
+
+| Parameter | Description |
+|:--|:--|
+| `haploblock_obj` | Object returned by `compute_local_GEBV()` or `compute_haplotype_effects()` |
+
+### Optional Parameters
+
+| Parameter | Default | Description |
+|:--|:--|:--|
+| `variance` | `"Block_Var"` | Column of `haploblock_obj$Haploblocks` to colour blocks by, usually `"Block_Var"` or `"Unique_Haplo_Block_Var"` (see [LocalGEBV](local-gebv.md)) |
+| `scale_viridis_option` | `"magma"` | Viridis colour palette: `"magma"`, `"inferno"`, `"plasma"`, `"viridis"`, `"cividis"`, `"rocket"`, `"mako"`, or `"turbo"` (or the equivalent letters `"A"` to `"H"`) |
+| `chrom_fill` | `NA` | Chromosome background colour |
+| `height` | `0.30` | Chromosome track thickness |
+| `single_width_bp` | `NULL` | Width used to display single-marker blocks |
+
+### Notes
+
+* Variance is shown on its original scale (not log transformed), so a few very high-variance blocks will stand out against the rest. This can be manually scaled in the `haploblock_obj$Haploblocks` data frame
+* Single-marker blocks are automatically given a visible width if `single_width_bp = NULL`.
+* `haploblock_obj` must contain localGEBV/haplotype effects - a haploblock data frame from `block_obj_to_df()` alone does not have a variance column.
+
+---
+
 ## Marker Density Plot
 
 Plots marker density along chromosomes using fixed genomic bins.
@@ -251,7 +291,7 @@ plot_marker_density(
 
 | Parameter | Default | Description |
 |:--|:--|:--|
-| `bin_size` | `500000` | Bin width used for counting markers |
+| `bin_size` | `500000` | Bin width used for counting markers (500 Kb default) |
 | `height` | `0.30` | Chromosome thickness |
 | `chrom_fill` | `NA` | Chromosome fill colour |
 | `col_low` | `"white"` | Low-density colour |
@@ -312,45 +352,3 @@ plot_ld_decay(
 * `"exp"` produces a monotonic decay curve.
 * `span` only affects LOESS.
 * `k` only affects GAM fitting.
-
----
-
-# Genetic Algorithm Diagnostics
-
-## GA Progress Plot
-
-Visualizes convergence of the genetic algorithm during parent selection.
-
-```r
-GA_progress_plot(
-    parent_selection_object
-)
-```
-
-### Required Inputs
-
-| Parameter | Description |
-|:--|:--|
-| `parent_selection_object` | Object returned from `select_parents()` |
-
-### Optional Parameters
-
-| Parameter | Default | Description |
-|:--|:--|:--|
-| `max_color` | `"#A01FF0"` | Maximum fitness line colour |
-| `mean_color` | `"#A01FF0"` | Mean fitness line colour |
-| `ribbon_color` | `"#A01FF0"` | Interquartile ribbon colour |
-| `ribbon_alpha` | `0.35` | Ribbon transparency |
-| `max_linewidth` | `1.2` | Maximum fitness line width |
-| `mean_linewidth` | `0.8` | Mean fitness line width |
-
-### Details
-
-The figure displays:
-
-* Maximum objective value by generation.
-* Mean objective value by generation.
-* Interquartile range across the population.
-* Final maximum value labelled on the plot.
-
-Returns a `ggplot2` object.

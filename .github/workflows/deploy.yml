@@ -30,6 +30,6 @@ jobs:
       - run: git fetch origin gh-pages --depth=1 || true
 
       # NOTE: version string below is hardcoded. Needs updating on new HapSelect release.
-      - run: mike deploy --push --update-aliases 1.0.1 latest
+      - run: mike deploy --push --update-aliases 2.0.0 latest
 
       - run: mike set-default --push latest

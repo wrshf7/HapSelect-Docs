@@ -34,9 +34,9 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
     Computing LD, haploblocks, and haplotype effects are supported for polyploids in localGEBV and haplotype methods, but parent selection algorithms and simulation currently only support diploid! We plan to update the localGEBV method to support polyploidy in the near future and the haplotype method at an indeterminate date.
 
 - **LD file** - pairwise LD between each marker within a chromosome.
-    - Can be computed internally using either the in-built function or the PLINK 1.9 wrapper function.
+    - Only required for LD-based blocking (`ld_strategy()`) and the LD decay plot. Window-based blocking needs no LD, and graph-based blocking computes its own.
+    - Can be computed internally using either the in-built C++ function (`pairwise_ld()`) or the PLINK 1.9 wrapper function (`plink_pairwise_ld_geno()`).
     - Can be computed externally and read in (see file structure below)
-    - We HIGHLY recommend using the PLINK 1.9 wrapper function if PLINK 1.9 is installed, because R is not built for large, iterative computations required to compute LD pairs. Even small to moderate sized SNP panels will take too long in R.
     - Pairs not present (i.e., missing) in the data frame object are allowed and are handled in the haploblocking function call.
     - Columns:
         - `Chrom`: the chromosome each SNP pair belongs to.
@@ -55,8 +55,7 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
     Ensure that the genotype coding in the genotype matrix is the same that was utilised to estimate marker effects. Marker effects computed within the package will be the same as long as the genotype matrix was not changed post-estimation.
 
 - **Haploblock file** - dataframe produced as a standard part of the workflow.
-    - May be provided if custom haploblocking is desired (e.g., blocking based on physical/map distance, number of markers per block, etc.)
-        - We plan to provide haploblocking by distance/number of markers functionality in a future update.
+    - May be provided if custom haploblocking is desired. Blocking by LD, by physical/map distance or number of markers, and by a local LD graph are all built in (see [Haplotype Blocks](workflow/haploblocks.md)).
     - Columns:
         - `Block`: SNP names within a block as identified in the map, genotype, and marker effects files. They should be separated by a ";" (no whitespaces as this will break downstream computations!). It must be a character!
         - `Block_ID`: Unique block identifier. We utilise the format "chromosome:block_nested_within_chromosome". As an example, "3:132" corresponds to the 132nd block on chromosome 3. It must be a character!
@@ -67,13 +66,16 @@ HapSelect expects two primary inputs (map file and genotype file). The rest can 
         - `Start_Pos`: The numerical  position of `First_SNP` (usually physical or genetic map position).
         - `End_Pos`: The numerical position of `Last_SNP` (usually physical or genetic map position).
 
+!!! tip
+    If your genotypes are in a VCF file, `read_vcf_geno()` and `read_vcf_phased()` will read them into these formats, and `beagle_phase_geno()` will impute and phase them. See [Data Import, Imputation, and Phasing](workflow/data-import.md).
+
 Example datasets are bundled with the package along with function examples to compute other files:
 
 ```r
 #Two required, primary inputs:
 map  <- HapSelect::map
-geno <- HapSelect::geno #localGEBV
-geno <- HapSelect::geno_phased #haplotype method
+geno        <- HapSelect::geno        #localGEBV
+geno_phased <- HapSelect::geno_phased #haplotype method
 
 #Optional inputs that can also be created in the R package workflow:
 ld_pairs       <- HapSelect::ld_pairs
@@ -86,39 +88,101 @@ BLUE           <- HapSelect::BLUE #example file to compute marker effects
 
 ## Step 1 — Order the Map
 
-Markers must be sorted by chromosome and position before LD computation:
+Markers must be sorted by chromosome and position before LD computation, and the genotype files put in the same order:
 
 ```r
-map <- order_map(map = map)
+map         <- order_map(map = map)
+geno        <- order_geno(geno = geno, map = map)
+geno_phased <- order_geno(geno = geno_phased, map = map)
 ```
 
 ## Step 2 — Compute Pairwise LD
 
 ```r
-# Internal R implementation (slow for large datasets)
-ld_pairs <- pairwise_ld(geno, parallelize = FALSE)
+# Internal R implementation with C++ backend
+ld_pairs   <- pairwise_ld(
+  genotype_matrix = geno,
+  parallelize     = FALSE,
+  window          = NULL,
+  min_r2          = NULL,
+  min_obs         = 2L
+)
 
-# Recommended: PLINK-backed implementation (recommended)
-ld_pairs <- plink_pairwise_ld_geno(geno = geno)
+# PLINK-backed implementation (requires PLINK 1.9, see Installation and Configuration)
+ld_pairs   <- plink_pairwise_ld_geno(
+  geno           = geno,
+  ld_window      = 999999,
+  ld_window_kb   = 1e6,
+  ld_window_r2   = 0
+)
 ```
 
-!!! tip
-    For large marker panels, use `plink_pairwise_ld_geno()`. See [Pairwise LD](workflow/pairwise-ld.md) for details.
 
 ## Step 3 — Define Haplotype Blocks
 
 ```r
+
+#LD Blocking
 haploblocks <- def_blocks(
-  ld        = ld_pairs,
-  map       = map,
-  method    = "flanking", #compares new marker to adjacent marker only
-  threshold = 0.2,        #LD threshold to include a marker
-  tolerance = 4,          #how many markers can fail the check for inclusion
-  tol_reset = TRUE,       #if a marker is added, reset the tolerance counter
-  start     = "beginning",       #blocking starts at the highest LD pair
-  parallel  = FALSE       #parallelise for large datasets (~25k+ markers)
+  map         = map,
+  strategy    = ld_strategy(
+    ld        = ld_pairs,
+    method    = "flanking",
+    tolerance = 3,
+    threshold = 0.5,
+    start     = "beginning",
+    tol_reset = TRUE,
+    parallel  = FALSE
+  )
 )
 
+#### Window-Based Blocking #####
+
+#make a haploblock list object
+
+#using fixed physical distance of cM widths, depending on the map
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 100000, # 100kb window
+    method    = "window_map"
+  )
+)
+
+#using fixed SNP intervals
+haploblocks <- def_blocks(
+  map         = map,
+  strategy    = window_strategy(
+    window    = 50, # every 50 SNP
+    method    = "window_snp"
+  )
+)
+
+#Graph-based blocking (LD calculated internally - geno is required)
+haploblocks <- def_blocks(
+  map          = map,
+  geno         = geno,
+  strategy     = graph_strategy(
+    theta_core        = 0.80,
+    theta_core_by_chr = NULL,
+    theta_extend      = 0.20,
+    theta_bridge      = 0.20,
+    theta_refill      = 0.80,
+    ld_min_r2         = 0.20,
+    window_ld         = 20,
+    window_core       = 20,
+    window_extend     = 50,
+    min_links         = 1,
+    max_gap_snps      = 2,
+    max_gap_markers   = 2,
+    max_gap_position  = NULL,
+    min_block_snps    = 2,
+    parallel          = FALSE
+  )
+)
+
+
+#turn object into an interpretable
 haploblocks <- block_obj_to_df(haploblocks, map)
 
 #Report basic block statistics:
@@ -132,7 +196,7 @@ block_summary(block_df = haploblocks)
 ```r
 #localGEBV
 haploblock_obj <- compute_local_GEBV(
-  geno           = geno_phased,
+  geno           = geno,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing genotypes in a block will return NA for the localGEBV
@@ -140,8 +204,8 @@ haploblock_obj <- compute_local_GEBV(
 )
 
 #haplotypes
-haploblock_obj <- compute_haplotype_effects(
-  geno           = geno,
+haplotype_obj <- compute_haplotype_effects(
+  geno           = geno_phased,
   marker_effects = marker_effects,
   haploblocks_df = haploblocks,
   set_missing_NA = TRUE,            #if TRUE, any missing alleles in a block will return NA for the haplotype effect
@@ -161,14 +225,20 @@ marker_effects_plot(marker_effects = marker_effects$Effect,
                     chr = map$Chromosome, pos = map$Position)
 
 #Manhattan-style plots of localGEBV and haplotype effects
-unique_haplo_effects_plot(haplo_obj = haploblock_obj)     #haplotypes
+unique_haplo_effects_plot(haplo_obj = haplotype_obj)      #haplotypes
 unique_localGEBV_effects_plot(haplo_obj = haploblock_obj) #localGEBV
 
 #Visualization of block sizes and block positions
 plot_haploblocks(haploblock_df = haploblock_obj$Haploblocks)
 
+#Visualization of block sizes, positions, and variance (after calculating localGEBV/haplotype effects)
+block_variance_manhattan_plot(
+  haplo_obj = haploblock_obj
+)
+plot_haploblocks_variance(haploblock_obj = haploblock_obj)
+
 #Tornado plots demonstrating the spread of localGEBV and haplotype effects with blocks ordered by variance
-haplo_block_var_funnel_plot(haplo_obj = haploblock_obj, mean_line = FALSE) #haplotypes
+haplo_block_var_funnel_plot(haplo_obj = haplotype_obj, mean_line = FALSE) #haplotypes
 local_gebv_block_var_funnel_plot(haplo_obj = haploblock_obj, mean_line = FALSE)
 
 #Plot to visualize LD decay
@@ -184,7 +254,7 @@ plot_ld_decay(map = map, ld = ld_pairs, max_kb = 500) #warning: may be slow for 
     Generally, a small subset of blocks explains the vast majority of total variance in localGEBV. While the whole genome can be used for optimisation, results are often completley identical and it is much more computationally efficient to use a subset of blocks. In past examples, 9-13% of blocks have explaind at least 90% of genetic variance.
 
 ```r
-There are three methods we have implemented to select haploblocks:
+#There are three methods we have implemented to select haploblocks:
 #1: select the top n blocks based on Block_Var
 #2: select the top x% of blocks (round up)
 #3: select the top blocks explaining x% of the total sum of block variance (round up)
@@ -202,9 +272,12 @@ haploblock_obj = select_top_blocks(haploblock_obj = haploblock_obj, perc_total =
 #3 select the top blocks explaining at least 90% of the total block variance
 haploblock_obj = select_top_blocks(haploblock_obj = haploblock_obj, perc_of_total_var = 0.9) #perc_of_total_var is the proportion of blocks exlaining at lest a given threshold of the total block variation (rounded up)
 
+#select the same blocks for the haplotype effects
+haplotype_obj = select_top_blocks(haploblock_obj = haplotype_obj, perc_of_total_var = 0.9)
+
 #Parent Selection (localGEBV)
-GA_output = local_gebv_parent_selection(
-    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks()
+localGEBV_parent_obj = local_gebv_parent_selection(
+    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks() computed using compute_local_GEBV()
     n_founders = 20,                    #number of parents to select
     popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
     maxiter = 300,                      #max number of iterations
@@ -217,8 +290,8 @@ GA_output = local_gebv_parent_selection(
 )
 
 #Parent Selection (haplotypes - diploid only!)
-GA_output = ohs_parent_selection(
-    haploblock_obj = haploblock_obj,    #haploblock object from select_top_blocks()
+haplotype_parent_obj = haplotype_parent_selection(
+    haploblock_obj = haplotype_obj,     #haploblock object from select_top_blocks() computed using compute_haplotype_effects()
     n_founders = 20,                    #number of parents to select
     popSize = 10,                       #parameter to aid optimization - higher uses more memory and each iteration is slower, but leads to faster convergence
     maxiter = 300,                      #max number of iterations
@@ -230,10 +303,16 @@ GA_output = ohs_parent_selection(
     strategy = "OHS"                    #"OHS" enforces haplotypes must come from two different parents, "OPV" allows the same haplotype to be utilised twice, "Haploid_OHS" allows the same parent to contribute two haplotypes, but not from the same chromosome
 )
 
-#one unique set of parents - other solutions may exist, see the GA_output$GA@solution object for other potential sets of parents with the same fitness (note: many are the same combination in different permutations)
-GA_output$selected_founders
+#one unique set of parents - other solutions may exist, see the localGEBV_parent_obj$GA@solution object for other potential sets of parents with the same fitness (note: many are the same combination in different permutations)
+localGEBV_parent_obj$selected_founders #substitute haplotype_parent_obj for haplotypes
+
+#check the GA converged: best, mean, and median fitness over iterations
+plot(localGEBV_parent_obj$GA)
 
 ```
+
+!!! warning
+    If `strategy` is not specified, the GA functions use the least constrained strategy (`"selfing"` for localGEBV, `"OPV"` for haplotypes). See [Parent Selection](workflow/parent-selection.md).
 
 !!! warning
     Be sure to use `select_top_blocks()` to regenerate `haploblock_obj`. If you would like to use the whole genome, specify `n = nrow(haploblock_obj$Haploblocks)`, `perc_total = 1`, or `perc_of_total_var = 1`
@@ -244,8 +323,8 @@ GA_output$selected_founders
 ```r
 
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (haplotypes)
-parent_sln_obj = OHS_vs_TS_simulation(
-    GA_output = GA_output,
+Haplotype_Sim = Haplotype_vs_TS_simulation(
+    GA_output = haplotype_parent_obj,
     geno_phased = geno_phased,                             #phased genotype matrix from previous steps
     marker_effects = marker_effects,                       #marker effects dataframe previously used
     map = map,                                             #map dataframe previously used
@@ -263,9 +342,9 @@ parent_sln_obj = OHS_vs_TS_simulation(
 )
 
 #Basic Recurrent Truncation Selection Simulation and Diversity Analysis (localGEBV)
-parent_sln_obj = localGEBV_vs_TS_simulation(
-    GA_output = GA_output,
-    geno = geno,                                           #genotype matrix from previous steps
+localGEBV_Sim = localGEBV_vs_TS_simulation(
+    GA_output = localGEBV_parent_obj,
+    geno = geno_phased,                                    #genotype matrix from previous steps - recommended to use phased over dosage here
     marker_effects = marker_effects,                       #marker effects dataframe previously used
     map = map,                                             #map dataframe previously used
     genetic_map_position = NULL,                           #vector of genetic map positions for each markers (in cM) - if NULL, map positions are assumed to be proportionally distributed to chromosomal physical position (0 to max_cM_chr)
@@ -281,6 +360,12 @@ parent_sln_obj = localGEBV_vs_TS_simulation(
     alpha = c(1,1,1,0.5)                                   #transparency values assigned to the same four groups on the PCA plot
 )
 
+```
+
+```r
+#display the results - substitute localGEBV_Sim with Haplotype_Sim for haplotypes
+localGEBV_Sim$Simulation_Plot
+localGEBV_Sim$PCA_Plot
 ```
 
 See the individual workflow pages for full parameter documentation.
