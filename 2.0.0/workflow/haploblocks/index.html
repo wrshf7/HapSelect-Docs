@@ -1,0 +1,1780 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Haplotype block discovery, localGEBV analysis, and parent selection for genomic selection in R">
+      
+      
+      
+        <link rel="canonical" href="https://wrshf7.github.io/HapSelect-Docs/2.0.0/workflow/haploblocks/">
+      
+      
+        <link rel="prev" href="../pairwise-ld/">
+      
+      
+        <link rel="next" href="../marker-effects/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Haplotype Blocks - HapSelect</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/custom.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#haplotype-blocks" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="HapSelect" class="md-header__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HapSelect
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Haplotype Blocks
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Following system theme - switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Following system theme - switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.5 2c-1.79 1.15-3 3.18-3 5.5s1.21 4.35 3.03 5.5C4.46 13 2 10.54 2 7.5A5.5 5.5 0 0 1 7.5 2m11.57 1.5 1.43 1.43L4.93 20.5 3.5 19.07zm-6.18 2.43L11.41 5 9.97 6l.42-1.7L9 3.24l1.75-.12.58-1.65L12 3.1l1.73.03-1.35 1.13zm-3.3 3.61-1.16-.73-1.12.78.34-1.32-1.09-.83 1.36-.09.45-1.29.51 1.27 1.36.03-1.05.87zM19 13.5a5.5 5.5 0 0 1-5.5 5.5c-1.22 0-2.35-.4-3.26-1.07l7.69-7.69c.67.91 1.07 2.04 1.07 3.26m-4.4 6.58 2.77-1.15-.24 3.35zm4.33-2.7 1.15-2.77 2.2 2.54zm1.15-4.96-1.14-2.78 3.34.24zM9.63 18.93l2.77 1.15-2.53 2.19z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Light mode - switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode - switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Dark mode - switch to system theme"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Dark mode - switch to system theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="HapSelect" class="md-nav__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  <img src="../../assets/logo.svg" alt="logo">
+
+    </a>
+    HapSelect
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../progress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progress Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Explanations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../example_workflow_minimal_comments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Minimal Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specific Sections
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specific Sections
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../data-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Import and Imputation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pairwise-ld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairwise LD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Haplotype Blocks
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Haplotype Blocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#def_blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        def_blocks()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ld_strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ld_strategy()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#window_strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        window_strategy()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graph_strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        graph_strategy()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#block_obj_to_df" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        block_obj_to_df()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#block_summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        block_summary()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Note
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../marker-effects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marker Effects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../local-gebv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LocalGEBV and Haplotype Effects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualisations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../parent-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parent Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basic-simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#def_blocks" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        def_blocks()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ld_strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        ld_strategy()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#window_strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        window_strategy()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#graph_strategy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        graph_strategy()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#block_obj_to_df" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        block_obj_to_df()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#block_summary" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        block_summary()
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#important-note" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Important Note
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="haplotype-blocks">Haplotype Blocks<a class="headerlink" href="#haplotype-blocks" title="Permanent link">&para;</a></h1>
+<p>Haplotype blocks (haploblocks) are contiguous genomic regions that are treated as a single unit for localGEBV, haplotype effects, and parent selection. HapSelect offers three ways to define them:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Strategy</th>
+<th style="text-align: left;">Groups markers by</th>
+<th style="text-align: left;">Needs</th>
+<th style="text-align: left;">Best suited to</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ld_strategy()</code></td>
+<td style="text-align: left;">Linear extension from the highest LD pairs</td>
+<td style="text-align: left;">Pairwise LD table</td>
+<td style="text-align: left;">The classic localGEBV haploblocking approach</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>window_strategy()</code></td>
+<td style="text-align: left;">A fixed number of markers or a fixed map distance</td>
+<td style="text-align: left;">Map only</td>
+<td style="text-align: left;">Quick, LD-free blocking or a baseline comparison</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>graph_strategy()</code></td>
+<td style="text-align: left;">Connected groups of markers in a local LD graph</td>
+<td style="text-align: left;">Genotype matrix</td>
+<td style="text-align: left;">Larger, more complete blocks with fewer singletons</td>
+</tr>
+</tbody>
+</table>
+<h2 id="def_blocks"><code>def_blocks()</code><a class="headerlink" href="#def_blocks" title="Permanent link">&para;</a></h2>
+<p>All three strategies run through <code>def_blocks()</code>. A strategy holds <em>how</em> to block, while <code>def_blocks()</code> is given <em>what</em> to block.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="n">map</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w">                       </span><span class="c1">#ordered map from order_map()</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">ld_strategy</span><span class="p">(</span><span class="n">ld</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ld_pairs</span><span class="p">),</span><span class="w"> </span><span class="c1">#ld_strategy(), window_strategy(), or graph_strategy()</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">  </span><span class="n">geno</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="w">                       </span><span class="c1">#genotype matrix - required by graph_strategy() only</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="p">)</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="c1">#turn the list object into a data frame for downstream steps</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">block_obj_to_df</span><span class="p">(</span><span class="n">haploblocks</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>strategy</code></td>
+<td style="text-align: left;">A strategy object built by <code>ld_strategy()</code>, <code>window_strategy()</code>, or <code>graph_strategy()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>map</code></td>
+<td style="text-align: left;">Ordered marker map from <code>order_map()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>geno</code></td>
+<td style="text-align: left;">Dosage genotype matrix. Required by <code>graph_strategy()</code>, which computes LD directly from it, and ignored (with a warning) by the other strategies</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>def_blocks()</code> changed in v2.0.0. The LD parameters (<code>ld</code>, <code>method</code>, <code>threshold</code>, etc.) are no longer passed to <code>def_blocks()</code> directly - they now go into <code>ld_strategy()</code>. Code written for v1 will need to be updated!</p>
+</div>
+<hr />
+<h2 id="ld_strategy"><code>ld_strategy()</code><a class="headerlink" href="#ld_strategy" title="Permanent link">&para;</a></h2>
+<p>Grows blocks outward from seed marker pairs one marker at a time while LD stays high, using a pre-computed pairwise LD table (see <a href="../pairwise-ld/">Pairwise LD</a>).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="n">map</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="n">strategy</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nf">ld_strategy</span><span class="p">(</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="n">ld</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="n">ld_pairs</span><span class="p">,</span>
+<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="n">method</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">"flanking"</span><span class="p">,</span>
+<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span><span class="n">threshold</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">,</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span><span class="n">tolerance</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span><span class="n">tol_reset</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">TRUE</span><span class="p">,</span>
+<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="n">start</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="s">"LD"</span><span class="p">,</span>
+<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="n">parallel</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">  </span><span class="p">)</span>
+<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a><span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>ld</code></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Pairwise LD output from <code>pairwise_ld()</code>, <code>plink_pairwise_ld()</code>, or <code>plink_pairwise_ld_geno()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>method</code></td>
+<td style="text-align: left;"><code>"flanking"</code></td>
+<td style="text-align: left;">Block definition method (<code>"flanking"</code> or <code>"average"</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>threshold</code></td>
+<td style="text-align: left;"><code>0.7</code></td>
+<td style="text-align: left;">Minimum r² value to consider adding a marker to the block (between 0 and 1)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tolerance</code></td>
+<td style="text-align: left;"><code>1</code></td>
+<td style="text-align: left;">Number of markers allowed to fall below <code>threshold</code> before terminating a block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>tol_reset</code></td>
+<td style="text-align: left;"><code>TRUE</code></td>
+<td style="text-align: left;">If <code>TRUE</code>, reset the tolerance counter when a marker is successfully added to a block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>start</code></td>
+<td style="text-align: left;"><code>"LD"</code></td>
+<td style="text-align: left;">Seed strategy for block boundaries (<code>"LD"</code> or <code>"beginning"</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>parallel</code></td>
+<td style="text-align: left;"><code>FALSE</code></td>
+<td style="text-align: left;">Process chromosomes in parallel, using up to the number of cores allowed by <code>set_cpu_cores()</code> (see <a href="../../configuration/">Configuration</a>)</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>method</code></strong></p>
+<ul>
+<li><code>"flanking"</code> → compares the LD of the adjacent marker only (i.e., compares current first/last marker in the block to the next marker)</li>
+<li><code>"average"</code> → compares average LD across block (i.e., averages the next marker's LD to all markers currently in the block)</li>
+</ul>
+<p><strong><code>tolerance</code></strong></p>
+<ul>
+<li>If the next marker to compare does not meet or exceed <code>threshold</code>, the counter is incremented by 1. Once the counter is greater than the <code>tolerance</code> value the block is terminated. Any markers between a successfully added marker and the block that did not meet the threshold will also be added to the block. This parameter helps to accommodate for reference alignment error, genotyping error, structural variation, and other systematic errors</li>
+</ul>
+<p><strong><code>tol_reset</code></strong></p>
+<ul>
+<li><code>TRUE</code> the <code>tolerance</code> counter is reset to 0 when a marker meets the threshold.</li>
+<li><code>FALSE</code> the counter is not reset and will keep incrementing even if a marker is successfully added.</li>
+</ul>
+<p><strong><code>start</code></strong></p>
+<ul>
+<li><code>"LD"</code> -&gt; starts from the highest LD pair and the block will be extended both to the left and to the right according to the distance coordinate. The tolerance counter is reset between left extension and right extension.</li>
+<li><code>"beginning"</code> -&gt; starts at the beginning of the chromosome, so blocks are only extended to the right.</li>
+</ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code>threshold</code> must be between 0 and 1 and <code>tolerance</code> must be a non-negative number, otherwise <code>ld_strategy()</code> will stop with an error before any blocking is attempted.</p>
+</div>
+<h3 id="how-ld-blocks-are-built">How LD blocks are built<a class="headerlink" href="#how-ld-blocks-are-built" title="Permanent link">&para;</a></h3>
+<p><code>ld_strategy()</code> walks along a chromosome and extends a block one marker at a time,
+absorbing markers while LD stays high and closing the block off to start a new
+one where it drops away. The diagrams below illustrate how the parameters above
+shape that process.</p>
+<p>In each diagram, circles are markers laid out in physical order along the
+chromosome. A grey line is a strong link (LD ≥ <code>threshold</code>) and a dashed red line
+is a weak link (LD below <code>threshold</code>). A bracket underneath groups the markers
+that end up in one block, and an upright dashed red line marks a block boundary.</p>
+<blockquote>
+<p>LD values in these diagrams are illustrative, chosen to make each behaviour
+visible.</p>
+</blockquote>
+<video class="method-video" src="../../assets/ld-blocking-matrix.mp4" poster="../../assets/ld-blocking-matrix-poster.jpg" autoplay loop muted playsinline></video>
+<p class="method-video-caption">LD blocking on 150 markers of the bundled example data (<code>threshold = 0.7</code>, <code>start = "LD"</code>). The triangle is the pairwise LD between markers; blocks form along the bottom from the highest LD pair down, not from left to right.</p>
+
+<h4 id="growing-a-block">Growing a block<a class="headerlink" href="#growing-a-block" title="Permanent link">&para;</a></h4>
+<p>A block grows outward from a seed. Each new marker (the <em>candidate</em>) is compared
+against the block; if the LD clears <code>threshold</code> the candidate joins. A marker
+that falls short isn't dropped straight away. It can be <strong>tolerated</strong> and
+absorbed if a later marker reaches back across it. Where LD stays too low, the
+block is closed off and the next block begins.</p>
+<p><img alt="Growing a block" src="../../assets/mechanic.png" /></p>
+<p>Here <code>S2</code> is a weak link (<code>0.61</code>), but the block reaches across it to <code>S3</code>
+(<code>0.74 ≥ 0.70</code>), so <code>S2</code> is pulled in. Extension later runs out of road, so the
+block ends and <code>S4</code> and <code>S5</code> are left as their own single-marker blocks.</p>
+<h4 id="method-what-a-candidate-is-compared-against"><code>method</code>: what a candidate is compared against<a class="headerlink" href="#method-what-a-candidate-is-compared-against" title="Permanent link">&para;</a></h4>
+<p><code>flanking</code> compares the candidate to the block <strong>edge</strong> only; <code>average</code> compares
+it to the <strong>mean</strong> LD across the whole block. Same markers, opposite result:
+under <code>flanking</code> the weak <code>LD(S3, S4) = 0.55</code> ends the block, while under
+<code>average</code> the strong ties to <code>S1</code> and <code>S2</code> lift the mean to <code>0.71</code> and <code>S4</code>
+joins.</p>
+<p><img alt="flanking vs average" src="../../assets/method.png" /></p>
+<h4 id="tolerance-how-many-weak-links-a-block-bridges"><code>tolerance</code>: how many weak links a block bridges<a class="headerlink" href="#tolerance-how-many-weak-links-a-block-bridges" title="Permanent link">&para;</a></h4>
+<p><code>tolerance</code> is the number of consecutive weak links the block may span before it
+gives up. On the same LD landscape, raising it bridges wider gaps, producing
+fewer, longer blocks and fewer singletons.</p>
+<p><img alt="tolerance 0, 1, 2" src="../../assets/tolerance.png" /></p>
+<h4 id="tol_reset-whether-an-accepted-marker-forgives-past-misses"><code>tol_reset</code>: whether an accepted marker forgives past misses<a class="headerlink" href="#tol_reset-whether-an-accepted-marker-forgives-past-misses" title="Permanent link">&para;</a></h4>
+<p>Each weak link the block spans adds to a miss counter, and the block is closed
+off once that counter passes <code>tolerance</code>. <code>tol_reset</code> decides whether accepting a
+marker resets the counter. With <code>tolerance = 2</code> in both rows below: under <code>TRUE</code>,
+absorbing <code>S4</code> resets the counter, so the later weak link is affordable and the
+block runs to the end; under <code>FALSE</code>, the two early misses have already spent the
+budget, so the next weak link closes the block.</p>
+<p><img alt="tol_reset true vs false" src="../../assets/reset.png" /></p>
+<h4 id="start-where-a-block-is-seeded-and-which-way-it-grows"><code>start</code>: where a block is seeded and which way it grows<a class="headerlink" href="#start-where-a-block-is-seeded-and-which-way-it-grows" title="Permanent link">&para;</a></h4>
+<p><code>start</code> sets the seed and the growth direction. <code>"LD"</code> seeds from the highest-LD
+adjacent pair and extends in <strong>both</strong> directions, resetting the tolerance counter
+between the left and right passes. <code>"beginning"</code> seeds at the first marker on the
+chromosome and extends <strong>rightward</strong> only.</p>
+<p><img alt="start = LD vs beginning" src="../../assets/direction.png" /></p>
+<hr />
+<h2 id="window_strategy"><code>window_strategy()</code><a class="headerlink" href="#window_strategy" title="Permanent link">&para;</a></h2>
+<p>Cuts blocks straight from the map with no reference to LD. Blocks are either a fixed number of markers or a fixed map distance. No LD table or genotype matrix is needed.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="c1">#fixed number of markers per block</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="n">map</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">  </span><span class="n">strategy</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nf">window_strategy</span><span class="p">(</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="n">window</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="m">50</span><span class="p">,</span><span class="w">             </span><span class="c1">#every 50 SNP</span>
+<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">    </span><span class="n">method</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">"window_snp"</span>
+<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">  </span><span class="p">)</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="p">)</span>
+<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>
+<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="c1">#fixed map distance per block</span>
+<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span>
+<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">  </span><span class="n">map</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">  </span><span class="n">strategy</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="nf">window_strategy</span><span class="p">(</span>
+<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="n">window</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="m">1e6</span><span class="p">,</span><span class="w">            </span><span class="c1">#1 Mb windows for a physical map (use cM for a genetic map)</span>
+<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">    </span><span class="n">method</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="s">"window_map"</span>
+<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="w">  </span><span class="p">)</span>
+<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>window</code></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Block size. A whole number of markers for <code>"window_snp"</code>, or a distance in the map's own <code>Position</code> units (bp or cM) for <code>"window_map"</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>method</code></td>
+<td style="text-align: left;"><code>"window_snp"</code></td>
+<td style="text-align: left;"><code>"window_snp"</code> (fixed number of markers) or <code>"window_map"</code> (fixed map distance)</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>method</code></strong></p>
+<ul>
+<li><code>"window_snp"</code> → consecutive runs of <code>window</code> markers. The last block on a chromosome is short when the number of markers is not evenly divisible by <code>window</code>.</li>
+<li><code>"window_map"</code> → intervals of <code>[0, window)</code>, <code>[window, 2 × window)</code>, ... starting from position 0 on every chromosome. An interval with no markers produces no block, so the number of blocks follows marker density rather than chromosome length.</li>
+</ul>
+<p><img alt="window_snp vs window_map" src="../../assets/window-snp-vs-map.png" /></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>window</code> is in the units of your map! For a physical map <code>window = 1e6</code> is 1 Mb, but for a genetic map in cM it would be one block per chromosome. Fractional windows are allowed for <code>"window_map"</code>, but <code>"window_snp"</code> requires a whole number.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Markers with a missing <code>Chromosome</code> or <code>Position</code> are dropped with a warning, and an unsorted map is sorted with a warning. Run <code>order_map()</code> first to avoid both.</p>
+</div>
+<hr />
+<h2 id="graph_strategy"><code>graph_strategy()</code><a class="headerlink" href="#graph_strategy" title="Permanent link">&para;</a></h2>
+<p>Graph-based blocking is a new implementation and is similar in concept to LD-based blocking. Rather than growing a block one marker at a time from a single chain of pairwise comparisons, it builds a sparse <strong>local LD graph</strong> over each chromosome and reads blocks off its structure, so a block is defined by how its markers hang together as a group. Because LD is only computed within a short window of each marker, it does not require genome-wide pairwise LD and LD is calculated internally from <code>geno</code>.</p>
+<p>The method was developed by Jingyang Tong (QAAFI, The University of Queensland).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">  </span><span class="n">map</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">  </span><span class="n">geno</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span><span class="w">              </span><span class="c1">#required! LD is computed directly from the genotypes</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">  </span><span class="n">strategy</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="nf">graph_strategy</span><span class="p">(</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span><span class="n">theta_core</span><span class="w">        </span><span class="o">=</span><span class="w"> </span><span class="m">0.80</span><span class="p">,</span>
+<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span><span class="n">theta_core_by_chr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">    </span><span class="n">theta_extend</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">0.20</span><span class="p">,</span>
+<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="w">    </span><span class="n">theta_bridge</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">0.20</span><span class="p">,</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="w">    </span><span class="n">theta_refill</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">0.80</span><span class="p">,</span>
+<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="w">    </span><span class="n">ld_min_r2</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="m">0.20</span><span class="p">,</span>
+<a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span><span class="n">window_ld</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span><span class="n">window_core</span><span class="w">       </span><span class="o">=</span><span class="w"> </span><span class="m">20</span><span class="p">,</span>
+<a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span><span class="n">window_extend</span><span class="w">     </span><span class="o">=</span><span class="w"> </span><span class="m">50</span><span class="p">,</span>
+<a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span><span class="n">min_links</span><span class="w">         </span><span class="o">=</span><span class="w"> </span><span class="m">1</span><span class="p">,</span>
+<a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="n">max_gap_snps</span><span class="w">      </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<a id="__codelineno-3-16" name="__codelineno-3-16" href="#__codelineno-3-16"></a><span class="w">    </span><span class="n">max_gap_markers</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<a id="__codelineno-3-17" name="__codelineno-3-17" href="#__codelineno-3-17"></a><span class="w">    </span><span class="n">max_gap_position</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="kc">NULL</span><span class="p">,</span>
+<a id="__codelineno-3-18" name="__codelineno-3-18" href="#__codelineno-3-18"></a><span class="w">    </span><span class="n">min_block_snps</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="m">2</span><span class="p">,</span>
+<a id="__codelineno-3-19" name="__codelineno-3-19" href="#__codelineno-3-19"></a><span class="w">    </span><span class="n">parallel</span><span class="w">          </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span>
+<a id="__codelineno-3-20" name="__codelineno-3-20" href="#__codelineno-3-20"></a><span class="w">  </span><span class="p">)</span>
+<a id="__codelineno-3-21" name="__codelineno-3-21" href="#__codelineno-3-21"></a><span class="p">)</span>
+</code></pre></div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p><code>graph_strategy()</code> <strong>MUST</strong> be given <code>geno</code> in <code>def_blocks()</code>, otherwise it will stop with an error. <code>geno</code> is aligned to <code>map</code> by marker name (see <code>order_geno()</code> in <a href="../pairwise-ld/">Pairwise LD</a>), so markers missing from either file are dropped with a warning.</p>
+</div>
+<video class="method-video" src="../../assets/graph-blocking.mp4" poster="../../assets/graph-blocking-poster.jpg" autoplay loop muted playsinline></video>
+<p class="method-video-caption">Graph blocking on one chromosome of the bundled example data with the default parameters: core edges, extension and bridge edges, the resulting components, linearisation (Stage II) and refill (Stage III). Each point is a marker, laid out by its LD connections rather than its map position.</p>
+
+<h3 id="parameters">Parameters<a class="headerlink" href="#parameters" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Parameter</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Stage</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>theta_core</code></td>
+<td style="text-align: left;"><code>0.80</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Minimum r² for a core edge between two markers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>theta_core_by_chr</code></td>
+<td style="text-align: left;"><code>NULL</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Named vector of per-chromosome <code>theta_core</code> overrides, e.g., <code>c("1" = 0.9, "2" = 0.8)</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>theta_extend</code></td>
+<td style="text-align: left;"><code>0.20</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Minimum r² for attaching an ungrouped marker to a block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>theta_bridge</code></td>
+<td style="text-align: left;"><code>0.20</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Minimum r² for a boundary edge that merges two adjacent blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>theta_refill</code></td>
+<td style="text-align: left;"><code>0.80</code></td>
+<td style="text-align: left;">III</td>
+<td style="text-align: left;">Minimum r² for refilling a marker left inside a block's span</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ld_min_r2</code></td>
+<td style="text-align: left;"><code>0.20</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">LD floor - edges below this are never stored</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>window_ld</code></td>
+<td style="text-align: left;"><code>20</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Number of markers ahead of each marker to compute LD with</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>window_core</code></td>
+<td style="text-align: left;"><code>20</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Maximum marker distance for a core edge</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>window_extend</code></td>
+<td style="text-align: left;"><code>50</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Maximum marker distance to the nearest member of a block being extended</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>min_links</code></td>
+<td style="text-align: left;"><code>1</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Minimum number of supporting edges for an extension</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_gap_snps</code></td>
+<td style="text-align: left;"><code>2</code></td>
+<td style="text-align: left;">I</td>
+<td style="text-align: left;">Maximum number of markers between two blocks that a bridge may cross</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_gap_markers</code></td>
+<td style="text-align: left;"><code>2</code></td>
+<td style="text-align: left;">II</td>
+<td style="text-align: left;">Maximum gap between consecutive members (in marker positions) before a block is split</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>max_gap_position</code></td>
+<td style="text-align: left;"><code>NULL</code></td>
+<td style="text-align: left;">II</td>
+<td style="text-align: left;">Maximum gap between consecutive members in map units before a block is split, or <code>NULL</code> for no limit</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>min_block_snps</code></td>
+<td style="text-align: left;"><code>2</code></td>
+<td style="text-align: left;">II</td>
+<td style="text-align: left;">Minimum number of markers for a segment to be kept</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>parallel</code></td>
+<td style="text-align: left;"><code>FALSE</code></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">Process chromosomes in parallel, using up to the number of cores allowed by <code>set_cpu_cores()</code> (see <a href="../../configuration/">Configuration</a>)</td>
+</tr>
+</tbody>
+</table>
+<p>All r² thresholds (<code>theta_*</code> and <code>ld_min_r2</code>) must be between 0 and 1, and all window, gap, and count parameters must be whole numbers. <code>graph_strategy()</code> will also stop with an error if <code>ld_min_r2</code> is above <code>theta_core</code>, <code>theta_extend</code>, <code>theta_bridge</code>, or any <code>theta_core_by_chr</code> value, because edges below <code>ld_min_r2</code> are never stored and those thresholds could never be applied. A <code>window_core</code> larger than <code>window_ld</code> produces a warning, since pairs beyond <code>window_ld</code> are never computed.</p>
+<h3 id="how-graph-blocks-are-built">How graph blocks are built<a class="headerlink" href="#how-graph-blocks-are-built" title="Permanent link">&para;</a></h3>
+<p>The method runs in three stages on each chromosome. In the diagrams below, circles are markers in physical order, arcs above the track are LD edges, and a bracket underneath groups the markers in one block. Light circles are markers that do not (yet) belong to a block.</p>
+<blockquote>
+<p>LD values in these diagrams are illustrative, chosen to make each behaviour
+visible.</p>
+</blockquote>
+<h4 id="stage-i-build-blocks-from-a-local-ld-graph">Stage I: build blocks from a local LD graph<a class="headerlink" href="#stage-i-build-blocks-from-a-local-ld-graph" title="Permanent link">&para;</a></h4>
+<p><img alt="Stage I: core, extend, bridge" src="../../assets/graph-construction.png" /></p>
+<ol>
+<li><strong>Core components</strong> - LD is computed between each marker and the next <code>window_ld</code> markers. Every pair with r² ≥ <code>theta_core</code> (and within <code>window_core</code> markers) becomes an edge, and each connected group of two or more markers becomes a core block. A core block does not have to be a contiguous run of markers: <code>S6</code>, <code>S7</code>, and <code>S9</code> are connected without <code>S8</code>.</li>
+<li><strong>Extension</strong> - each ungrouped marker joins a neighbouring block if it has at least <code>min_links</code> edges with r² ≥ <code>theta_extend</code> to that block and the nearest member of the block is within <code>window_extend</code> markers. If more than one block qualifies, the block with the most supporting edges is chosen, then the highest mean r², then the nearest. Markers are attached one at a time, so a marker that has just joined a block can pull in the next one.</li>
+<li><strong>Bridging</strong> - adjacent blocks separated by no more than <code>max_gap_snps</code> markers are merged when any of the last three markers of one block has an edge with r² ≥ <code>theta_bridge</code> to any of the first three markers of the next. Bridging merges the two blocks, but it does <strong>not</strong> absorb the markers in the gap between them (<code>S5</code> above).</li>
+</ol>
+<p>Any marker still ungrouped at the end of Stage I becomes a one-marker block.</p>
+<p><strong><code>theta_core_by_chr</code></strong></p>
+<p>Some genomes have very different LD between chromosomes (e.g., the A, B, and D subgenomes of bread wheat), so a single <code>theta_core</code> may be too strict for some chromosomes and too lenient for others. <code>theta_core_by_chr</code> replaces <code>theta_core</code> for the chromosomes it names. Names must match the chromosome numbers in the map after <code>order_map()</code>, otherwise <code>def_blocks()</code> will stop with an error.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1">#a lower core threshold on chromosomes 1 and 2, theta_core everywhere else</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">graph_strategy</span><span class="p">(</span><span class="n">theta_core</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.8</span><span class="p">,</span><span class="w"> </span><span class="n">theta_core_by_chr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">c</span><span class="p">(</span><span class="s">"1"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">,</span><span class="w"> </span><span class="s">"2"</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="m">0.7</span><span class="p">))</span>
+</code></pre></div>
+<h4 id="stage-ii-project-blocks-onto-the-map-and-keep-segments-that-do-not-overlap">Stage II: project blocks onto the map and keep segments that do not overlap<a class="headerlink" href="#stage-ii-project-blocks-onto-the-map-and-keep-segments-that-do-not-overlap" title="Permanent link">&para;</a></h4>
+<p><img alt="Stage II: project, score, select" src="../../assets/graph-linearisation.png" /></p>
+<p>A block from Stage I is a set of connected markers, which can skip markers or jump across the chromosome. A haploblock must be a contiguous region, so each block is projected back onto the map:</p>
+<ol>
+<li><strong>Split</strong> - members are put in map order, and the block is split wherever consecutive members are more than <code>max_gap_markers</code> positions apart (or more than <code>max_gap_position</code> apart in map units, if given). Segments with fewer than <code>min_block_snps</code> markers are discarded.</li>
+<li><strong>Score</strong> - each candidate segment is scored as:</li>
+</ol>
+<div class="arithmatex">\[
+\text{score} = 1000 \times n_{\text{markers}} + 100 \times \frac{n_{\text{markers}}}{\text{span}} - \log(1 + \text{length})
+\]</div>
+<p>where <span class="arithmatex">\(n_{\text{markers}}\)</span> is the number of markers in the segment, span is the number of marker positions from its first to its last marker, and length is its map distance. The number of markers dominates, density breaks ties, and a shorter segment is preferred when both are equal.</p>
+<ol>
+<li><strong>Select</strong> - segments are taken from the highest score down, and a segment is kept only if its whole interval is still free. A kept segment claims its entire interval, including any markers it skips, so this is a greedy selection rather than a search for the best overall set.</li>
+</ol>
+<h4 id="stage-iii-re-test-the-markers-a-selected-block-skipped">Stage III: re-test the markers a selected block skipped<a class="headerlink" href="#stage-iii-re-test-the-markers-a-selected-block-skipped" title="Permanent link">&para;</a></h4>
+<p><img alt="Stage III: refill" src="../../assets/graph-refill.png" /></p>
+<p>After selection, some markers sit inside a block's span without belonging to it. Each one is re-tested against the block that encloses it, and joins the block if its r² with <strong>any</strong> current member is ≥ <code>theta_refill</code>. LD is recomputed from the genotypes here, so <code>window_ld</code> and <code>ld_min_r2</code> do not limit the comparison. Markers outside every selected block are kept as one-marker blocks.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>A marker inside a block's span that fails the refill test is <strong>dropped</strong> and appears in <strong>no</strong> block. Unlike <code>ld_strategy()</code> and <code>window_strategy()</code>, the graph method does not guarantee every marker in the map is assigned to a block! On the bundled example data with the default parameters, 486 of the 6,070 markers are dropped. Dropped markers do not contribute to localGEBV or haplotype effects. Lowering <code>theta_refill</code> keeps more of them, and <code>attr(haploblocks, "graph_diagnostics")</code> reports how many were dropped on each chromosome (see below).</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do <strong>NOT</strong> estimate marker effects prior to using the graph approach! Marker effects should <strong>only be estimated with the final marker set</strong>!</p>
+</div>
+<h3 id="diagnostics">Diagnostics<a class="headerlink" href="#diagnostics" title="Permanent link">&para;</a></h3>
+<p><code>def_blocks()</code> attaches a per-chromosome summary to its output when using <code>graph_strategy()</code>. Inspect it before converting to a data frame, as <code>block_obj_to_df()</code> does not keep it:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">def_blocks</span><span class="p">(</span><span class="n">map</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">map</span><span class="p">,</span><span class="w"> </span><span class="n">geno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">geno</span><span class="p">,</span><span class="w"> </span><span class="n">strategy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nf">graph_strategy</span><span class="p">())</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="nf">attr</span><span class="p">(</span><span class="n">haploblocks</span><span class="p">,</span><span class="w"> </span><span class="s">"graph_diagnostics"</span><span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>chromosome</code></td>
+<td style="text-align: left;">Chromosome number</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>theta_core</code></td>
+<td style="text-align: left;"><code>theta_core</code> used on this chromosome, after any <code>theta_core_by_chr</code> override</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_blocks</code></td>
+<td style="text-align: left;">Total number of blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_multi_marker_blocks</code></td>
+<td style="text-align: left;">Number of blocks with two or more markers</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_single_marker_blocks</code></td>
+<td style="text-align: left;">Number of one-marker blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_markers_in</code></td>
+<td style="text-align: left;">Markers on the chromosome</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_markers_out</code></td>
+<td style="text-align: left;">Markers placed in a block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_refilled</code></td>
+<td style="text-align: left;">Markers added back to a block in Stage III</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_dropped</code></td>
+<td style="text-align: left;">Markers dropped in Stage III (in no block)</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="block_obj_to_df"><code>block_obj_to_df()</code><a class="headerlink" href="#block_obj_to_df" title="Permanent link">&para;</a></h2>
+<p>Converts the block list object from <code>def_blocks()</code> to a data frame for downstream use. This is the same for every strategy.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">haploblocks</span><span class="w"> </span><span class="o">&lt;-</span><span class="w"> </span><span class="nf">block_obj_to_df</span><span class="p">(</span><span class="n">haploblocks</span><span class="p">,</span><span class="w"> </span><span class="n">map</span><span class="p">)</span>
+</code></pre></div>
+<p>The resulting data frame has one row per haploblock:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Block</code></td>
+<td style="text-align: left;">Constituent markers, <code>;</code> delimited</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Block_ID</code></td>
+<td style="text-align: left;">Unique block identifier, <code>Chromosome:Block</code> (e.g., <code>"3:132"</code> is the 132nd block on chromosome 3)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Num_SNP</code></td>
+<td style="text-align: left;">Number of markers in the block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>First_SNP</code> / <code>Last_SNP</code></td>
+<td style="text-align: left;">First and last marker in the block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Chrom</code></td>
+<td style="text-align: left;">Chromosome</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Start_Pos</code> / <code>End_Pos</code></td>
+<td style="text-align: left;">Map position of <code>First_SNP</code> and <code>Last_SNP</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Block_Size</code></td>
+<td style="text-align: left;"><code>End_Pos - Start_Pos</code> (0 for single-marker blocks)</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not use any kind of whitespace as a delimeter, this will not be considered a delimeter and will be part of the marker name!</p>
+</div>
+<h2 id="block_summary"><code>block_summary()</code><a class="headerlink" href="#block_summary" title="Permanent link">&para;</a></h2>
+<p>Reports basic statistics across all blocks.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nf">block_summary</span><span class="p">(</span><span class="n">block_df</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">haploblocks</span><span class="p">)</span>
+</code></pre></div>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Column</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>Mean_SNP_per_Block</code> / <code>Max_SNP_per_Block</code></td>
+<td style="text-align: left;">Mean and maximum number of markers per block</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Mean_Block_Size</code> / <code>Max_Block_Size</code></td>
+<td style="text-align: left;">Mean and maximum <code>Block_Size</code> of multi-marker blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Singleton_Blocks</code></td>
+<td style="text-align: left;">Number of single-marker blocks</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>Percent_Singleton_Blocks</code></td>
+<td style="text-align: left;">Percentage of blocks that are single-marker blocks</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p><code>Mean_Block_Size</code> does not include singleton blocks (size 0) in the computation. It is the mean size of multi-SNP blocks. <code>block_summary()</code> is a quick way to compare strategies or parameter settings on the same data.</p>
+</div>
+<h2 id="important-note">Important Note<a class="headerlink" href="#important-note" title="Permanent link">&para;</a></h2>
+<p>A custom haploblock dataframe may be provided for downstream steps. It must, however, be formatted the same with the same column names! At minimum, the <code>Block</code>, <code>Block_ID</code>, <code>First_SNP</code>, <code>Last_SNP</code>, and <code>Chrom</code> columns must be provided! The <code>Block</code> column should contain the list of markers in the block separated by <code>;</code> (no whitespace!), the <code>Block_ID</code> should be a character and a unique identifier, <code>First_SNP</code> and <code>Last_SNP</code> should be the character name of the first and last SNP making up the block in <code>Block</code>, and <code>Chrom</code> should be a numeric positive integer value.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nf">head</span><span class="p">(</span><span class="n">haploblocks</span><span class="p">)</span>
+</code></pre></div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

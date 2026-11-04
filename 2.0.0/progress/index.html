@@ -1,0 +1,1417 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Haplotype block discovery, localGEBV analysis, and parent selection for genomic selection in R">
+      
+      
+      
+        <link rel="canonical" href="https://wrshf7.github.io/HapSelect-Docs/2.0.0/progress/">
+      
+      
+        <link rel="prev" href="../configuration/">
+      
+      
+        <link rel="next" href="../getting-started/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../assets/favicon.svg">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.8.0">
+    
+    
+      
+        <title>Progress Reporting - HapSelect</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.57a0d79d.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.fb2fffe2.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/custom.css">
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#progress-reporting" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="HapSelect" class="md-header__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            HapSelect
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Progress Reporting
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Following system theme - switch to light mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Following system theme - switch to light mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M7.5 2c-1.79 1.15-3 3.18-3 5.5s1.21 4.35 3.03 5.5C4.46 13 2 10.54 2 7.5A5.5 5.5 0 0 1 7.5 2m11.57 1.5 1.43 1.43L4.93 20.5 3.5 19.07zm-6.18 2.43L11.41 5 9.97 6l.42-1.7L9 3.24l1.75-.12.58-1.65L12 3.1l1.73.03-1.35 1.13zm-3.3 3.61-1.16-.73-1.12.78.34-1.32-1.09-.83 1.36-.09.45-1.29.51 1.27 1.36.03-1.05.87zM19 13.5a5.5 5.5 0 0 1-5.5 5.5c-1.22 0-2.35-.4-3.26-1.07l7.69-7.69c.67.91 1.07 2.04 1.07 3.26m-4.4 6.58 2.77-1.15-.24 3.35zm4.33-2.7 1.15-2.77 2.2 2.54zm1.15-4.96-1.14-2.78 3.34.24zM9.63 18.93l2.77 1.15-2.53 2.19z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Light mode - switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Light mode - switch to dark mode" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5s-1.65.15-2.39.42zM3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29zm.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14zM20.65 7l-1.77 3.79a7.02 7.02 0 0 0-2.38-4.15zm-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29zM12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="custom" data-md-color-accent="custom"  aria-label="Dark mode - switch to system theme"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Dark mode - switch to system theme" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3zm3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95zm-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="HapSelect" class="md-nav__button md-logo" aria-label="HapSelect" data-md-component="logo">
+      
+  <img src="../assets/logo.svg" alt="logo">
+
+    </a>
+    HapSelect
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/wrshf7/HapSelect" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.1.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    HapSelect
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Changelog
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Installation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../configuration/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Configuration
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progress Reporting
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Progress Reporting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#progress-bars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progress Bars
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#machine-readable-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Machine-Readable Progress
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Getting Started
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Workflow
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Workflow
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/example_workflow/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Explanations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/example_workflow_minimal_comments/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Complete Workflow with Minimal Explanation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_8_3" id="__nav_8_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Specific Sections
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_8_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Specific Sections
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/data-import/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Data Import and Imputation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/pairwise-ld/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pairwise LD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/haploblocks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Haplotype Blocks
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/marker-effects/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Marker Effects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/local-gebv/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    LocalGEBV and Haplotype Effects
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/visualizations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Visualisations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/parent-selection/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Parent Selection
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../workflow/basic-simulation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Basic Simulation
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Function Reference
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#progress-bars" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Progress Bars
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#machine-readable-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Machine-Readable Progress
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="progress-reporting">Progress Reporting<a class="headerlink" href="#progress-reporting" title="Permanent link">&para;</a></h1>
+<p>Many HapSelect steps take minutes to hours on real datasets. HapSelect reports what it is doing and how far along it is in one of two ways:</p>
+<ul>
+<li><strong>Progress bars</strong> (default) - one labelled bar per step, for people watching an R session or terminal.</li>
+<li><strong>Machine-readable events</strong> - one JSON line per event on <code>stderr</code>, for other programs (pipelines, dashboards, web front ends) to follow a run. See <a href="#machine-readable-progress">Machine-Readable Progress</a>.</li>
+</ul>
+<p>Progress reporting never changes any results.</p>
+<hr />
+<h2 id="progress-bars">Progress Bars<a class="headerlink" href="#progress-bars" title="Permanent link">&para;</a></h2>
+<video class="method-video progress-video" src="../assets/progress-terminal.mp4" poster="../assets/progress-terminal-poster.jpg" autoplay loop muted playsinline></video>
+<p class="method-video-caption progress-video">Progress bars from LD calculation through to simulation on the example data (sped up).</p>
+
+<p>Every long-running function reports as a named <strong>step</strong> with its own bar. The text beside a bar says what the step is currently doing (e.g., <code>Fold 3/5</code>, <code>Building blocks</code>, or the genetic algorithm's current fitness). Work that cannot be counted, such as waiting on BEAGLE to start, shows a spinner with the time taken. A step that stops with an error marks its bar as failed.</p>
+<p>Bars are drawn when R is running interactively (e.g., RStudio) or in a terminal. When output is redirected to a file, as in most batch jobs, bars are switched off automatically and the same information is printed as plain text instead (for example, the genetic algorithm prints one line per iteration when <code>monitor = TRUE</code>).</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>While a bar is being drawn, anything a step prints (such as the variance components printed for each cross-validation fold) is held back and printed once the step finishes, so it does not break up the bar. Nothing is lost.</p>
+</div>
+<h3 id="turning-progress-bars-off">Turning progress bars off<a class="headerlink" href="#turning-progress-bars-off" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1">#for the rest of the session</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nf">options</span><span class="p">(</span><span class="n">progressr.enable</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kc">FALSE</span><span class="p">)</span>
+</code></pre></div>
+<p>Or, before starting R (e.g., for a scheduled job), set the environment variable <code>R_PROGRESSR_ENABLE=false</code>.</p>
+<h3 id="other-settings">Other settings<a class="headerlink" href="#other-settings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Setting</th>
+<th style="text-align: left;">Default</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>options(HapSelect.progress_interval = )</code></td>
+<td style="text-align: left;"><code>0.2</code></td>
+<td style="text-align: left;">Minimum number of seconds between progress updates. Must be set <strong>before</strong> HapSelect is loaded (e.g., in your <code>.Rprofile</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>options(cli.progress_show_after = )</code></td>
+<td style="text-align: left;"><code>0</code></td>
+<td style="text-align: left;">Seconds before a bar is shown</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>options(cli.progress_clear = )</code></td>
+<td style="text-align: left;"><code>FALSE</code></td>
+<td style="text-align: left;">If <code>TRUE</code>, finished bars are removed instead of left on screen</td>
+</tr>
+</tbody>
+</table>
+<h3 id="using-your-own-progress-handler">Using your own progress handler<a class="headerlink" href="#using-your-own-progress-handler" title="Permanent link">&para;</a></h3>
+<p>HapSelect reports progress through the <a href="https://progressr.futureverse.org/">progressr</a> package. If you have already set your own handlers with <code>progressr::handlers()</code> (e.g., in your <code>.Rprofile</code>) before HapSelect is loaded, HapSelect leaves them alone. You can also replace HapSelect's handler at any time:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">progressr</span><span class="o">::</span><span class="nf">handlers</span><span class="p">(</span><span class="s">"txtprogressbar"</span><span class="p">)</span>
+</code></pre></div>
+<p>Other handlers still show progress, but not the step names or status text, which only HapSelect's own handler knows about.</p>
+<hr />
+<h2 id="machine-readable-progress">Machine-Readable Progress<a class="headerlink" href="#machine-readable-progress" title="Permanent link">&para;</a></h2>
+<p>Setting the environment variable <code>HAPSELECT_MACHINE_LOGGING=1</code> <strong>before</strong> HapSelect is loaded replaces the progress bars with a stream of events on <code>stderr</code>, one JSON object per line:</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">HAPSELECT_MACHINE_LOGGING</span><span class="o">=</span><span class="m">1</span><span class="w"> </span>Rscript<span class="w"> </span>my_analysis.R
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:18.374Z","event":"step_started","step":"window_blocking","label":"Window Blocking"}
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:18.385Z","event":"progress","step":"window_blocking","current":0,"total":21}
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:18.390Z","event":"progress","step":"window_blocking","current":21,"total":21}
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:18.391Z","event":"step_finished","step":"window_blocking","status":"succeeded"}
+</code></pre></div>
+<p>Nothing else about a run changes: results, printed output, warnings, and errors are the same as without it.</p>
+<h3 id="reading-the-stream">Reading the stream<a class="headerlink" href="#reading-the-stream" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Every event line starts with the prefix <code>@@HS</code> (including the trailing space). Warnings, messages, and output from PLINK and BEAGLE share <code>stderr</code>, so keep only lines that start with the prefix and parse the rest of the line as JSON.</li>
+<li>Fields with no value are left out rather than sent as <code>null</code>.</li>
+<li>Numbers are written in full precision.</li>
+<li>Progress events are throttled to at most one every <code>HapSelect.progress_interval</code> seconds (0.2 by default), so not every increment is sent. Use <code>current</code> and <code>total</code> rather than counting events.</li>
+</ul>
+<h3 id="common-fields">Common fields<a class="headerlink" href="#common-fields" title="Permanent link">&para;</a></h3>
+<p>Every event has:</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Field</th>
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>v</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Protocol version, which is the installed HapSelect version (e.g., <code>"2.0.0"</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>at</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;">Time the event was sent, ISO 8601 in UTC with milliseconds (e.g., <code>"2026-11-02T04:14:18.374Z"</code>)</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>event</code></td>
+<td style="text-align: left;">string</td>
+<td style="text-align: left;"><code>"step_started"</code>, <code>"progress"</code>, <code>"step_finished"</code>, or <code>"metric"</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="events">Events<a class="headerlink" href="#events" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Event</th>
+<th style="text-align: left;">Fields</th>
+<th style="text-align: left;">Sent when</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>step_started</code></td>
+<td style="text-align: left;"><code>step</code>, <code>label</code></td>
+<td style="text-align: left;">A step begins. <code>label</code> is a human-readable name for display</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>progress</code></td>
+<td style="text-align: left;"><code>step</code>, <code>current</code>, <code>total</code>, <code>message</code></td>
+<td style="text-align: left;">A step's count advances, or its status changes. All but <code>step</code> may be absent - see below</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>step_finished</code></td>
+<td style="text-align: left;"><code>step</code>, <code>status</code>, <code>message</code></td>
+<td style="text-align: left;">A step ends. <code>status</code> is <code>"succeeded"</code> or <code>"failed"</code>, and a failed step carries the error in <code>message</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>metric</code></td>
+<td style="text-align: left;"><code>step</code>, <code>name</code>, <code>values</code></td>
+<td style="text-align: left;">A step produces a result worth charting live, such as one generation of the genetic algorithm. <code>values</code> is an object of named numbers</td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>progress</code> events</strong></p>
+<ul>
+<li><code>current</code> and <code>total</code> are whole numbers, and <code>current</code> never exceeds <code>total</code>. <code>total</code> is absent when the amount of work is not known.</li>
+<li><code>message</code> is the status text shown beside a progress bar (e.g., <code>"Fold 3/5"</code>).</li>
+<li>A status sent during work that is not counted (e.g., <code>"Running Beagle"</code>) repeats the step's last <code>current</code> and <code>total</code>, so it should not be read as the count starting over. Before a step has counted anything, a status has no counts at all.</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.206Z","event":"progress","step":"beagle_phase","message":"Writing VCF"}
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.953Z","event":"progress","step":"read_vcf","current":112,"total":112,"message":"Converting genotypes"}
+</code></pre></div>
+<p><strong>Nested steps</strong></p>
+<p>Steps can run inside other steps. For example, <code>beagle_phase_geno()</code> reads BEAGLE's output with the VCF reader, so a <code>read_vcf</code> step starts and finishes inside the <code>beagle_phase</code> step. Track steps with a <strong>stack</strong>, not a single current step: <code>progress</code> and <code>metric</code> events belong to the innermost running step, named in their <code>step</code> field.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.199Z","event":"step_started","step":"beagle_phase","label":"Phasing (Beagle)"}
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.947Z","event":"step_started","step":"read_vcf","label":"Reading VCF"}
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.987Z","event":"step_finished","step":"read_vcf","status":"succeeded"}
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.987Z","event":"step_finished","step":"beagle_phase","status":"succeeded"}
+</code></pre></div>
+<p><strong>Failed steps</strong></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.988Z","event":"step_started","step":"graph_blocking","label":"Graph Blocking"}
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:28.988Z","event":"step_finished","step":"graph_blocking","status":"failed","message":"geno must be supplied for a graph_strategy: the method computes LD from the genotypes directly. Pass it to def_blocks(strategy, map, geno = ...)."}
+</code></pre></div>
+<h3 id="steps">Steps<a class="headerlink" href="#steps" title="Permanent link">&para;</a></h3>
+<p>The <code>step</code> identifiers below are part of the protocol and are safe to key on. Labels are for display and may be reworded between versions.</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><code>step</code></th>
+<th style="text-align: left;"><code>label</code></th>
+<th style="text-align: left;">Reported by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>read_vcf</code></td>
+<td style="text-align: left;">Reading VCF</td>
+<td style="text-align: left;"><code>read_vcf_geno()</code>, <code>read_vcf_phased()</code>, and nested inside the <code>beagle_*_geno()</code> functions</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>beagle_impute</code></td>
+<td style="text-align: left;">Imputation (Beagle)</td>
+<td style="text-align: left;"><code>beagle_impute()</code>, <code>beagle_impute_geno()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>beagle_phase</code></td>
+<td style="text-align: left;">Phasing (Beagle)</td>
+<td style="text-align: left;"><code>beagle_phase_geno()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pairwise_ld</code></td>
+<td style="text-align: left;">Pairwise LD</td>
+<td style="text-align: left;"><code>pairwise_ld()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>plink_ld</code></td>
+<td style="text-align: left;">Pairwise LD (PLINK)</td>
+<td style="text-align: left;"><code>plink_pairwise_ld()</code>, <code>plink_pairwise_ld_geno()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ld_blocking</code></td>
+<td style="text-align: left;">LD Blocking</td>
+<td style="text-align: left;"><code>def_blocks()</code> with <code>ld_strategy()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>window_blocking</code></td>
+<td style="text-align: left;">Window Blocking</td>
+<td style="text-align: left;"><code>def_blocks()</code> with <code>window_strategy()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>graph_blocking</code></td>
+<td style="text-align: left;">Graph Blocking</td>
+<td style="text-align: left;"><code>def_blocks()</code> with <code>graph_strategy()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>marker_effects</code></td>
+<td style="text-align: left;">Marker Effects</td>
+<td style="text-align: left;"><code>solve_marker_effects()</code>, <code>create_marker_effects_file()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>cross_validation</code></td>
+<td style="text-align: left;">Cross Validation</td>
+<td style="text-align: left;"><code>cross_validation()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>n_fold_cross_validation</code></td>
+<td style="text-align: left;">N-Fold Cross Validation</td>
+<td style="text-align: left;"><code>n_fold_cross_validation()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>local_gebv</code></td>
+<td style="text-align: left;">Local GEBV</td>
+<td style="text-align: left;"><code>compute_local_GEBV()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>haplotype_effects</code></td>
+<td style="text-align: left;">Haplotype Effects</td>
+<td style="text-align: left;"><code>compute_haplotype_effects()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>gebv_chunk_prep</code></td>
+<td style="text-align: left;">Preparing Blocks</td>
+<td style="text-align: left;">Nested inside <code>local_gebv</code> / <code>haplotype_effects</code> when <code>parallel = TRUE</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>local_gebv_parent_selection</code></td>
+<td style="text-align: left;">Local GEBV Parent Selection</td>
+<td style="text-align: left;"><code>local_gebv_parent_selection()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>haplotype_parent_selection</code></td>
+<td style="text-align: left;">Haplotype Parent Selection</td>
+<td style="text-align: left;"><code>haplotype_parent_selection()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>local_gebv_simulation</code></td>
+<td style="text-align: left;">Local GEBV vs Truncation Simulation</td>
+<td style="text-align: left;"><code>localGEBV_vs_TS_simulation()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>haplotype_simulation</code></td>
+<td style="text-align: left;">Haplotype vs Truncation Simulation</td>
+<td style="text-align: left;"><code>Haplotype_vs_TS_simulation()</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>block_var_test</code></td>
+<td style="text-align: left;">Haploblock Variance Test</td>
+<td style="text-align: left;">Haploblock variance test</td>
+</tr>
+</tbody>
+</table>
+<h3 id="metrics">Metrics<a class="headerlink" href="#metrics" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;"><code>name</code></th>
+<th style="text-align: left;"><code>values</code></th>
+<th style="text-align: left;">Sent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>variance_components</code></td>
+<td style="text-align: left;"><code>marker_variance</code>, <code>additive_genetic_variance</code>, <code>residual_variance</code>, <code>h2</code></td>
+<td style="text-align: left;">Each time marker effects are solved, including once per cross-validation fold</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>prediction_accuracy</code></td>
+<td style="text-align: left;"><code>accuracy</code></td>
+<td style="text-align: left;">By <code>create_marker_effects_file()</code>, after its <code>marker_effects</code> step has finished, so with no <code>step</code> field</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>cv_fold</code></td>
+<td style="text-align: left;"><code>fold</code>, <code>accuracy</code></td>
+<td style="text-align: left;">Once per cross-validation fold</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>cv_summary</code></td>
+<td style="text-align: left;"><code>folds</code>, <code>mean_accuracy</code></td>
+<td style="text-align: left;">At the end of cross-validation</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>ga_generation</code></td>
+<td style="text-align: left;"><code>iter</code>, <code>best</code>, <code>mean</code>, <code>sd</code></td>
+<td style="text-align: left;">Once per generation of the genetic algorithm, with the fitness of the best solution and the mean and standard deviation across the population</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>@@HS {"v":"2.0.0","at":"2026-11-02T04:14:19.427Z","event":"metric","step":"marker_effects","name":"variance_components","values":{"marker_variance":3.67727338501975e-05,"additive_genetic_variance":0.0620438023570159,"residual_variance":0.165621257872503,"h2":0.272522284686402}}
+</code></pre></div>
+<h3 id="example-following-a-run-from-python">Example: following a run from Python<a class="headerlink" href="#example-following-a-run-from-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="n">env</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">,</span> <span class="n">HAPSELECT_MACHINE_LOGGING</span><span class="o">=</span><span class="s2">"1"</span><span class="p">)</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="n">proc</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s2">"Rscript"</span><span class="p">,</span> <span class="s2">"my_analysis.R"</span><span class="p">],</span> <span class="n">env</span><span class="o">=</span><span class="n">env</span><span class="p">,</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>                        <span class="n">stderr</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">,</span> <span class="n">text</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>
+<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="n">steps</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">#a stack, because steps can nest</span>
+<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">proc</span><span class="o">.</span><span class="n">stderr</span><span class="p">:</span>
+<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>    <span class="k">if</span> <span class="ow">not</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"@@HS "</span><span class="p">):</span>
+<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a>        <span class="k">continue</span>  <span class="c1">#a warning, message, or PLINK/BEAGLE output</span>
+<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a>    <span class="n">event</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="s2">"@@HS "</span><span class="p">):])</span>
+<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
+<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a>    <span class="k">if</span> <span class="n">event</span><span class="p">[</span><span class="s2">"event"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"step_started"</span><span class="p">:</span>
+<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a>        <span class="n">steps</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s2">"step"</span><span class="p">])</span>
+<a id="__codelineno-8-17" name="__codelineno-8-17" href="#__codelineno-8-17"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"started:"</span><span class="p">,</span> <span class="n">event</span><span class="p">[</span><span class="s2">"label"</span><span class="p">])</span>
+<a id="__codelineno-8-18" name="__codelineno-8-18" href="#__codelineno-8-18"></a>    <span class="k">elif</span> <span class="n">event</span><span class="p">[</span><span class="s2">"event"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"step_finished"</span><span class="p">:</span>
+<a id="__codelineno-8-19" name="__codelineno-8-19" href="#__codelineno-8-19"></a>        <span class="n">steps</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s2">"step"</span><span class="p">])</span>
+<a id="__codelineno-8-20" name="__codelineno-8-20" href="#__codelineno-8-20"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"finished:"</span><span class="p">,</span> <span class="n">event</span><span class="p">[</span><span class="s2">"step"</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s2">"status"</span><span class="p">],</span> <span class="n">event</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"message"</span><span class="p">,</span> <span class="s2">""</span><span class="p">))</span>
+<a id="__codelineno-8-21" name="__codelineno-8-21" href="#__codelineno-8-21"></a>    <span class="k">elif</span> <span class="n">event</span><span class="p">[</span><span class="s2">"event"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"progress"</span> <span class="ow">and</span> <span class="s2">"total"</span> <span class="ow">in</span> <span class="n">event</span><span class="p">:</span>
+<a id="__codelineno-8-22" name="__codelineno-8-22" href="#__codelineno-8-22"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="s1">'step'</span><span class="p">]</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="s1">'current'</span><span class="p">]</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">event</span><span class="p">[</span><span class="s1">'total'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-8-23" name="__codelineno-8-23" href="#__codelineno-8-23"></a>    <span class="k">elif</span> <span class="n">event</span><span class="p">[</span><span class="s2">"event"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"metric"</span><span class="p">:</span>
+<a id="__codelineno-8-24" name="__codelineno-8-24" href="#__codelineno-8-24"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"  metric:"</span><span class="p">,</span> <span class="n">event</span><span class="p">[</span><span class="s2">"name"</span><span class="p">],</span> <span class="n">event</span><span class="p">[</span><span class="s2">"values"</span><span class="p">])</span>
+<a id="__codelineno-8-25" name="__codelineno-8-25" href="#__codelineno-8-25"></a>
+<a id="__codelineno-8-26" name="__codelineno-8-26" href="#__codelineno-8-26"></a><span class="n">proc</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+</code></pre></div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>With machine logging on, progress is reported even when R is not interactive, so it works under <code>Rscript</code>, job schedulers, and subprocesses. Setting <code>R_PROGRESSR_ENABLE=false</code> as well stops the <code>progress</code> events, but <code>step_started</code>, <code>step_finished</code>, and <code>metric</code> events are still sent.</p>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "..", "features": ["navigation.sections", "navigation.top", "search.suggest", "search.highlight", "content.code.copy"], "search": "../assets/javascripts/workers/search.a7633da7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c21346df.min.js"></script>
+      
+        <script src="https://unpkg.com/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
